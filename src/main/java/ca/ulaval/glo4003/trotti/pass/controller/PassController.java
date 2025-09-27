@@ -44,4 +44,32 @@ public class PassController {
                     .build();
         }
     }
+
+    @GET
+    @Path("/my-purchases")
+    public Response getUserPurchases(@HeaderParam("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"error\":\"Token manquant ou invalide\"}")
+                        .build();
+            }
+
+            String token = authHeader.substring(7);
+            String email = JwtUtil.extractEmail(token);
+
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"error\":\"Utilisateur non trouvé\"}")
+                        .build();
+            }
+
+            return Response.ok(user.getPurchasedPasses()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
 }
