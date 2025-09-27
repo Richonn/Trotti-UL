@@ -36,7 +36,7 @@ public class UserController {
         try {
             if (request == null || request.getEmail() == null || request.getPassword() == null) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"error\":\"Email et mot de passe sont requis.\"}")
+                        .entity("{\"error\":\"Email and password required.\"}")
                         .build();
             }
 
