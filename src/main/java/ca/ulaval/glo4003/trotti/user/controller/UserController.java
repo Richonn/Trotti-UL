@@ -50,4 +50,16 @@ public class UserController {
                     .build();
         }
     }
+
+    @GET
+    @Path("/all")
+    public Response getAllUsers() {
+        try {
+            return Response.ok(userService.getAllUsers()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Impossible de récupérer les utilisateurs.\"}")
+                    .build();
+        }
+    }
 }
