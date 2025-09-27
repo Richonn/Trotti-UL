@@ -1,5 +1,11 @@
 package ca.ulaval.glo4003.trotti.user.model;
 
+import ca.ulaval.glo4003.trotti.pass.model.Pass;
+import ca.ulaval.glo4003.trotti.pass.model.PaymentInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String name;
     private String dateOfBirth;
@@ -8,6 +14,9 @@ public class User {
     private String idul;
     private String email;
     private String password;
+
+    private PaymentInfo paymentInfo;
+    private List<Pass> purchasedPasses = new ArrayList<>();
 
     public User() {}
 
@@ -31,4 +40,20 @@ public class User {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public PaymentInfo getPaymentInfo() {
+        return paymentInfo;
+    }
+
+    public void setPaymentInfo(PaymentInfo paymentInfo) {
+        this.paymentInfo = paymentInfo;
+    }
+
+    public List<Pass> getPurchasedPasses() {
+        return purchasedPasses;
+    }
+
+    public void addPass(Pass pass) {
+        this.purchasedPasses.add(pass);
+    }
 }
