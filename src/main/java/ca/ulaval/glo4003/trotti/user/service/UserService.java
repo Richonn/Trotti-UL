@@ -19,15 +19,25 @@ public class UserService {
         if (user == null) {
             throw new RuntimeException("User cannot be null");
         }
-        if (user.getEmail() == null) {
-            throw new RuntimeException("User email cannot be null");
-        }
+
+        List<String> missingFields = new ArrayList<>();
+
+        if (user.getGender() == null) missingFields.add("gender");
+        if (user.getDateOfBirth() == null) missingFields.add("date of birth");
+        if (user.getIdul() == null) missingFields.add("idul");
+        if (user.getAge() == null) missingFields.add("age");
+        if (user.getName() == null) missingFields.add("name");
+        if (user.getEmail() == null) missingFields.add("email");
         if (user.getPassword() == null) {
-            throw new RuntimeException("User password cannot be null");
+            missingFields.add("password");
+        } else if (!PASSWORD_PATERN.matcher(user.getPassword()).matches()) {
+            throw new RuntimeException("Password must have at least 10 characters including uppercases, number and special characters");
         }
-        if (!PASSWORD_PATERN.matcher(user.getPassword()).matches()) {
-            throw new RuntimeException("Invalid password");
+
+        if (!missingFields.isEmpty()) {
+            throw new RuntimeException("Missing or invalid fields: " + String.join(", ", missingFields));
         }
+
         users.put(user.getEmail(), user);
     }
 
