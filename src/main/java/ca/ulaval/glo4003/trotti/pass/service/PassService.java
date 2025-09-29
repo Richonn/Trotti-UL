@@ -13,48 +13,13 @@ import java.time.LocalDate;
 
 public class PassService {
     private static final BigDecimal BASE_PRICE = BigDecimal.valueOf(45);
-    private static final int BASE_INCLUDED_MINUTES = 30;
     private static final BigDecimal EXTRA_PRICE_PER_BLOCK = BigDecimal.valueOf(2);
 
     public PurchaseResponse purchase(PurchaseRequest request, User user) {
-        int months = SessionUtil.getSessionDurationInMonths(request.getSession());
+        BigDecimal totalPrice = getTotalPrice(request);
+        setPaymentInfo(request, user, totalPrice);
 
-        int extraBlocks = request.getExtraMinutesPerDay() / 10;
-
-        BigDecimal extraPrice = EXTRA_PRICE_PER_BLOCK
-                .multiply(BigDecimal.valueOf(extraBlocks))
-                .multiply(BigDecimal.valueOf(months));
-
-        BigDecimal totalPrice = BASE_PRICE.add(extraPrice);
-
-        PaymentInfo paymentInfo;
-
-        if (request.getCardNumber() == null || request.getCardNumber().isBlank()) {
-            paymentInfo = user.getPaymentInfo();
-            if (paymentInfo == null) {
-                throw new RuntimeException("No payment info available. Please provide card details.");
-            }
-        } else {
-            paymentInfo = new PaymentInfo(
-                    request.getCardNumber(),
-                    request.getCardHolder(),
-                    request.getExpiryDate(),
-                    request.getCvv()
-            );
-            user.setPaymentInfo(paymentInfo);
-        }
-
-        if (!processPayment(paymentInfo, totalPrice)) {
-            throw new RuntimeException("Payment failed");
-        }
-
-        Pass pass = new Pass(
-                request.getSession(),
-                request.getExtraMinutesPerDay(),
-                request.isMonthlyBilling(),
-                totalPrice
-        );
-        user.addPass(pass);
+        Pass pass = getUserPass(request, user, totalPrice);
 
         LocalDate startDate = SessionUtil.getSessionStartDate(request.getSession());
         LocalDate endDate = SessionUtil.getSessionEndDate(request.getSession());
@@ -73,7 +38,51 @@ public class PassService {
         );
     }
 
-    private boolean processPayment(PaymentInfo paymentInfo, BigDecimal total) {
+    private static Pass getUserPass(PurchaseRequest request, User user, BigDecimal totalPrice) {
+        Pass pass = new Pass(
+                request.getSession(),
+                request.getExtraMinutesPerDay(),
+                request.isMonthlyBilling(),
+                totalPrice
+        );
+        user.addPass(pass);
+        return pass;
+    }
+
+    private static BigDecimal getTotalPrice(PurchaseRequest request) {
+        int months = SessionUtil.getSessionDurationInMonths(request.getSession());
+        int extraBlocks = request.getExtraMinutesPerDay() / 10;
+
+        BigDecimal extraPrice = EXTRA_PRICE_PER_BLOCK
+                .multiply(BigDecimal.valueOf(extraBlocks))
+                .multiply(BigDecimal.valueOf(months));
+
+        return BASE_PRICE.add(extraPrice);
+    }
+
+    private void setPaymentInfo(PurchaseRequest request, User user, BigDecimal totalPrice) {
+        PaymentInfo paymentInfo;
+        if (request.getCardNumber() == null || request.getCardNumber().isBlank()) {
+            paymentInfo = user.getPaymentInfo();
+            if (paymentInfo == null) {
+                throw new RuntimeException("No payment info available. Please provide card details.");
+            }
+        } else {
+            paymentInfo = new PaymentInfo(
+                    request.getCardNumber(),
+                    request.getCardHolder(),
+                    request.getExpiryDate(),
+                    request.getCvv()
+            );
+            user.setPaymentInfo(paymentInfo);
+        }
+
+        if (!processPayment(paymentInfo)) {
+            throw new RuntimeException("Payment failed");
+        }
+    }
+
+    private boolean processPayment(PaymentInfo paymentInfo) {
         return paymentInfo.getCardNumber() != null && paymentInfo.getCardNumber().length() >= 12;
     }
 }
