@@ -17,14 +17,17 @@ public class PassController {
     private final PassService passService = new PassService();
     private final UserService userService = new UserService();
 
+    private static boolean isTokenValid(String authHeader) {
+        return authHeader == null || !authHeader.startsWith("Bearer ");
+    }
+
     @POST
     @Path("/purchase")
-    public Response purchase(@HeaderParam("Authorization") String authHeader, PurchaseRequest request) {        try {
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"error\":\"Token manquant ou invalide\"}")
-                        .build();
-            }
+    public Response purchase(@HeaderParam("Authorization") String authHeader, PurchaseRequest request) {
+        try {
+            if (isTokenValid(authHeader)) return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("{\"error\":\"Invalid or missing token\"}")
+                .build();
 
             String token = authHeader.substring(7);
             String email = JwtUtil.extractEmail(token);
@@ -32,16 +35,16 @@ public class PassController {
             User user = userService.findByEmail(email);
             if (user == null) {
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"error\":\"Utilisateur non trouvé\"}")
-                        .build();
+                    .entity("{\"error\":\"User not found\"}")
+                    .build();
             }
 
             PurchaseResponse response = passService.purchase(request, user);
             return Response.status(Response.Status.CREATED).entity(response).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+                .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                .build();
         }
     }
 
@@ -49,11 +52,9 @@ public class PassController {
     @Path("/my-purchases")
     public Response getUserPurchases(@HeaderParam("Authorization") String authHeader) {
         try {
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"error\":\"Token manquant ou invalide\"}")
-                        .build();
-            }
+            if (isTokenValid(authHeader)) return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("{\"error\":\"Invalid or missing token\"}")
+                .build();
 
             String token = authHeader.substring(7);
             String email = JwtUtil.extractEmail(token);
@@ -61,15 +62,15 @@ public class PassController {
             User user = userService.findByEmail(email);
             if (user == null) {
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"error\":\"Utilisateur non trouvé\"}")
-                        .build();
+                    .entity("{\"error\":\"User not found\"}")
+                    .build();
             }
 
             return Response.ok(user.getPurchasedPasses()).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+                .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                .build();
         }
     }
 }
