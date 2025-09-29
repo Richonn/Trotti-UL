@@ -2,6 +2,8 @@ package ca.ulaval.glo4003.trotti.user.service;
 
 import ca.ulaval.glo4003.trotti.user.model.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -35,5 +37,13 @@ public class UserService {
             throw new RuntimeException("Invalid email or password");
         }
         return user;
+    }
+
+    public List<User> getAllUsers() {
+        return new ArrayList<>(users.values());
+    }
+
+    public User findByEmail(String email) {
+        return users.get(email);
     }
 }
