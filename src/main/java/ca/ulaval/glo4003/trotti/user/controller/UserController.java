@@ -58,7 +58,7 @@ public class UserController {
             return Response.ok(userService.getAllUsers()).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"Impossible de récupérer les utilisateurs.\"}")
+                    .entity("{\"error\":\"Can't get all user\"}")
                     .build();
         }
     }
