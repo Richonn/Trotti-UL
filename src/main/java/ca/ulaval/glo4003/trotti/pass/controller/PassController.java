@@ -14,8 +14,13 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PassController {
-    private final PassService passService = new PassService();
-    private final UserService userService = new UserService();
+    private final PassService passService;
+    private final UserService userService;
+
+    public PassController(PassService passService, UserService userService) {
+        this.passService = passService;
+        this.userService = userService;
+    }
 
     private static boolean isTokenValid(String authHeader) {
         return authHeader == null || !authHeader.startsWith("Bearer ");
