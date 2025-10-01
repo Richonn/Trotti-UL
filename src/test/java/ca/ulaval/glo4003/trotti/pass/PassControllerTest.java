@@ -11,9 +11,6 @@ import ca.ulaval.glo4003.trotti.user.service.UserService;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,39 +27,7 @@ class PassControllerTest {
         passService = mock(PassService.class);
         userService = mock(UserService.class);
 
-        controller = new PassController(passService, userService) {
-            private final PassService ps = passService;
-            private final UserService us = userService;
-//            @Override
-//            public Response purchase(String authHeader, PurchaseRequest request) {
-//                try {
-//                    if (authHeader == null || !authHeader.startsWith("Bearer "))
-//                        return Response.status(Response.Status.UNAUTHORIZED).build();
-//                    String token = authHeader.substring(7);
-//                    String email = JwtUtil.extractEmail(token);
-//                    User user = us.findByEmail(email);
-//                    if (user == null) return Response.status(Response.Status.UNAUTHORIZED).build();
-//                    PurchaseResponse response = ps.purchase(request, user);
-//                    return Response.status(Response.Status.CREATED).entity(response).build();
-//                } catch (Exception e) {
-//                    return Response.status(Response.Status.BAD_REQUEST).build();
-//                }
-//            }
-//            @Override
-//            public Response getUserPurchases(String authHeader) {
-//                try {
-//                    if (authHeader == null || !authHeader.startsWith("Bearer "))
-//                        return Response.status(Response.Status.UNAUTHORIZED).build();
-//                    String token = authHeader.substring(7);
-//                    String email = JwtUtil.extractEmail(token);
-//                    User user = us.findByEmail(email);
-//                    if (user == null) return Response.status(Response.Status.UNAUTHORIZED).build();
-//                    return Response.ok(user.getPurchasedPasses()).build();
-//                } catch (Exception e) {
-//                    return Response.status(Response.Status.BAD_REQUEST).build();
-//                }
-//            }
-        };
+        controller = new PassController(passService, userService) {};
 
         testUser = new User();
         testUser.setEmail("alice@email.com");
@@ -118,17 +83,6 @@ class PassControllerTest {
         Response response = controller.getUserPurchases("Bearer " + token);
         assertEquals(401, response.getStatus());
     }
-
-//    @Test
-//    void getUserPurchases_shouldReturn200_whenValidUser() {
-//        String token = JwtUtil.generateToken(testUser.getEmail());
-//        testUser.setPurchasedPasses(List.of("pass1", "pass2"));
-//        when(userService.findByEmail(testUser.getEmail())).thenReturn(testUser);
-//
-//        Response response = controller.getUserPurchases("Bearer " + token);
-//        assertEquals(200, response.getStatus());
-//        assertTrue(response.getEntity().toString().contains("pass1"));
-//    }
 
     @Test
     void getUserPurchases_shouldReturn400_whenExceptionThrown() {
