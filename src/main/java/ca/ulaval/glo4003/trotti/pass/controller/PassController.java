@@ -17,6 +17,11 @@ public class PassController {
     private final PassService passService;
     private final UserService userService;
 
+    public PassController() {
+        this.passService = new PassService();
+        this.userService = new UserService();
+    }
+
     public PassController(PassService passService, UserService userService) {
         this.passService = passService;
         this.userService = userService;
