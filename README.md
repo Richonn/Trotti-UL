@@ -31,6 +31,7 @@ mvn exec:java -Dexec.mainClass="ca.ulaval.glo4003.trotti.Main"
 ## Tester le projet
 
 Une fois l'application lancée, utilisez un outils d'envoie de requêtes http (curl ou postman par exemple).
+Vous trouverez à la racine du projet une collection postman qui vous permettra de tester les routes (`TrottiUL.postman_collection.json`).
 Voici les routes imlémentées :
 
 ---

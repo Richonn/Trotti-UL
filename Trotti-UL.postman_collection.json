@@ -1,0 +1,292 @@
+{
+	"info": {
+		"_postman_id": "6be1a165-b8d5-4162-bf8f-af3f5f654c92",
+		"name": "Trotti-UL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35988341"
+	},
+	"item": [
+		{
+			"name": "Get Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/user/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Alexandra Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"age\": 24,\n  \"idul\": \"adupo123\",\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Didier Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"age\": 24,\n  \"idul\": \"adupo123\",\n  \"email\": \"didier.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Purchase pass",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pass/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pass",
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Purchase pass same credit card",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pass/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pass",
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Purchase pass new credit card",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pass/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pass",
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all purchases by client",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pass/my-purchases",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pass",
+						"my-purchases"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
