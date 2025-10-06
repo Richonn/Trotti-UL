@@ -87,13 +87,15 @@ public class PassService {
     private boolean processPayment(PaymentInfo paymentInfo) {
         if (!paymentInfo.getExpiryDate().matches("\\d{2}/\\d{2}"))
             return false;
+
         String[] parts = paymentInfo.getExpiryDate().split("/");
         int month = Integer.parseInt(parts[0]);
         int year = Integer.parseInt(parts[1]);
         if (month < 1 || month > 12) {
             return false;
         }
-        int currentYear = Year.now().getValue() % 100; // get last two digits
+
+        int currentYear = Year.now().getValue() % 100;
         int currentMonth = LocalDate.now().getMonthValue();
         if (year < currentYear || (year == currentYear && month < currentMonth)) {
             return false;
@@ -109,7 +111,7 @@ public class PassService {
         for (int i = 0; i < paymentInfo.getCardNumber().length(); i++) {
             numbers[i] = Character.getNumericValue(paymentInfo.getCardNumber().charAt(i));
             if ((i + 1) % 2 == 1) {
-            numbers[i] = (numbers[i] * 2) % 10 + ((numbers[i] * 2) / 10);
+                numbers[i] = (numbers[i] * 2) % 10 + ((numbers[i] * 2) / 10);
             }
         }
 
