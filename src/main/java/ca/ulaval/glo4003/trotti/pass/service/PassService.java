@@ -84,11 +84,11 @@ public class PassService {
         }
     }
 
-    private boolean processPayment(PaymentInfo paymentInfo) {
-        if (!paymentInfo.getExpiryDate().matches("\\d{2}/\\d{2}"))
+    private boolean verifyExpiryDate(String date) {
+        if (!date.matches("\\d{2}/\\d{2}"))
             return false;
 
-        String[] parts = paymentInfo.getExpiryDate().split("/");
+        String[] parts = date.split("/");
         int month = Integer.parseInt(parts[0]);
         int year = Integer.parseInt(parts[1]);
         if (month < 1 || month > 12) {
@@ -97,24 +97,29 @@ public class PassService {
 
         int currentYear = Year.now().getValue() % 100;
         int currentMonth = LocalDate.now().getMonthValue();
-        if (year < currentYear || (year == currentYear && month < currentMonth)) {
+        return !(year < currentYear || (year == currentYear && month < currentMonth));
+    }
+
+    private boolean verifyCardNumber(String cardNumber) {
+        if (cardNumber == null ||
+            cardNumber.length() < 8 ||
+            cardNumber.length() > 16) {
             return false;
         }
 
-        if (paymentInfo.getCardNumber() == null ||
-            paymentInfo.getCardNumber().length() < 8 ||
-            paymentInfo.getCardNumber().length() > 16) {
-            return false;
-        }
-
-        int[] numbers = new int[paymentInfo.getCardNumber().length()];
-        for (int i = 0; i < paymentInfo.getCardNumber().length(); i++) {
-            numbers[i] = Character.getNumericValue(paymentInfo.getCardNumber().charAt(i));
+        int[] numbers = new int[cardNumber.length()];
+        for (int i = 0; i < cardNumber.length(); i++) {
+            numbers[i] = Character.getNumericValue(cardNumber.charAt(i));
             if ((i + 1) % 2 == 1) {
                 numbers[i] = (numbers[i] * 2) % 10 + ((numbers[i] * 2) / 10);
             }
         }
 
         return IntStream.of(numbers).sum() % 10 == 0;
+    }
+
+    private boolean processPayment(PaymentInfo paymentInfo) {
+        return verifyCardNumber(paymentInfo.getCardNumber())
+            && verifyExpiryDate(paymentInfo.getExpiryDate());
     }
 }
