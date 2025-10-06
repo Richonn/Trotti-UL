@@ -10,6 +10,8 @@ import ca.ulaval.glo4003.trotti.user.model.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Year;
+import java.util.stream.IntStream;
 
 public class PassService {
     private static final BigDecimal BASE_PRICE = BigDecimal.valueOf(45);
@@ -83,6 +85,34 @@ public class PassService {
     }
 
     private boolean processPayment(PaymentInfo paymentInfo) {
-        return paymentInfo.getCardNumber() != null && paymentInfo.getCardNumber().length() >= 12;
+        if (!paymentInfo.getExpiryDate().matches("\\d{2}/\\d{2}"))
+            return false;
+        String[] parts = paymentInfo.getExpiryDate().split("/");
+        int month = Integer.parseInt(parts[0]);
+        int year = Integer.parseInt(parts[1]);
+        if (month < 1 || month > 12) {
+            return false;
+        }
+        int currentYear = Year.now().getValue() % 100; // get last two digits
+        int currentMonth = LocalDate.now().getMonthValue();
+        if (year < currentYear || (year == currentYear && month < currentMonth)) {
+            return false;
+        }
+
+        if (paymentInfo.getCardNumber() == null ||
+            paymentInfo.getCardNumber().length() < 8 ||
+            paymentInfo.getCardNumber().length() > 16) {
+            return false;
+        }
+
+        int[] numbers = new int[paymentInfo.getCardNumber().length()];
+        for (int i = 0; i < paymentInfo.getCardNumber().length(); i++) {
+            numbers[i] = Character.getNumericValue(paymentInfo.getCardNumber().charAt(i));
+            if ((i + 1) % 2 == 1) {
+            numbers[i] = (numbers[i] * 2) % 10 + ((numbers[i] * 2) / 10);
+            }
+        }
+
+        return IntStream.of(numbers).sum() % 10 == 0;
     }
 }
