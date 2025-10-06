@@ -33,9 +33,9 @@ class PassServiceTest {
         req.setSession(Session.A2025);
         req.setExtraMinutesPerDay(20);
         req.setMonthlyBilling(true);
-        req.setCardNumber("4111111111111111");
+        req.setCardNumber("4242424242424242");
         req.setCardHolder("Alice Dupont");
-        req.setExpiryDate("12/28");
+        req.setExpiryDate("12/70");
         req.setCvv("123");
 
         PurchaseResponse res = passService.purchase(req, testUser);
@@ -51,9 +51,9 @@ class PassServiceTest {
         req.setSession(Session.A2025);
         req.setExtraMinutesPerDay(20);
         req.setMonthlyBilling(true);
-        req.setCardNumber("4111111111111111");
+        req.setCardNumber("4242424242424242");
         req.setCardHolder("Alice Dupont");
-        req.setExpiryDate("12/28");
+        req.setExpiryDate("12/70");
         req.setCvv("123");
 
         passService.purchase(req, testUser);
@@ -73,6 +73,49 @@ class PassServiceTest {
         req.setSession(Session.A2025);
         req.setExtraMinutesPerDay(10);
         req.setMonthlyBilling(true);
+
+        assertThrows(RuntimeException.class, () -> passService.purchase(req, testUser));
+    }
+
+    @Test
+    void purchase_withInvalidCard_shouldThrow() {
+        PurchaseRequest req = new PurchaseRequest();
+        req.setSession(Session.A2025);
+        req.setExtraMinutesPerDay(20);
+        req.setMonthlyBilling(true);
+        req.setCardNumber("9738292023849291");
+        req.setCardHolder("Alice Dupont");
+        req.setExpiryDate("12/28");
+        req.setCvv("123");
+
+        assertThrows(RuntimeException.class, () -> passService.purchase(req, testUser));
+
+    }
+
+    @Test
+    void purchase_withExpiredCard_shouldThrow() {
+        PurchaseRequest req = new PurchaseRequest();
+        req.setSession(Session.A2025);
+        req.setExtraMinutesPerDay(20);
+        req.setMonthlyBilling(true);
+        req.setCardNumber("4242424242424242");
+        req.setCardHolder("Alice Dupont");
+        req.setExpiryDate("12/17");
+        req.setCvv("123");
+
+        assertThrows(RuntimeException.class, () -> passService.purchase(req, testUser));
+    }
+
+    @Test
+    void purchase_withInvalidDate_shouldThrow() {
+        PurchaseRequest req = new PurchaseRequest();
+        req.setSession(Session.A2025);
+        req.setExtraMinutesPerDay(20);
+        req.setMonthlyBilling(true);
+        req.setCardNumber("4242424242424242");
+        req.setCardHolder("Alice Dupont");
+        req.setExpiryDate("93920");
+        req.setCvv("123");
 
         assertThrows(RuntimeException.class, () -> passService.purchase(req, testUser));
     }
