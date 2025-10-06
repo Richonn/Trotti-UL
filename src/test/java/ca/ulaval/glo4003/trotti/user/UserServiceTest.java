@@ -14,6 +14,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         userService = new UserService();
+        userService.clearAllUsers();
         validUser = new User();
         validUser.setName("Alexandra Dupont");
         validUser.setDateOfBirth("2000-01-01");
@@ -78,5 +79,35 @@ class UserServiceTest {
         userService.register(validUser);
 
         assertTrue(userService.getAllUsers().contains(validUser));
+    }
+
+    @Test
+    void register_alreadyUsedEmail_shouldThrow() {
+        User newUser = new User();
+        newUser.setName("John Doe");
+        newUser.setDateOfBirth("2000-01-01");
+        newUser.setGender("M");
+        newUser.setAge(20);
+        newUser.setIdul("jodoe24");
+        newUser.setEmail("Alice@Email.com");
+        newUser.setPassword("Password@321!");
+
+        userService.register(validUser);
+        assertThrows(RuntimeException.class, () -> userService.register(newUser));
+    }
+
+    @Test
+    void register_notAlreadyUsedEmail_shouldNotThrow() {
+        User newUser = new User();
+        newUser.setName("John Doe");
+        newUser.setDateOfBirth("2000-01-01");
+        newUser.setGender("M");
+        newUser.setAge(20);
+        newUser.setIdul("jodoe24");
+        newUser.setEmail("John@Email.com");
+        newUser.setPassword("Password@321!");
+
+        userService.register(validUser);
+        assertDoesNotThrow(() -> userService.register(newUser));
     }
 }
