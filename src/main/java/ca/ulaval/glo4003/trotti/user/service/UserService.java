@@ -15,6 +15,13 @@ public class UserService {
             "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,}$"
     );
 
+    private Boolean verifyEmailAlreadyUsed(String email) {
+        for  (User user : users.values()) {
+            if (user.getEmail().equals(email)) return true;
+        }
+        return false;
+    }
+
     public void register(User user) {
         if (user == null) {
             throw new RuntimeException("User cannot be null");
@@ -27,7 +34,11 @@ public class UserService {
         if (user.getIdul() == null) missingFields.add("idul");
         if (user.getAge() == null) missingFields.add("age");
         if (user.getName() == null) missingFields.add("name");
-        if (user.getEmail() == null) missingFields.add("email");
+        if (user.getEmail() == null) {
+            missingFields.add("email");
+        } else if (verifyEmailAlreadyUsed(user.getEmail())) {
+            throw new RuntimeException("Email already in use");
+        }
         if (user.getPassword() == null) {
             missingFields.add("password");
         } else if (!PASSWORD_PATERN.matcher(user.getPassword()).matches()) {
@@ -55,5 +66,9 @@ public class UserService {
 
     public User findByEmail(String email) {
         return users.get(email);
+    }
+
+    public void clearAllUsers() {
+        users.clear();
     }
 }
