@@ -3,6 +3,8 @@ package ca.ulaval.glo4003.trotti.user.model;
 import ca.ulaval.glo4003.trotti.pass.model.Pass;
 import ca.ulaval.glo4003.trotti.pass.model.PaymentInfo;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,6 @@ public class User {
     private String name;
     private String dateOfBirth;
     private String gender;
-    private Integer age;
     private String idul;
     private String email;
     private String password;
@@ -29,8 +30,11 @@ public class User {
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
 
-    public Integer getAge() { return age; }
-    public void setAge(Integer age) { this.age = age; }
+    public Integer getAge() {
+        if (dateOfBirth == null) return 0;
+        LocalDate birthDate = LocalDate.parse(this.dateOfBirth);
+        return Period.between(birthDate, LocalDate.now()).getYears();
+    }
 
     public String getIdul() { return idul; }
     public void setIdul(String idul) { this.idul = idul; }

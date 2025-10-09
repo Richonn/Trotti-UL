@@ -19,7 +19,6 @@ class UserServiceTest {
         validUser.setName("Alexandra Dupont");
         validUser.setDateOfBirth("2000-01-01");
         validUser.setGender("F");
-        validUser.setAge(25);
         validUser.setIdul("dupaa12");
         validUser.setEmail("Alice@Email.com");
         validUser.setPassword("Password@123");
@@ -40,7 +39,6 @@ class UserServiceTest {
         incomplete.setPassword(null);
         incomplete.setGender(null);
         incomplete.setDateOfBirth(null);
-        incomplete.setAge(null);
         incomplete.setIdul("bad");
         assertThrows(RuntimeException.class, () -> userService.register(incomplete));
     }
@@ -51,7 +49,6 @@ class UserServiceTest {
         invalidPass.setName("Bob");
         invalidPass.setGender("M");
         invalidPass.setDateOfBirth("1999-01-01");
-        invalidPass.setAge(26);
         invalidPass.setIdul("bob1");
         invalidPass.setEmail("bob@email.com");
         invalidPass.setPassword("short");
@@ -87,7 +84,6 @@ class UserServiceTest {
         newUser.setName("John Doe");
         newUser.setDateOfBirth("2000-01-01");
         newUser.setGender("M");
-        newUser.setAge(20);
         newUser.setIdul("jodoe24");
         newUser.setEmail("Alice@Email.com");
         newUser.setPassword("Password@321!");
@@ -102,7 +98,6 @@ class UserServiceTest {
         newUser.setName("John Doe");
         newUser.setDateOfBirth("2000-01-01");
         newUser.setGender("M");
-        newUser.setAge(20);
         newUser.setIdul("jodoe24");
         newUser.setEmail("John@Email.com");
         newUser.setPassword("Password@321!");
