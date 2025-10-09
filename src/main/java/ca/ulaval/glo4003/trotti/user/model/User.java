@@ -19,6 +19,8 @@ public class User {
     private PaymentInfo paymentInfo;
     private List<Pass> purchasedPasses = new ArrayList<>();
 
+    private boolean isActivated = false;
+
     public User() {}
 
     public String getName() { return name; }
@@ -59,5 +61,11 @@ public class User {
 
     public void addPass(Pass pass) {
         this.purchasedPasses.add(pass);
+    }
+
+    public boolean activateAccount() {
+        if (isActivated) return false;
+        isActivated = true;
+        return true;
     }
 }

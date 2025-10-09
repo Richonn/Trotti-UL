@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.user.service;
 
+import ca.ulaval.glo4003.trotti.shared.notification.EmailService;
 import ca.ulaval.glo4003.trotti.user.model.User;
 
 import java.util.ArrayList;
@@ -69,5 +70,15 @@ public class UserService {
 
     public void clearAllUsers() {
         users.clear();
+    }
+
+    public void activateAccount(String email) {
+        EmailService emailService = new EmailService();
+        User user = findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        user.activateAccount();
+        emailService.send(user.getEmail(), "Activation", "Votre compte est activé !");
     }
 }
