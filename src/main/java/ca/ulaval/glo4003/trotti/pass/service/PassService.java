@@ -53,7 +53,12 @@ public class PassService {
 
     private static BigDecimal getTotalPrice(PurchaseRequest request) {
         int months = SessionUtil.getSessionDurationInMonths(request.getSession());
-        int extraBlocks = request.getExtraMinutesPerDay() / 10;
+        int extraBlocks = request.getExtraMinutesPerDay();
+
+        if (extraBlocks % 10 != 0)
+            throw new IllegalArgumentException("Extra minutes must be divisible by 10.");
+
+        extraBlocks /= 10;
 
         BigDecimal extraPrice = EXTRA_PRICE_PER_BLOCK
                 .multiply(BigDecimal.valueOf(extraBlocks))
