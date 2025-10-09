@@ -8,6 +8,8 @@ public class Pass {
     private final boolean monthlyBilling;
     private final BigDecimal totalPrice;
 
+    private boolean active = true;
+
     public Pass(Session session, int extraMinutesPerDay, boolean monthlyBilling, BigDecimal totalPrice) {
         this.session = session;
         this.extraMinutesPerDay = extraMinutesPerDay;
@@ -29,5 +31,13 @@ public class Pass {
 
     public BigDecimal getTotalPrice() {
         return totalPrice;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 }

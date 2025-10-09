@@ -63,6 +63,9 @@ public class User {
         this.purchasedPasses.add(pass);
     }
 
+    public boolean isActivated() { return isActivated; }
+    public void activate() { this.isActivated = true; }
+
     public boolean activateAccount() {
         if (isActivated) return false;
         isActivated = true;
