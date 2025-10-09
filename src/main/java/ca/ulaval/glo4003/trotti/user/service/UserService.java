@@ -32,7 +32,6 @@ public class UserService {
         if (user.getGender() == null) missingFields.add("gender");
         if (user.getDateOfBirth() == null) missingFields.add("date of birth");
         if (user.getIdul() == null) missingFields.add("idul");
-        if (user.getAge() == null) missingFields.add("age");
         if (user.getName() == null) missingFields.add("name");
         if (user.getEmail() == null) {
             missingFields.add("email");

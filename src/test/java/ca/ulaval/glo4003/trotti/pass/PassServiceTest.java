@@ -21,7 +21,6 @@ class PassServiceTest {
         testUser.setName("Alexandra Dupont");
         testUser.setDateOfBirth("2000-01-01");
         testUser.setGender("F");
-        testUser.setAge(25);
         testUser.setIdul("dupaa12");
         testUser.setEmail("Alice@Email.com");
         testUser.setPassword("Password@123");
