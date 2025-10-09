@@ -55,6 +55,8 @@ public class PassService {
         int months = SessionUtil.getSessionDurationInMonths(request.getSession());
         int extraBlocks = request.getExtraMinutesPerDay();
 
+        if (extraBlocks < 0)
+            throw new IllegalArgumentException("Extra minutes must be greater or equal to 0");
         if (extraBlocks % 10 != 0)
             throw new IllegalArgumentException("Extra minutes must be divisible by 10.");
 
