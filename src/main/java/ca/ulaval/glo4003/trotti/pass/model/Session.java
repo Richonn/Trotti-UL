@@ -14,4 +14,13 @@ public enum Session {
     public String getDescription() {
         return description;
     }
+
+    public static Session getInstance(String value) {
+        for (Session session : Session.values()) {
+            if (session.name().equalsIgnoreCase(value)) {
+                return session;
+            }
+        }
+        throw new IllegalArgumentException("Session inconnue: " + value);
+    }
 }
