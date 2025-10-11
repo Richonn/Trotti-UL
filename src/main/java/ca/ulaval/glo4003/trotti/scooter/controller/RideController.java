@@ -38,7 +38,7 @@ public class RideController {
             return Response.status(403).entity("{\"error\":\"No active subscription\"}").build();
         }
 
-        RideCode rideCode = rideService.generateCode();
+        RideCode rideCode = rideService.generateAndSendCode(email);
 
         RideCodeResponse response = new RideCodeResponse(rideCode);
         return Response.ok(response).build();
