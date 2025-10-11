@@ -7,22 +7,32 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class MailtrapEmailService implements EmailService {
 
     private final String domain;
     private final String apiKey;
     private final String fromEmail;
+    private final HttpClient httpClient;
 
     public MailtrapEmailService() {
-        this.domain = System.getenv("MAILGUN_DOMAIN");
-        this.apiKey = System.getenv("MAILGUN_API_KEY");
-        this.fromEmail = System.getenv("EMAIL_FROM");
+        this(HttpClient.newHttpClient());
+    }
+
+    public MailtrapEmailService(HttpClient httpClient) {
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing()
+                .load();
+
+        this.domain = dotenv.get("MAILGUN_DOMAIN", System.getenv("MAILGUN_DOMAIN"));
+        this.apiKey = dotenv.get("MAILGUN_API_KEY", System.getenv("MAILGUN_API_KEY"));
+        this.fromEmail = dotenv.get("EMAIL_FROM", System.getenv("EMAIL_FROM"));
+        this.httpClient = httpClient;
 
         if (domain == null || apiKey == null || fromEmail == null) {
             throw new RuntimeException("Variables d'environnement manquantes. Vérifiez MAILGUN_DOMAIN, MAILGUN_API_KEY et EMAIL_FROM");
         }
-
     }
 
     @Override
@@ -38,7 +48,6 @@ public class MailtrapEmailService implements EmailService {
                 urlEncode(body)
         );
 
-        HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.mailgun.net/v3/" + domain + "/messages"))
                 .header("Authorization", "Basic " + encodedAuth)
@@ -48,16 +57,14 @@ public class MailtrapEmailService implements EmailService {
 
         try {
             System.out.println("Envoi d'email via Mailgun à " + to);
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 System.out.println("Email envoyé avec succès ! " + response.body());
             } else {
-                System.err.println("Erreur Mailgun: " + response.statusCode() + " - " + response.body());
                 throw new RuntimeException("Erreur envoi email: " + response.body());
             }
         } catch (IOException | InterruptedException e) {
-            System.err.println("Erreur: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Erreur envoi mail: " + e.getMessage(), e);
         }

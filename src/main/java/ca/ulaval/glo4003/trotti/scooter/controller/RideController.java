@@ -16,9 +16,19 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class RideController {
 
-    private final RideService rideService = new RideService();
-    private final UserService userService = new UserService();
-    private final PassService passService = new PassService();
+    private final RideService rideService;
+    private final UserService userService;
+    private final PassService passService;
+
+    public RideController() {
+        this(new RideService(), new UserService(), new PassService());
+    }
+
+    public RideController(RideService rideService, UserService userService, PassService passService) {
+        this.rideService = rideService;
+        this.userService = userService;
+        this.passService = passService;
+    }
 
     @POST
     @Path("/request-code")
