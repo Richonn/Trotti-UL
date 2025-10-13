@@ -62,4 +62,12 @@ public class UserController {
                     .build();
         }
     }
+
+    @POST
+    @Path("/activate")
+    public Response activateAccount(@HeaderParam("Authorization") String authHeader) {
+        String email = JwtUtil.extractEmail(authHeader.substring(7));
+        userService.activateAccount(email);
+        return Response.ok("{\"message\":\"Account activated\"}").build();
+    }
 }

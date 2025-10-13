@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.user.service;
 
+import ca.ulaval.glo4003.trotti.shared.email.MailtrapEmailService;
 import ca.ulaval.glo4003.trotti.user.model.User;
 
 import java.util.ArrayList;
@@ -69,5 +70,21 @@ public class UserService {
 
     public void clearAllUsers() {
         users.clear();
+    }
+
+    public void activateAccount(String email) {
+        User user = findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("Utilisateur inconnu");
+        }
+
+        if (user.isActivated()) {
+            throw new RuntimeException("Compte déjà Activé");
+        }
+
+        user.activateAccount();
+
+        MailtrapEmailService mailtrapEmailService = new MailtrapEmailService();
+        mailtrapEmailService.sendEmail(user.getEmail(), "Activation", "Votre compte est activé !");
     }
 }

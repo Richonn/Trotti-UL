@@ -17,6 +17,10 @@ import static org.mockito.Mockito.*;
 
 class PassControllerTest {
 
+    static {
+        System.setProperty("net.bytebuddy.experimental", "true");
+    }
+
     private PassService passService;
     private UserService userService;
     private PassController controller;
@@ -91,5 +95,26 @@ class PassControllerTest {
 
         Response response = controller.getUserPurchases("Bearer " + token);
         assertEquals(400, response.getStatus());
+    }
+
+    @Test
+    void getUserPurchases_shouldReturn401_whenTokenInvalid() {
+        Response response = controller.getUserPurchases("InvalidToken");
+        assertEquals(401, response.getStatus());
+    }
+
+    @Test
+    void getUserPurchases_shouldReturn200_whenValidUser() {
+        User mockUser = mock(User.class);
+        when(mockUser.getEmail()).thenReturn(testUser.getEmail());
+        when(mockUser.getPurchasedPasses()).thenReturn(java.util.List.of());
+
+        String token = JwtUtil.generateToken(testUser.getEmail());
+        when(userService.findByEmail(testUser.getEmail())).thenReturn(mockUser);
+
+        Response response = controller.getUserPurchases("Bearer " + token);
+
+        assertEquals(200, response.getStatus());
+        assertNotNull(response.getEntity());
     }
 }

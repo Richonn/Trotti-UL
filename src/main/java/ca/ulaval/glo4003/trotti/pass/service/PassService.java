@@ -129,4 +129,18 @@ public class PassService {
         return verifyCardNumber(paymentInfo.getCardNumber())
             && verifyExpiryDate(paymentInfo.getExpiryDate());
     }
+
+    public boolean hasActiveSession(User user) {
+        LocalDate today = LocalDate.now();
+
+        for (Pass pass : user.getPurchasedPasses()) {
+            LocalDate startDate = SessionUtil.getSessionStartDate(pass.getSession());
+            LocalDate endDate = SessionUtil.getSessionEndDate(pass.getSession());
+
+            if (!today.isBefore(startDate) && !today.isAfter(endDate)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

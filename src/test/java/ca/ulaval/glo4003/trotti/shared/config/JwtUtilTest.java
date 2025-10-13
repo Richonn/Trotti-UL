@@ -1,6 +1,5 @@
-package ca.ulaval.glo4003.trotti.shared;
+package ca.ulaval.glo4003.trotti.shared.config;
 
-import ca.ulaval.glo4003.trotti.shared.config.JwtUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -12,7 +12,8 @@ public class Main {
     public static HttpServer startServer() {
         final ResourceConfig rc = new ResourceConfig()
                 .packages("ca.ulaval.glo4003.trotti.user.controller",
-                        "ca.ulaval.glo4003.trotti.pass.controller");
+                          "ca.ulaval.glo4003.trotti.pass.controller",
+                          "ca.ulaval.glo4003.trotti.scooter.controller");
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
 
