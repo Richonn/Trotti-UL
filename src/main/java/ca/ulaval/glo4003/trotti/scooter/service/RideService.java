@@ -11,6 +11,7 @@ import java.util.Random;
 public class RideService {
 
     private final EmailService emailService;
+    private static java.util.HashMap<String, RideCode> userRideCodes = new java.util.HashMap<>();
 
     public RideService() {
         this.emailService = new MailtrapEmailService();
@@ -26,6 +27,8 @@ public class RideService {
         RideCode rideCode = new RideCode(code, expirationTime);
 
         sendCodeByEmail(userEmail, rideCode);
+
+        userRideCodes.put(userEmail, rideCode);
 
         return new RideCode(code, expirationTime);
     }
@@ -62,5 +65,18 @@ public class RideService {
 
     public boolean isCodeValid(RideCode rideCode, String inputCode) {
         return rideCode.getCode().equals(inputCode) && !rideCode.isExpired();
+    }
+
+    public RideCode getUserCode(String userEmail) {
+        RideCode code = userRideCodes.get(userEmail);
+        if (code == null) {
+            return null;
+        }
+        return code;
+    }
+
+    public boolean belongsToUser(String userEmail, String rideCode) {
+        RideCode storedCode = userRideCodes.get(userEmail);
+        return storedCode != null && storedCode.getCode().equals(rideCode);
     }
 }
