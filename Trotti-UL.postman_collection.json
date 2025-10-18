@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "6be1a165-b8d5-4162-bf8f-af3f5f654c92",
+		"_postman_id": "1d53ab69-4445-40aa-8bfe-d5c08436088f",
 		"name": "Trotti-UL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "35988341"
+		"_exporter_id": "48983168",
+		"_collection_link": "https://yohan-decamps-7039098.postman.co/workspace/Yohan-Decamps's-Workspace~3aae193a-7807-4b3a-827b-455b0b76fc60/collection/48983168-1d53ab69-4445-40aa-8bfe-d5c08436088f?action=share&source=collection_link&creator=48983168"
 	},
 	"item": [
 		{
@@ -283,6 +284,68 @@
 						"api",
 						"pass",
 						"my-purchases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get request code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pass/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pass",
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Take scooter",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Alexandra Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"age\": 24,\n  \"idul\": \"adupo123\",\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/ride/request-code",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ride",
+						"request-code"
 					]
 				}
 			},
