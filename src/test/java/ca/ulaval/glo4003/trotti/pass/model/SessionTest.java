@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.pass.model;
 
+import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

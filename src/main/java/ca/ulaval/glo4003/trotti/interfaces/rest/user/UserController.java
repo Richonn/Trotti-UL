@@ -4,10 +4,15 @@ import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
 import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
+import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
+import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
+import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.AccountActivationResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.LoginRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.LoginResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.RegisterResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -24,6 +29,7 @@ public class UserController {
     private final LoginUserUseCase loginUserUseCase;
     private final ActivateAccountUseCase activateAccountUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
+    private final TokenGenerator tokenGenerator;
 
     public UserController() {
         ApplicationContext context = ApplicationContext.getInstance();
@@ -31,6 +37,7 @@ public class UserController {
         this.loginUserUseCase = context.getLoginUserUseCase();
         this.activateAccountUseCase = context.getActivateAccountUseCase();
         this.getAllUsersUseCase = context.getGetAllUsersUseCase();
+        this.tokenGenerator = context.getTokenGenerator();
     }
 
     @POST
@@ -57,13 +64,9 @@ public class UserController {
                     .entity(new RegisterResponse(userDto))
                     .build();
         } catch (DomainException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+            return ErrorResponseBuilder.buildErrorResponse(e);
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
         }
     }
 
@@ -72,21 +75,18 @@ public class UserController {
     public Response login(LoginRequest request) {
         try {
             if (request == null || request.getEmail() == null || request.getPassword() == null) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"error\":\"Email and password required.\"}")
-                        .build();
+                return ErrorResponseBuilder.buildErrorResponse(
+                    new IllegalArgumentException("Email and password required."),
+                    Response.Status.BAD_REQUEST
+                );
             }
 
             String token = loginUserUseCase.execute(request.getEmail(), request.getPassword());
-            return Response.ok("{\"token\": \"" + token + "\"}").build();
+            return Response.ok(new LoginResponse(token)).build();
         } catch (DomainException e) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.UNAUTHORIZED);
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
         }
     }
 
@@ -114,9 +114,7 @@ public class UserController {
 
             return Response.ok(userDtos).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"Can't get all users\"}")
-                    .build();
+            return ErrorResponseBuilder.buildInternalServerError("Can't get all users");
         }
     }
 
@@ -124,18 +122,14 @@ public class UserController {
     @Path("/activate")
     public Response activateAccount(@HeaderParam("Authorization") String authHeader) {
         try {
-            String token = authHeader.substring(7);
-            String email = ApplicationContext.getInstance().getJwtTokenService().extractEmail(token);
+            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+            String email = tokenGenerator.extractEmail(token);
             activateAccountUseCase.execute(email);
-            return Response.ok("{\"message\":\"Account activated\"}").build();
+            return Response.ok(new AccountActivationResponse("Account activated")).build();
         } catch (DomainException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+            return ErrorResponseBuilder.buildErrorResponse(e);
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
+            return ErrorResponseBuilder.buildInternalServerError(e);
         }
     }
 

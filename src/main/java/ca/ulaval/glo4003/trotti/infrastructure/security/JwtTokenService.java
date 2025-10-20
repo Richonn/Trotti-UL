@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.infrastructure.security;
 
+import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -7,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
 
-public class JwtTokenService {
+public class JwtTokenService implements TokenGenerator {
     private final Key secretKey;
     private final long expirationTime;
 

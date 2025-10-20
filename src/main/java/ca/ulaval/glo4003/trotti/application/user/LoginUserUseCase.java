@@ -1,18 +1,18 @@
 package ca.ulaval.glo4003.trotti.application.user;
 
+import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.InvalidCredentialsException;
-import ca.ulaval.glo4003.trotti.infrastructure.security.JwtTokenService;
 
 public class LoginUserUseCase {
     private final UserRepository userRepository;
-    private final JwtTokenService jwtTokenService;
+    private final TokenGenerator tokenGenerator;
 
-    public LoginUserUseCase(UserRepository userRepository, JwtTokenService jwtTokenService) {
+    public LoginUserUseCase(UserRepository userRepository, TokenGenerator tokenGenerator) {
         this.userRepository = userRepository;
-        this.jwtTokenService = jwtTokenService;
+        this.tokenGenerator = tokenGenerator;
     }
 
     public String execute(String email, String password) {
@@ -25,6 +25,6 @@ public class LoginUserUseCase {
             throw new InvalidCredentialsException("Invalid password");
         }
 
-        return jwtTokenService.generateToken(email);
+        return tokenGenerator.generateToken(email);
     }
 }

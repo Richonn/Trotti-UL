@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
+import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.User;
@@ -13,21 +14,21 @@ import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestRideCodeUseCase {
     private final UserRepository userRepository;
     private final PassRepository passRepository;
     private final RideCodeGenerator rideCodeGenerator;
+    private final RideCodeRepository rideCodeRepository;
     private final EmailService emailService;
-    private final Map<String, RideCode> userRideCodes = new ConcurrentHashMap<>();
 
     public RequestRideCodeUseCase(UserRepository userRepository, PassRepository passRepository,
-                                   RideCodeGenerator rideCodeGenerator, EmailService emailService) {
+                                   RideCodeGenerator rideCodeGenerator, RideCodeRepository rideCodeRepository,
+                                   EmailService emailService) {
         this.userRepository = userRepository;
         this.passRepository = passRepository;
         this.rideCodeGenerator = rideCodeGenerator;
+        this.rideCodeRepository = rideCodeRepository;
         this.emailService = emailService;
     }
 
@@ -45,7 +46,7 @@ public class RequestRideCodeUseCase {
         }
 
         RideCode rideCode = rideCodeGenerator.generate();
-        userRideCodes.put(userEmail, rideCode);
+        rideCodeRepository.save(userEmail, rideCode);
 
         sendCodeByEmail(userEmail, rideCode);
 
@@ -53,7 +54,7 @@ public class RequestRideCodeUseCase {
     }
 
     public RideCode getUserCode(String userEmail) {
-        return userRideCodes.get(userEmail);
+        return rideCodeRepository.findByUserEmail(userEmail).orElse(null);
     }
 
     private void sendCodeByEmail(String email, RideCode rideCode) {

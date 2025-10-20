@@ -11,9 +11,11 @@ import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
+import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
+import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
@@ -30,9 +32,10 @@ public class ApplicationContext {
     private final StationRepository stationRepository;
     private final ScooterRepository scooterRepository;
     private final RideRepository rideRepository;
+    private final RideCodeRepository rideCodeRepository;
 
     private final EmailService emailService;
-    private final JwtTokenService jwtTokenService;
+    private final TokenGenerator tokenGenerator;
 
     private final PricingPolicy pricingPolicy;
     private final RideCodeGenerator rideCodeGenerator;
@@ -54,20 +57,21 @@ public class ApplicationContext {
         this.stationRepository = new InMemoryStationRepository();
         this.scooterRepository = new InMemoryScooterRepository();
         this.rideRepository = new InMemoryRideRepository();
+        this.rideCodeRepository = new InMemoryRideCodeRepository();
 
         this.emailService = new MailtrapEmailAdapter();
-        this.jwtTokenService = new JwtTokenService();
+        this.tokenGenerator = new JwtTokenService();
 
         this.pricingPolicy = new PricingPolicy();
         this.rideCodeGenerator = new RideCodeGenerator();
 
         this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService);
-        this.loginUserUseCase = new LoginUserUseCase(userRepository, jwtTokenService);
+        this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
         this.activateAccountUseCase = new ActivateAccountUseCase(userRepository, emailService);
         this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
         this.purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy);
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
-        this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, emailService);
+        this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService);
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase);
 
         initializeData();
@@ -125,7 +129,7 @@ public class ApplicationContext {
         return userRepository;
     }
 
-    public JwtTokenService getJwtTokenService() {
-        return jwtTokenService;
+    public TokenGenerator getTokenGenerator() {
+        return tokenGenerator;
     }
 }
