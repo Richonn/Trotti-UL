@@ -32,6 +32,7 @@ class ScooterControllerTest {
     private RideService mockRideService;
     private UserService mockUserService;
     private PassService mockPassService;
+    private ca.ulaval.glo4003.trotti.scooter.service.StationsService mockStationsService;
     private User testUser;
 
     @BeforeEach
@@ -39,8 +40,9 @@ class ScooterControllerTest {
         mockRideService = mock(RideService.class);
         mockUserService = mock(UserService.class);
         mockPassService = mock(PassService.class);
+        mockStationsService = mock(ca.ulaval.glo4003.trotti.scooter.service.StationsService.class);
 
-        rideController = new RideController(mockRideService, mockUserService, mockPassService);
+        rideController = new RideController(mockRideService, mockUserService, mockPassService, mockStationsService);
 
         testUser = new User();
         testUser.setEmail(TEST_EMAIL);
