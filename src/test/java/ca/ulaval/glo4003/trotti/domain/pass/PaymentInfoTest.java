@@ -10,11 +10,9 @@ class PaymentInfoTest {
 
     @Test
     void givenValidData_whenCreatingPaymentInfo_thenSucceeds() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act
         PaymentInfo paymentInfo = new PaymentInfo(
             "4532015112830366",
             "John Doe",
@@ -22,7 +20,6 @@ class PaymentInfoTest {
             "123"
         );
 
-        // Assert
         assertEquals("John Doe", paymentInfo.getCardHolder());
         assertEquals("123", paymentInfo.getCvv());
         assertNotNull(paymentInfo.getCardNumber());
@@ -31,11 +28,9 @@ class PaymentInfoTest {
 
     @Test
     void givenInvalidCardNumber_whenCreatingPaymentInfo_thenThrowsException() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             new PaymentInfo("1234567890123456", "John Doe", expiryDate, "123")
         );
@@ -43,11 +38,9 @@ class PaymentInfoTest {
 
     @Test
     void givenEmptyCardHolder_whenCreatingPaymentInfo_thenThrowsException() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             new PaymentInfo("4532015112830366", "", expiryDate, "123")
         );
@@ -58,11 +51,9 @@ class PaymentInfoTest {
 
     @Test
     void givenNullCardHolder_whenCreatingPaymentInfo_thenThrowsException() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             new PaymentInfo("4532015112830366", null, expiryDate, "123")
         );
@@ -70,7 +61,6 @@ class PaymentInfoTest {
 
     @Test
     void givenInvalidExpiryDate_whenCreatingPaymentInfo_thenThrowsException() {
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             new PaymentInfo("4532015112830366", "John Doe", "invalid", "123")
         );
@@ -78,11 +68,9 @@ class PaymentInfoTest {
 
     @Test
     void givenEmptyCvv_whenCreatingPaymentInfo_thenThrowsException() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             new PaymentInfo("4532015112830366", "John Doe", expiryDate, "")
         );
@@ -90,11 +78,9 @@ class PaymentInfoTest {
 
     @Test
     void givenNullCvv_whenCreatingPaymentInfo_thenThrowsException() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             new PaymentInfo("4532015112830366", "John Doe", expiryDate, null)
         );
@@ -102,11 +88,9 @@ class PaymentInfoTest {
 
     @Test
     void givenInvalidCvvFormat_whenCreatingPaymentInfo_thenThrowsException() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             new PaymentInfo("4532015112830366", "John Doe", expiryDate, "12")
         );
@@ -120,11 +104,9 @@ class PaymentInfoTest {
 
     @Test
     void givenValid4DigitCvv_whenCreatingPaymentInfo_thenSucceeds() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
-        // Act
         PaymentInfo paymentInfo = new PaymentInfo(
             "4532015112830366",
             "John Doe",
@@ -132,34 +114,29 @@ class PaymentInfoTest {
             "1234"
         );
 
-        // Assert
         assertEquals("1234", paymentInfo.getCvv());
     }
 
     @Test
     void givenTwoPaymentInfosWithSameData_whenComparingEquality_thenAreEqual() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
         PaymentInfo info1 = new PaymentInfo("4532015112830366", "John Doe", expiryDate, "123");
         PaymentInfo info2 = new PaymentInfo("4532015112830366", "John Doe", expiryDate, "123");
 
-        // Act & Assert
         assertEquals(info1, info2);
         assertEquals(info1.hashCode(), info2.hashCode());
     }
 
     @Test
     void givenTwoPaymentInfosWithDifferentData_whenComparingEquality_thenAreNotEqual() {
-        // Arrange
         int futureYear = (Year.now().getValue() + 1) % 100;
         String expiryDate = String.format("12/%02d", futureYear);
 
         PaymentInfo info1 = new PaymentInfo("4532015112830366", "John Doe", expiryDate, "123");
         PaymentInfo info2 = new PaymentInfo("5425233430109903", "Jane Doe", expiryDate, "456");
 
-        // Act & Assert
         assertNotEquals(info1, info2);
     }
 }

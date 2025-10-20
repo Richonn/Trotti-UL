@@ -176,7 +176,6 @@ class UserFunctionalTest {
                 .then()
                 .statusCode(201);
 
-        // Login with wrong password
         given()
                 .contentType(ContentType.JSON)
                 .body(String.format("""

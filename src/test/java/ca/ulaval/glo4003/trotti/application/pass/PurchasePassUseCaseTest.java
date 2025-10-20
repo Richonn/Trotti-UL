@@ -33,7 +33,6 @@ class PurchasePassUseCaseTest {
 
     @Test
     void givenValidData_whenExecuting_thenCreatesAndSavesPass() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -54,16 +53,14 @@ class PurchasePassUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act
         PassPurchaseResult result = purchasePassUseCase.execute(
             email, sessionCode, extraMinutes, monthlyBilling,
             cardNumber, cardHolder, expiryDate, cvv
         );
 
-        // Assert
         assertNotNull(result);
         assertEquals(sessionCode, result.getSessionCode());
-        assertEquals(BigDecimal.valueOf(61), result.getTotalPrice()); // 45 + 16
+        assertEquals(BigDecimal.valueOf(61), result.getTotalPrice());
         assertEquals(monthlyBilling, result.isMonthlyBilling());
 
         ArgumentCaptor<Pass> passCaptor = ArgumentCaptor.forClass(Pass.class);
@@ -77,12 +74,10 @@ class PurchasePassUseCaseTest {
 
     @Test
     void givenNonExistentUser_whenExecuting_thenThrowsUserNotFoundException() {
-        // Arrange
         String email = "nonexistent@example.com";
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(UserNotFoundException.class, () ->
             purchasePassUseCase.execute(
                 email, "A2025", 0, false,
@@ -95,7 +90,6 @@ class PurchasePassUseCaseTest {
 
     @Test
     void givenInvalidSession_whenExecuting_thenThrowsIllegalArgumentException() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -108,7 +102,6 @@ class PurchasePassUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             purchasePassUseCase.execute(
                 email, "INVALID", 0, false,
@@ -121,7 +114,6 @@ class PurchasePassUseCaseTest {
 
     @Test
     void givenInvalidCardNumber_whenExecuting_thenThrowsIllegalArgumentException() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -134,7 +126,6 @@ class PurchasePassUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             purchasePassUseCase.execute(
                 email, "A2025", 0, false,
@@ -147,7 +138,6 @@ class PurchasePassUseCaseTest {
 
     @Test
     void givenInvalidExtraMinutes_whenExecuting_thenThrowsIllegalArgumentException() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -160,7 +150,6 @@ class PurchasePassUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act & Assert - Extra minutes must be divisible by 10
         assertThrows(IllegalArgumentException.class, () ->
             purchasePassUseCase.execute(
                 email, "A2025", 15, false,
@@ -173,7 +162,6 @@ class PurchasePassUseCaseTest {
 
     @Test
     void givenZeroExtraMinutes_whenExecuting_thenChargesBasePrice() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -186,13 +174,11 @@ class PurchasePassUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act
         PassPurchaseResult result = purchasePassUseCase.execute(
             email, "A2025", 0, false,
             "4532015112830366", "John Doe", "12/25", "123"
         );
 
-        // Assert
         assertEquals(BigDecimal.valueOf(45), result.getTotalPrice());
     }
 }

@@ -48,7 +48,6 @@ class RequestRideCodeUseCaseTest {
 
     @Test
     void givenActivatedUserWithActivePass_whenExecuting_thenGeneratesAndSavesRideCode() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -66,10 +65,8 @@ class RequestRideCodeUseCaseTest {
         when(passRepository.hasActivePassForUser(user.getId(), LocalDate.now())).thenReturn(true);
         when(rideCodeGenerator.generate()).thenReturn(expectedCode);
 
-        // Act
         RideCode result = requestRideCodeUseCase.execute(email);
 
-        // Assert
         assertEquals(expectedCode, result);
 
         verify(rideCodeRepository).save(email, expectedCode);
@@ -87,12 +84,10 @@ class RequestRideCodeUseCaseTest {
 
     @Test
     void givenNonExistentUser_whenExecuting_thenThrowsUserNotFoundException() {
-        // Arrange
         String email = "nonexistent@example.com";
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(UserNotFoundException.class, () ->
             requestRideCodeUseCase.execute(email)
         );
@@ -103,7 +98,6 @@ class RequestRideCodeUseCaseTest {
 
     @Test
     void givenNonActivatedUser_whenExecuting_thenThrowsAccountNotActivatedException() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -113,11 +107,9 @@ class RequestRideCodeUseCaseTest {
             "M",
             "johdo123"
         );
-        // User is not activated
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act & Assert
         assertThrows(AccountNotActivatedException.class, () ->
             requestRideCodeUseCase.execute(email)
         );
@@ -128,7 +120,6 @@ class RequestRideCodeUseCaseTest {
 
     @Test
     void givenUserWithoutActivePass_whenExecuting_thenThrowsNoActivePassException() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -143,7 +134,6 @@ class RequestRideCodeUseCaseTest {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(passRepository.hasActivePassForUser(user.getId(), LocalDate.now())).thenReturn(false);
 
-        // Act & Assert
         assertThrows(NoActivePassException.class, () ->
             requestRideCodeUseCase.execute(email)
         );
@@ -154,31 +144,25 @@ class RequestRideCodeUseCaseTest {
 
     @Test
     void givenUserEmail_whenGettingUserCode_thenReturnsCodeFromRepository() {
-        // Arrange
         String email = "test@example.com";
         RideCode expectedCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(expectedCode));
 
-        // Act
         RideCode result = requestRideCodeUseCase.getUserCode(email);
 
-        // Assert
         assertEquals(expectedCode, result);
         verify(rideCodeRepository).findByUserEmail(email);
     }
 
     @Test
     void givenUserEmailWithNoCode_whenGettingUserCode_thenReturnsNull() {
-        // Arrange
         String email = "test@example.com";
 
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.empty());
 
-        // Act
         RideCode result = requestRideCodeUseCase.getUserCode(email);
 
-        // Assert
         assertNull(result);
     }
 }

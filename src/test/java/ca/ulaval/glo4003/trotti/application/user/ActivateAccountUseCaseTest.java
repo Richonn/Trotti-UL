@@ -28,7 +28,6 @@ class ActivateAccountUseCaseTest {
 
     @Test
     void givenValidUser_whenExecuting_thenActivatesAccountAndSendsEmail() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -41,10 +40,8 @@ class ActivateAccountUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act
         activateAccountUseCase.execute(email);
 
-        // Assert
         assertTrue(user.isActivated());
         verify(userRepository).save(user);
 
@@ -61,12 +58,10 @@ class ActivateAccountUseCaseTest {
 
     @Test
     void givenNonExistentUser_whenExecuting_thenThrowsUserNotFoundException() {
-        // Arrange
         String email = "nonexistent@example.com";
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(UserNotFoundException.class, () ->
             activateAccountUseCase.execute(email)
         );
@@ -77,7 +72,6 @@ class ActivateAccountUseCaseTest {
 
     @Test
     void givenAlreadyActivatedUser_whenExecuting_thenThrowsAccountAlreadyActivatedException() {
-        // Arrange
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -91,7 +85,6 @@ class ActivateAccountUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act & Assert
         assertThrows(AccountAlreadyActivatedException.class, () ->
             activateAccountUseCase.execute(email)
         );
@@ -101,10 +94,8 @@ class ActivateAccountUseCaseTest {
 
     @Test
     void givenInvalidEmail_whenExecuting_thenThrowsIllegalArgumentException() {
-        // Arrange
         String invalidEmail = "not-an-email";
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             activateAccountUseCase.execute(invalidEmail)
         );

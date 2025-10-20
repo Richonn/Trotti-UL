@@ -27,30 +27,24 @@ class InMemoryPassRepositoryTest {
 
     @Test
     void givenPass_whenSaving_thenCanRetrieveById() {
-        // Arrange
         Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
 
-        // Act
         repository.save(pass);
         Optional<Pass> result = repository.findById(pass.getId());
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals(pass, result.get());
     }
 
     @Test
     void givenNonExistentId_whenFindingById_thenReturnsEmpty() {
-        // Act
         Optional<Pass> result = repository.findById("non-existent-id");
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     void givenMultiplePassesForUser_whenFindingByUserId_thenReturnsAllUserPasses() {
-        // Arrange
         Pass pass1 = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
         Pass pass2 = Pass.purchase(userId, Session.H2026, 20, true, pricingPolicy);
         Pass otherUserPass = Pass.purchase("other-user", Session.A2025, 0, false, pricingPolicy);
@@ -59,10 +53,8 @@ class InMemoryPassRepositoryTest {
         repository.save(pass2);
         repository.save(otherUserPass);
 
-        // Act
         List<Pass> result = repository.findByUserId(userId);
 
-        // Assert
         assertEquals(2, result.size());
         assertTrue(result.contains(pass1));
         assertTrue(result.contains(pass2));
@@ -71,62 +63,50 @@ class InMemoryPassRepositoryTest {
 
     @Test
     void givenNoPassesForUser_whenFindingByUserId_thenReturnsEmptyList() {
-        // Act
         List<Pass> result = repository.findByUserId("non-existent-user");
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     void givenUserWithActivePass_whenCheckingHasActivePass_thenReturnsTrue() {
-        // Arrange
         Pass activePass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
         repository.save(activePass);
 
         LocalDate dateInSession = LocalDate.of(2025, 10, 15);
 
-        // Act
         boolean hasActivePass = repository.hasActivePassForUser(userId, dateInSession);
 
-        // Assert
         assertTrue(hasActivePass);
     }
 
     @Test
     void givenUserWithNoActivePass_whenCheckingHasActivePass_thenReturnsFalse() {
-        // Arrange
         Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
         repository.save(pass);
 
         LocalDate dateOutsideSession = LocalDate.of(2026, 5, 15);
 
-        // Act
         boolean hasActivePass = repository.hasActivePassForUser(userId, dateOutsideSession);
 
-        // Assert
         assertFalse(hasActivePass);
     }
 
     @Test
     void givenUserWithDeactivatedPass_whenCheckingHasActivePass_thenReturnsFalse() {
-        // Arrange
         Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
         pass.deactivate();
         repository.save(pass);
 
         LocalDate dateInSession = LocalDate.of(2025, 10, 15);
 
-        // Act
         boolean hasActivePass = repository.hasActivePassForUser(userId, dateInSession);
 
-        // Assert
         assertFalse(hasActivePass);
     }
 
     @Test
     void givenUserWithMultiplePasses_whenOneIsActive_thenHasActivePassReturnsTrue() {
-        // Arrange
         Pass expiredPass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
         Pass activePass = Pass.purchase(userId, Session.H2026, 0, false, pricingPolicy);
 
@@ -135,19 +115,15 @@ class InMemoryPassRepositoryTest {
 
         LocalDate dateInH2026 = LocalDate.of(2026, 2, 15);
 
-        // Act
         boolean hasActivePass = repository.hasActivePassForUser(userId, dateInH2026);
 
-        // Assert
         assertTrue(hasActivePass);
     }
 
     @Test
     void givenNonExistentUser_whenCheckingHasActivePass_thenReturnsFalse() {
-        // Act
         boolean hasActivePass = repository.hasActivePassForUser("non-existent-user", LocalDate.now());
 
-        // Assert
         assertFalse(hasActivePass);
     }
 }

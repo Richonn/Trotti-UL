@@ -27,7 +27,6 @@ class RegisterUserUseCaseTest {
 
     @Test
     void givenValidData_whenExecuting_thenCreatesAndSavesUser() {
-        // Arrange
         String email = "test@example.com";
         String password = "ValidPass123!";
         String name = "John Doe";
@@ -37,10 +36,8 @@ class RegisterUserUseCaseTest {
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
 
-        // Act
         String userId = registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul);
 
-        // Assert
         assertNotNull(userId);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
@@ -54,7 +51,6 @@ class RegisterUserUseCaseTest {
 
     @Test
     void givenExistingEmail_whenExecuting_thenThrowsUserAlreadyExistsException() {
-        // Arrange
         String email = "existing@example.com";
         String password = "ValidPass123!";
         String name = "John Doe";
@@ -64,7 +60,6 @@ class RegisterUserUseCaseTest {
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(true);
 
-        // Act & Assert
         assertThrows(UserAlreadyExistsException.class, () ->
             registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul)
         );
@@ -74,7 +69,6 @@ class RegisterUserUseCaseTest {
 
     @Test
     void givenInvalidEmail_whenExecuting_thenThrowsIllegalArgumentException() {
-        // Arrange
         String email = "invalid-email";
         String password = "ValidPass123!";
         String name = "John Doe";
@@ -82,7 +76,6 @@ class RegisterUserUseCaseTest {
         String gender = "M";
         String idul = "johdo123";
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul)
         );
@@ -92,7 +85,6 @@ class RegisterUserUseCaseTest {
 
     @Test
     void givenInvalidPassword_whenExecuting_thenThrowsIllegalArgumentException() {
-        // Arrange
         String email = "test@example.com";
         String password = "weak";
         String name = "John Doe";
@@ -102,7 +94,6 @@ class RegisterUserUseCaseTest {
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul)
         );
@@ -112,7 +103,6 @@ class RegisterUserUseCaseTest {
 
     @Test
     void givenValidData_whenExecuting_thenChecksIfEmailExists() {
-        // Arrange
         String email = "test@example.com";
         String password = "ValidPass123!";
         String name = "John Doe";
@@ -122,10 +112,8 @@ class RegisterUserUseCaseTest {
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
 
-        // Act
         registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul);
 
-        // Assert
         ArgumentCaptor<Email> emailCaptor = ArgumentCaptor.forClass(Email.class);
         verify(userRepository).existsByEmail(emailCaptor.capture());
         assertEquals(email, emailCaptor.getValue().getValue());

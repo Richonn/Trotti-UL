@@ -26,7 +26,6 @@ class LoginUserUseCaseTest {
 
     @Test
     void givenValidCredentials_whenExecuting_thenReturnsToken() {
-        // Arrange
         String email = "test@example.com";
         String password = "ValidPass123!";
         String expectedToken = "jwt-token-123";
@@ -43,23 +42,19 @@ class LoginUserUseCaseTest {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(tokenGenerator.generateToken(email)).thenReturn(expectedToken);
 
-        // Act
         String token = loginUserUseCase.execute(email, password);
 
-        // Assert
         assertEquals(expectedToken, token);
         verify(tokenGenerator).generateToken(email);
     }
 
     @Test
     void givenNonExistentEmail_whenExecuting_thenThrowsInvalidCredentialsException() {
-        // Arrange
         String email = "nonexistent@example.com";
         String password = "ValidPass123!";
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(InvalidCredentialsException.class, () ->
             loginUserUseCase.execute(email, password)
         );
@@ -69,7 +64,6 @@ class LoginUserUseCaseTest {
 
     @Test
     void givenWrongPassword_whenExecuting_thenThrowsInvalidCredentialsException() {
-        // Arrange
         String email = "test@example.com";
         String correctPassword = "ValidPass123!";
         String wrongPassword = "WrongPass456!";
@@ -85,7 +79,6 @@ class LoginUserUseCaseTest {
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
-        // Act & Assert
         assertThrows(InvalidCredentialsException.class, () ->
             loginUserUseCase.execute(email, wrongPassword)
         );
@@ -95,11 +88,9 @@ class LoginUserUseCaseTest {
 
     @Test
     void givenInvalidEmailFormat_whenExecuting_thenThrowsIllegalArgumentException() {
-        // Arrange
         String invalidEmail = "not-an-email";
         String password = "ValidPass123!";
 
-        // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
             loginUserUseCase.execute(invalidEmail, password)
         );
@@ -110,7 +101,6 @@ class LoginUserUseCaseTest {
 
     @Test
     void givenNonActivatedUser_whenExecuting_thenStillGeneratesToken() {
-        // Arrange - User can login even if not activated
         String email = "test@example.com";
         String password = "ValidPass123!";
         String expectedToken = "jwt-token-123";
@@ -123,15 +113,12 @@ class LoginUserUseCaseTest {
             "M",
             "johdo123"
         );
-        // User is not activated
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(tokenGenerator.generateToken(email)).thenReturn(expectedToken);
 
-        // Act
         String token = loginUserUseCase.execute(email, password);
 
-        // Assert
         assertEquals(expectedToken, token);
         assertFalse(user.isActivated());
     }

@@ -22,7 +22,6 @@ class InMemoryUserRepositoryTest {
 
     @Test
     void givenUser_whenSaving_thenCanRetrieveById() {
-        // Arrange
         User user = User.register(
             new Email("test@example.com"),
             new Password("ValidPass123!"),
@@ -32,18 +31,15 @@ class InMemoryUserRepositoryTest {
             "johdo123"
         );
 
-        // Act
         repository.save(user);
         Optional<User> result = repository.findById(user.getId());
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
     }
 
     @Test
     void givenUser_whenSaving_thenCanRetrieveByEmail() {
-        // Arrange
         Email email = new Email("test@example.com");
         User user = User.register(
             email,
@@ -54,36 +50,29 @@ class InMemoryUserRepositoryTest {
             "johdo123"
         );
 
-        // Act
         repository.save(user);
         Optional<User> result = repository.findByEmail(email);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
     }
 
     @Test
     void givenNonExistentId_whenFindingById_thenReturnsEmpty() {
-        // Act
         Optional<User> result = repository.findById("non-existent-id");
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     void givenNonExistentEmail_whenFindingByEmail_thenReturnsEmpty() {
-        // Act
         Optional<User> result = repository.findByEmail(new Email("nonexistent@example.com"));
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     void givenExistingUser_whenCheckingIfEmailExists_thenReturnsTrue() {
-        // Arrange
         Email email = new Email("test@example.com");
         User user = User.register(
             email,
@@ -95,25 +84,20 @@ class InMemoryUserRepositoryTest {
         );
         repository.save(user);
 
-        // Act
         boolean exists = repository.existsByEmail(email);
 
-        // Assert
         assertTrue(exists);
     }
 
     @Test
     void givenNonExistentUser_whenCheckingIfEmailExists_thenReturnsFalse() {
-        // Act
         boolean exists = repository.existsByEmail(new Email("nonexistent@example.com"));
 
-        // Assert
         assertFalse(exists);
     }
 
     @Test
     void givenMultipleUsers_whenFindingAll_thenReturnsAllUsers() {
-        // Arrange
         User user1 = User.register(
             new Email("test1@example.com"),
             new Password("ValidPass123!"),
@@ -134,10 +118,8 @@ class InMemoryUserRepositoryTest {
         repository.save(user1);
         repository.save(user2);
 
-        // Act
         List<User> result = repository.findAll();
 
-        // Assert
         assertEquals(2, result.size());
         assertTrue(result.contains(user1));
         assertTrue(result.contains(user2));
@@ -145,7 +127,6 @@ class InMemoryUserRepositoryTest {
 
     @Test
     void givenUsers_whenDeletingAll_thenRepositoryIsEmpty() {
-        // Arrange
         User user = User.register(
             new Email("test@example.com"),
             new Password("ValidPass123!"),
@@ -156,17 +137,14 @@ class InMemoryUserRepositoryTest {
         );
         repository.save(user);
 
-        // Act
         repository.deleteAll();
 
-        // Assert
         assertTrue(repository.findAll().isEmpty());
         assertFalse(repository.existsByEmail(new Email("test@example.com")));
     }
 
     @Test
     void givenSameUser_whenSavingTwice_thenUpdatesUser() {
-        // Arrange
         User user = User.register(
             new Email("test@example.com"),
             new Password("ValidPass123!"),
@@ -176,14 +154,12 @@ class InMemoryUserRepositoryTest {
             "johdo123"
         );
 
-        // Act
         repository.save(user);
         user.activate();
         repository.save(user);
 
         Optional<User> result = repository.findById(user.getId());
 
-        // Assert
         assertTrue(result.isPresent());
         assertTrue(result.get().isActivated());
     }
