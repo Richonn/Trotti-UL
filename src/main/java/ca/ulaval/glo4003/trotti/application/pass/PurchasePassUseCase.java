@@ -25,7 +25,15 @@ public class PurchasePassUseCase {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
-        PaymentInfo paymentInfo = new PaymentInfo(cardNumber, cardHolder, expiryDate, cvv);
+        if (cardNumber != null && !cardNumber.trim().isEmpty()) {
+            PaymentInfo paymentInfo = new PaymentInfo(cardNumber, cardHolder, expiryDate, cvv);
+            user.savePaymentInfo(paymentInfo);
+            userRepository.save(user);
+        } else {
+            if (user.getSavedPaymentInfo().isEmpty()) {
+                throw new IllegalArgumentException("No payment information available. Please provide card details.");
+            }
+        }
 
         Session session = Session.getInstance(sessionCode);
 

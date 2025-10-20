@@ -35,7 +35,7 @@ class LoginUserUseCaseTest {
             new Password(password),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -73,7 +73,7 @@ class LoginUserUseCaseTest {
             new Password(correctPassword),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -110,7 +110,7 @@ class LoginUserUseCaseTest {
             new Password(password),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 

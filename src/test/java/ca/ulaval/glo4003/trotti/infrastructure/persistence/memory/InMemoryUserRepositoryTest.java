@@ -27,7 +27,7 @@ class InMemoryUserRepositoryTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -46,7 +46,7 @@ class InMemoryUserRepositoryTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -79,7 +79,7 @@ class InMemoryUserRepositoryTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         repository.save(user);
@@ -103,7 +103,7 @@ class InMemoryUserRepositoryTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         User user2 = User.register(
@@ -132,7 +132,7 @@ class InMemoryUserRepositoryTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         repository.save(user);
@@ -150,7 +150,7 @@ class InMemoryUserRepositoryTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 

@@ -60,10 +60,17 @@ public class MailtrapEmailAdapter implements EmailService {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+            System.out.println("Mailgun Response Status: " + response.statusCode());
+            System.out.println("Mailgun Response Body: " + response.body());
+
             if (response.statusCode() != 200) {
-                throw new RuntimeException("Erreur envoi email: " + response.body());
+                throw new RuntimeException("Erreur envoi email (status " + response.statusCode() + "): " + response.body());
             }
+
+            System.out.println("Email sent successfully to: " + to);
         } catch (IOException | InterruptedException e) {
+            System.err.println("Erreur lors de l'envoi d'email: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Erreur envoi mail: " + e.getMessage(), e);
         }
     }

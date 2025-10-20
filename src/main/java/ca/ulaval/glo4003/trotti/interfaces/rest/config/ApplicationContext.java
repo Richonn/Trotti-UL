@@ -21,6 +21,7 @@ import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.email.MailtrapEmailAdapter;
+import ca.ulaval.glo4003.trotti.infrastructure.email.StubEmailService;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.*;
 import ca.ulaval.glo4003.trotti.infrastructure.security.JwtTokenService;
 
@@ -59,6 +60,9 @@ public class ApplicationContext {
         this.rideRepository = new InMemoryRideRepository();
         this.rideCodeRepository = new InMemoryRideCodeRepository();
 
+        // Use StubEmailService for development (prints to console)
+        // Use MailtrapEmailAdapter for production (sends real emails)
+        // this.emailService = new StubEmailService();
         this.emailService = new MailtrapEmailAdapter();
         this.tokenGenerator = new JwtTokenService();
 

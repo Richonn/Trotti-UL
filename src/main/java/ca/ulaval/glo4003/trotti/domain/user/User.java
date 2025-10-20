@@ -1,10 +1,12 @@
 package ca.ulaval.glo4003.trotti.domain.user;
 
+import ca.ulaval.glo4003.trotti.domain.pass.PaymentInfo;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class User {
@@ -16,6 +18,7 @@ public class User {
     private final Gender gender;
     private final Idul idul;
     private boolean activated;
+    private PaymentInfo savedPaymentInfo;
 
     private User(String id, Email email, Password password, String name, LocalDate dateOfBirth, Gender gender, Idul idul) {
         this.id = Objects.requireNonNull(id, "User ID cannot be null");
@@ -85,6 +88,14 @@ public class User {
 
     public boolean isActivated() {
         return activated;
+    }
+
+    public void savePaymentInfo(PaymentInfo paymentInfo) {
+        this.savedPaymentInfo = paymentInfo;
+    }
+
+    public Optional<PaymentInfo> getSavedPaymentInfo() {
+        return Optional.ofNullable(savedPaymentInfo);
     }
 
     @Override

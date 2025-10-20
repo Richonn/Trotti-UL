@@ -8,23 +8,23 @@ class GenderTest {
 
     @Test
     void givenMaleCode_whenCreatingGenderFromString_thenReturnsMale() {
-        Gender gender = Gender.fromString("M");
+        Gender gender = Gender.fromString("H");
 
-        assertEquals(Gender.MALE, gender);
+        assertEquals(Gender.HOMME, gender);
     }
 
     @Test
     void givenFemaleCode_whenCreatingGenderFromString_thenReturnsFemale() {
         Gender gender = Gender.fromString("F");
 
-        assertEquals(Gender.FEMALE, gender);
+        assertEquals(Gender.FEMME, gender);
     }
 
     @Test
     void givenOtherCode_whenCreatingGenderFromString_thenReturnsOther() {
-        Gender gender = Gender.fromString("O");
+        Gender gender = Gender.fromString("A");
 
-        assertEquals(Gender.OTHER, gender);
+        assertEquals(Gender.AUTRE, gender);
     }
 
     @Test
@@ -36,18 +36,18 @@ class GenderTest {
 
     @Test
     void givenFullName_whenCreatingGenderFromString_thenReturnsCorrectGender() {
-        assertEquals(Gender.MALE, Gender.fromString("MALE"));
-        assertEquals(Gender.FEMALE, Gender.fromString("FEMALE"));
-        assertEquals(Gender.OTHER, Gender.fromString("OTHER"));
+        assertEquals(Gender.HOMME, Gender.fromString("H"));
+        assertEquals(Gender.FEMME, Gender.fromString("F"));
+        assertEquals(Gender.AUTRE, Gender.fromString("A"));
         assertEquals(Gender.PREFER_NOT_TO_SAY, Gender.fromString("PREFER_NOT_TO_SAY"));
     }
 
     @Test
     void givenLowercaseInput_whenCreatingGenderFromString_thenIsCaseInsensitive() {
-        assertEquals(Gender.MALE, Gender.fromString("m"));
-        assertEquals(Gender.FEMALE, Gender.fromString("f"));
-        assertEquals(Gender.MALE, Gender.fromString("male"));
-        assertEquals(Gender.FEMALE, Gender.fromString("female"));
+        assertEquals(Gender.HOMME, Gender.fromString("h"));
+        assertEquals(Gender.FEMME, Gender.fromString("f"));
+        assertEquals(Gender.HOMME, Gender.fromString("homme"));
+        assertEquals(Gender.FEMME, Gender.fromString("femme"));
     }
 
     @Test
@@ -68,9 +68,9 @@ class GenderTest {
 
     @Test
     void givenGender_whenGettingCode_thenReturnsCorrectCode() {
-        assertEquals("M", Gender.MALE.getCode());
-        assertEquals("F", Gender.FEMALE.getCode());
-        assertEquals("O", Gender.OTHER.getCode());
+        assertEquals("H", Gender.HOMME.getCode());
+        assertEquals("F", Gender.FEMME.getCode());
+        assertEquals("A", Gender.AUTRE.getCode());
         assertEquals("N", Gender.PREFER_NOT_TO_SAY.getCode());
     }
 }

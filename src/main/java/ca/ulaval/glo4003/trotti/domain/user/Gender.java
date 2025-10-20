@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.trotti.domain.user;
 
 public enum Gender {
-    MALE("M"),
-    FEMALE("F"),
-    OTHER("O"),
+    HOMME("H"),
+    FEMME("F"),
+    AUTRE("A"),
     PREFER_NOT_TO_SAY("N");
 
     private final String code;

@@ -39,7 +39,7 @@ class PurchasePassUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -96,7 +96,7 @@ class PurchasePassUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -120,7 +120,7 @@ class PurchasePassUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -144,7 +144,7 @@ class PurchasePassUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -168,7 +168,7 @@ class PurchasePassUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 

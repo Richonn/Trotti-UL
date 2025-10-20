@@ -16,7 +16,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 "2000-01-15",
-                "M",
+                "H",
                 "johdo123"
         );
 
@@ -24,7 +24,7 @@ class UserTest {
         assertEquals("test@example.com", user.getEmail().getValue());
         assertEquals("John Doe", user.getName());
         assertEquals(LocalDate.of(2000, 1, 15), user.getDateOfBirth());
-        assertEquals(Gender.MALE, user.getGender());
+        assertEquals(Gender.HOMME, user.getGender());
         assertEquals("johdo123", user.getIdul().getValue());
         assertFalse(user.isActivated());
     }
@@ -36,7 +36,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 "2000-01-15",
-                "M",
+                "H",
                 "johdo123"
         );
 
@@ -52,7 +52,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 "2000-01-15",
-                "M",
+                "H",
                 "johdo123"
         );
         user.activate();
@@ -67,7 +67,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 "2000-01-15",
-                "M",
+                "H",
                 "johdo123"
         );
         user.activate();
@@ -82,7 +82,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 "2000-01-15",
-                "M",
+                "H",
                 "johdo123"
         );
         user.activate();
@@ -97,7 +97,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 "2000-01-15",
-                "M",
+                "H",
                 "johdo123"
         );
 
@@ -112,7 +112,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 birthDate.toString(),
-                "M",
+                "H",
                 "johdo123"
         );
 
@@ -128,7 +128,7 @@ class UserTest {
                 new Password("ValidPass123!"),
                 "John Doe",
                 "2000-01-15",
-                "M",
+                "H",
                 "johdo123"
         );
         User user2 = User.register(

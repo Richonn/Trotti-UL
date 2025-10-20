@@ -31,7 +31,7 @@ class RegisterUserUseCaseTest {
         String password = "ValidPass123!";
         String name = "John Doe";
         String dateOfBirth = "2000-01-15";
-        String gender = "M";
+        String gender = "H";
         String idul = "johdo123";
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
@@ -55,7 +55,7 @@ class RegisterUserUseCaseTest {
         String password = "ValidPass123!";
         String name = "John Doe";
         String dateOfBirth = "2000-01-15";
-        String gender = "M";
+        String gender = "H";
         String idul = "johdo123";
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(true);
@@ -73,7 +73,7 @@ class RegisterUserUseCaseTest {
         String password = "ValidPass123!";
         String name = "John Doe";
         String dateOfBirth = "2000-01-15";
-        String gender = "M";
+        String gender = "H";
         String idul = "johdo123";
 
         assertThrows(IllegalArgumentException.class, () ->
@@ -89,7 +89,7 @@ class RegisterUserUseCaseTest {
         String password = "weak";
         String name = "John Doe";
         String dateOfBirth = "2000-01-15";
-        String gender = "M";
+        String gender = "H";
         String idul = "johdo123";
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
@@ -107,7 +107,7 @@ class RegisterUserUseCaseTest {
         String password = "ValidPass123!";
         String name = "John Doe";
         String dateOfBirth = "2000-01-15";
-        String gender = "M";
+        String gender = "H";
         String idul = "johdo123";
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);

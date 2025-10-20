@@ -209,7 +209,7 @@ class ApiFunctionalTest {
         {
             "name": "Bob Test",
             "dateOfBirth": "2001-01-01",
-            "gender": "M",
+            "gender": "H",
             "idul": "bob123",
             "email": "%s",
             "password": "Password@123"

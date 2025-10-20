@@ -60,7 +60,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         user.activate();
@@ -100,7 +100,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
 
@@ -119,7 +119,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         user.activate();
@@ -140,7 +140,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         user.activate();
@@ -164,7 +164,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         user.activate();
@@ -188,7 +188,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         user.activate();
@@ -213,7 +213,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         user.activate();
@@ -240,7 +240,7 @@ class StartRideUseCaseTest {
             new Password("ValidPass123!"),
             "John Doe",
             "2000-01-15",
-            "M",
+            "H",
             "johdo123"
         );
         user.activate();
