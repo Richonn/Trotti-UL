@@ -118,4 +118,52 @@ class PassServiceTest {
 
         assertThrows(RuntimeException.class, () -> passService.purchase(req, testUser));
     }
+
+    @Test
+    void Purchase_WithInvalidCvv_shouldThrow() {
+        PurchaseRequest req = new PurchaseRequest();
+        req.setSession(Session.A2025);
+        req.setExtraMinutesPerDay(20);
+        req.setMonthlyBilling(true);
+        req.setCardNumber("4242424242424242");
+        req.setCardHolder("Alice Dupont");
+        req.setExpiryDate("12/70");
+        req.setCvv("12423");
+
+        assertThrows(RuntimeException.class, () -> passService.purchase(req, testUser));
+    }
+
+    @Test
+    void Purchase_ShouldAcceptAmericanExpressVcc() {
+        PurchaseRequest req = new PurchaseRequest();
+        req.setSession(Session.A2025);
+        req.setExtraMinutesPerDay(20);
+        req.setMonthlyBilling(true);
+        req.setCardNumber("342998675211009");
+        req.setCardHolder("Alice Dupont");
+        req.setExpiryDate("12/70");
+        req.setCvv("123");
+
+        PurchaseResponse res = passService.purchase(req, testUser);
+
+        assertNotNull(res);
+        assertEquals("Purchase successful", res.getMessage());
+        assertNotNull(res.getInvoice());
+    }
+
+    @Test
+    void hasActivateSession_shouldHandlerEmptyPassList() {
+        assertFalse(passService.hasActiveSession(testUser));
+    }
+
+    @Test
+    void purchase_withNegativeExtraMinutes_shouldThrow() {
+        PurchaseRequest req = new PurchaseRequest();
+        req.setSession(Session.A2025);
+        req.setExtraMinutesPerDay(-20);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> passService.purchase(req, testUser));
+
+        assertEquals("Extra minutes must be greater or equal to 0", exception.getMessage());
+    }
 }

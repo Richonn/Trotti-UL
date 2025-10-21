@@ -125,9 +125,22 @@ public class PassService {
         return IntStream.of(numbers).sum() % 10 == 0;
     }
 
+    private boolean verifyCvv(String cvv, String cardNumber) {
+        if (cvv == null || !cvv.matches("\\d{3,4}")) {
+            return false;
+        }
+
+        if (cardNumber != null && (cardNumber.startsWith("34") || cardNumber.startsWith("37"))) {
+            return cvv.length() == 4;
+        } else {
+            return cvv.length() == 3;
+        }
+    }
+
     private boolean processPayment(PaymentInfo paymentInfo) {
         return verifyCardNumber(paymentInfo.getCardNumber())
-            && verifyExpiryDate(paymentInfo.getExpiryDate());
+            && verifyExpiryDate(paymentInfo.getExpiryDate())
+            && verifyCvv(paymentInfo.getCvv(), paymentInfo.getCardNumber());
     }
 
     public boolean hasActiveSession(User user) {
