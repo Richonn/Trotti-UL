@@ -43,7 +43,7 @@ class UserFunctionalTest {
                 {
                     "name": "Test User",
                     "dateOfBirth": "2000-01-01",
-                    "gender": "M",
+                    "gender": "H",
                     "idul": "test123",
                     "email": "%s",
                     "password": "Password@123"
@@ -87,7 +87,7 @@ class UserFunctionalTest {
                 {
                     "name": "User Two",
                     "dateOfBirth": "2001-01-01",
-                    "gender": "M",
+                    "gender": "H",
                     "idul": "user2",
                     "email": "%s",
                     "password": "Password@456"
@@ -165,7 +165,7 @@ class UserFunctionalTest {
                 {
                     "name": "Password User",
                     "dateOfBirth": "2000-01-01",
-                    "gender": "M",
+                    "gender": "H",
                     "idul": "pass123",
                     "email": "%s",
                     "password": "Password@123"
@@ -176,7 +176,6 @@ class UserFunctionalTest {
                 .then()
                 .statusCode(201);
 
-        // Login with wrong password
         given()
                 .contentType(ContentType.JSON)
                 .body(String.format("""
@@ -282,7 +281,7 @@ class UserFunctionalTest {
                 {
                     "name": "List User",
                     "dateOfBirth": "2000-01-01",
-                    "gender": "M",
+                    "gender": "H",
                     "idul": "list123",
                     "email": "%s",
                     "password": "Password@123"
