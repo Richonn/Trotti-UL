@@ -60,9 +60,6 @@ public class ApplicationContext {
         this.rideRepository = new InMemoryRideRepository();
         this.rideCodeRepository = new InMemoryRideCodeRepository();
 
-        // Use StubEmailService for development (prints to console)
-        // Use MailtrapEmailAdapter for production (sends real emails)
-        // this.emailService = new StubEmailService();
         this.emailService = new MailtrapEmailAdapter();
         this.tokenGenerator = new JwtTokenService();
 

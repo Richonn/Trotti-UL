@@ -62,7 +62,6 @@ class UserFunctionalTest {
     void register_shouldFail_whenDuplicateEmail() {
         String email = "duplicate" + System.currentTimeMillis() + "@test.com";
 
-        // First registration
         given()
                 .contentType(ContentType.JSON)
                 .body(String.format("""
@@ -80,7 +79,6 @@ class UserFunctionalTest {
                 .then()
                 .statusCode(201);
 
-        // Duplicate registration
         given()
                 .contentType(ContentType.JSON)
                 .body(String.format("""
@@ -119,7 +117,6 @@ class UserFunctionalTest {
     void login_shouldReturnToken_whenValidCredentials() {
         String email = "login" + System.currentTimeMillis() + "@test.com";
 
-        // Register
         given()
                 .contentType(ContentType.JSON)
                 .body(String.format("""
@@ -137,7 +134,6 @@ class UserFunctionalTest {
                 .then()
                 .statusCode(201);
 
-        // Login
         given()
                 .contentType(ContentType.JSON)
                 .body(String.format("""
@@ -151,14 +147,13 @@ class UserFunctionalTest {
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue())
-                .body("token", matchesPattern(".+\\..+\\..+")); // JWT format
+                .body("token", matchesPattern(".+\\..+\\..+"));
     }
 
     @Test
     void login_shouldFail_whenWrongPassword() {
         String email = "wrongpass" + System.currentTimeMillis() + "@test.com";
 
-        // Register
         given()
                 .contentType(ContentType.JSON)
                 .body(String.format("""

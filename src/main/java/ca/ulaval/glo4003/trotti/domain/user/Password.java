@@ -19,7 +19,6 @@ public class Password {
                     "Password must have at least 10 characters including uppercases, number and special characters"
             );
         }
-        // TODO: integrate with PasswordHasher when created
         this.value = rawPassword;
     }
 

@@ -96,7 +96,6 @@ public class UserController {
         try {
             List<User> users = getAllUsersUseCase.execute();
 
-            // Convert domain users to DTOs
             List<ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User> userDtos = users.stream()
                 .map(user -> {
                     ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User dto = new ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User();
