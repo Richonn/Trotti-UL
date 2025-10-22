@@ -13,7 +13,6 @@ import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
-import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
@@ -21,7 +20,6 @@ import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.email.MailtrapEmailAdapter;
-import ca.ulaval.glo4003.trotti.infrastructure.email.StubEmailService;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.*;
 import ca.ulaval.glo4003.trotti.infrastructure.security.JwtTokenService;
 

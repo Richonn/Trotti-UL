@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.trotti.functional;
 import ca.ulaval.glo4003.Main;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.jupiter.api.*;
 
