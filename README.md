@@ -234,6 +234,120 @@ No body
 
 ---
 
+### POST http://localhost:8080/api/user/activate
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK
+
+```json
+{
+  "message": "Account activated successfully"
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/ride/request-code
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK - Le code unique est envoyé par courriel
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/ride/start
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+<details>
+<summary>Exemple</summary>
+
+```json
+{
+  "station": "VACHON",
+  "code": "45496",
+  "slot": 1
+}
+```
+
+</details>
+
+#### Response
+
+- Succès : 200 OK
+
+```json
+{
+  "message": "Ride started successfully"
+}
+```
+
+- Erreur : 400 Bad Request
+
+```json
+{
+  "error": "Invalid code or scooter not available"
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
 ## Récit 1
 
 En tant qu’Alexandra, je peux me créer un compte afin d’acheter une passe de trottinette
@@ -274,6 +388,37 @@ Conclure la transaction de vente avec le paiement par carte de crédit :
 - [x] La passe est valide pour une seule session
 - [x] Une session correspond au session universitaire comme A2025, H2026, E2026, donc c'est l'alternance entre session d'été, automne, hiver et l'Année
 - [x] La passe est valide de la date de début de session actuelle, jusqu’à la date de début de la prochaine
-- [x] La session doit être sélectionnée lors de l’achat
+- [x] La session doit être sélectionnée lors de l'achat
+
+---
+
+## Récit 3
+
+En tant qu'Alexandra quand j'ai complété ma commande, je peux maintenant effectuer des transports à trottinette
+
+### Critères d'acceptation
+
+- [x] Elle veut recevoir une notification par courriel de l'activation du compte
+- [x] Elle est maintenant autorisée à faire des voyages
+- [x] Elle peut demander un code unique pour débarrer les trottinettes
+  - [x] Le code est envoyé par courriel
+  - [x] Le code doit avoir au minimum 4 chiffres et au maximum 6 chiffres
+  - [x] Le code est valide pour seulement 60 secondes
+  - [x] Elle devra demander un nouveau code pour effectuer un nouveau voyage (générer un nouveau code)
+- [x] Les voyages doivent être seulement possibles si la session active est celle prise dans l'abonnement
+
+---
+
+## Récit 4
+
+En tant qu'Alexandra, je peux entrer le code unique à une station de trottinettes pour débloquer la trottinette afin de commencer mon voyage en trottinette
+
+### Critères d'acceptation
+
+- [x] Je dois indiquer mon code unique pour débarrer la trottinette que je veux utiliser
+- [x] La trottinette se trouve à un emplacement à la station pour que je puisse l'identifier (Station X - emplacement #1)
+- [x] La trottinette doit avoir un seuil d'énergie à plus de 15 % pour qu'elle soit débarrée
+- [x] Au démarrage de l'application, les stations ont 80% de leur capacité maximale de trottinettes
+- [x] Les stations sont disponibles (référence externe mentionnée dans les specs)
 
 ---

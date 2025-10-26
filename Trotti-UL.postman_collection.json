@@ -1,33 +1,11 @@
 {
 	"info": {
-		"_postman_id": "1d53ab69-4445-40aa-8bfe-d5c08436088f",
+		"_postman_id": "b5be0d03-6cb6-43ed-b4b6-d30c659462f9",
 		"name": "Trotti-UL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "48983168",
-		"_collection_link": "https://yohan-decamps-7039098.postman.co/workspace/Yohan-Decamps's-Workspace~3aae193a-7807-4b3a-827b-455b0b76fc60/collection/48983168-1d53ab69-4445-40aa-8bfe-d5c08436088f?action=share&source=collection_link&creator=48983168"
+		"_exporter_id": "35988341"
 	},
 	"item": [
-		{
-			"name": "Get Users",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/user/all",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"all"
-					]
-				}
-			},
-			"response": []
-		},
 		{
 			"name": "Register user",
 			"request": {
@@ -41,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"name\": \"Alexandra Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"age\": 24,\n  \"idul\": \"adupo123\",\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
+					"raw": "{\n  \"name\": \"Alexandra Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"idul\": \"adupo123\",\n  \"email\": \"gcacarie@gmail.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/user/register",
@@ -72,7 +50,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"name\": \"Didier Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"age\": 24,\n  \"idul\": \"adupo123\",\n  \"email\": \"didier.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
+					"raw": "{\n  \"name\": \"Didier Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"H\",\n  \"idul\": \"adupo123\",\n  \"email\": \"didier.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/user/register",
@@ -91,6 +69,27 @@
 			"response": []
 		},
 		{
+			"name": "Get Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/user/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Login User",
 			"request": {
 				"method": "POST",
@@ -103,7 +102,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
+					"raw": "{\n  \"email\": \"gcacarie@gmail.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/user/login",
@@ -134,7 +133,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
+					"raw": "{\n  \"email\": \"didier.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/user/login",
@@ -155,6 +154,16 @@
 		{
 			"name": "Purchase pass",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -186,6 +195,16 @@
 		{
 			"name": "Purchase pass same credit card",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -196,7 +215,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/pass/purchase",
@@ -217,6 +236,16 @@
 		{
 			"name": "Purchase pass new credit card",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODcyNDQsImV4cCI6MTc2MDk5MDg0NH0.0MNxgnwJeKoMJ9qSsNLkb2pSV0gQ-PrkKR6A44qfjlY",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -227,7 +256,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"321\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/pass/purchase",
@@ -271,7 +300,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+					"raw": ""
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/pass/my-purchases",
@@ -290,22 +319,22 @@
 			"response": []
 		},
 		{
-			"name": "get request code",
+			"name": "Activate Account",
 			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
+							"type": "string"
+						}
+					]
 				},
+				"method": "POST",
+				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/pass/purchase",
+					"raw": "http://localhost:8080/api/user/activate",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -313,16 +342,26 @@
 					"port": "8080",
 					"path": [
 						"api",
-						"pass",
-						"purchase"
+						"user",
+						"activate"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Take scooter",
+			"name": "get request code",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -333,7 +372,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"name\": \"Alexandra Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"age\": 24,\n  \"idul\": \"adupo123\",\n  \"email\": \"alexandra.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
+					"raw": ""
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/ride/request-code",
@@ -346,6 +385,47 @@
 						"api",
 						"ride",
 						"request-code"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Take scooter",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"station\": \"VACHON\",\n    \"code\": \"45496\",\n    \"slot\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/ride/start",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ride",
+						"start"
 					]
 				}
 			},
