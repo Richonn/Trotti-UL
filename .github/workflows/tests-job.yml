@@ -21,6 +21,6 @@ jobs:
       - name: Run tests with Maven
         run: mvn clean verify
         env:
-          MAILGUN_DOMAIN: ${{ secret.MAILGUN_DOMAIN }}
-          MAILGUN_API_KEY: ${{ secret.MAILGUN_API_KEY }}
-          EMAIL_FROM: ${{ secret.EMAIL_FROM }}
+          MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
+          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
