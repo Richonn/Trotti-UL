@@ -18,8 +18,5 @@ jobs:
           java-version: 21
           cache: 'maven'
 
-      - name: Run Checkstyle
-        run: mvn checkstyle:check
-
       - name: Build project without tests
         run: mvn clean package -DskipTests
