@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.domain.user;
 
+import ca.ulaval.glo4003.trotti.domain.pass.Money;
 import ca.ulaval.glo4003.trotti.domain.pass.PaymentInfo;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
 
@@ -19,6 +20,7 @@ public class User {
     private final Idul idul;
     private boolean activated;
     private PaymentInfo savedPaymentInfo;
+    private MonthlyBalance monthlyBalance;
 
     private User(String id, Email email, Password password, String name, LocalDate dateOfBirth, Gender gender, Idul idul) {
         this.id = Objects.requireNonNull(id, "User ID cannot be null");
@@ -29,6 +31,7 @@ public class User {
         this.gender = Objects.requireNonNull(gender, "Gender cannot be null");
         this.idul = Objects.requireNonNull(idul, "IDUL cannot be null");
         this.activated = false;
+        this.monthlyBalance = new MonthlyBalance();
     }
 
     public static User register(Email email, Password password, String name, String dateOfBirth, String gender, String idul) {
@@ -96,6 +99,14 @@ public class User {
 
     public Optional<PaymentInfo> getSavedPaymentInfo() {
         return Optional.ofNullable(savedPaymentInfo);
+    }
+
+    public void addToMonthlyBalance(Money amount) {
+        this.monthlyBalance = this.monthlyBalance.add(amount);
+    }
+
+    public MonthlyBalance getMonthlyBalance() {
+        return monthlyBalance;
     }
 
     @Override
