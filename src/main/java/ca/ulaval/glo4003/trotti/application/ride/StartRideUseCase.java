@@ -72,7 +72,7 @@ public class StartRideUseCase {
         scooter.rentTo(user.getId());
         scooterRepository.save(scooter);
 
-        Ride ride = Ride.start(user.getId(), scooter.getId(), LocalDateTime.now());
+        Ride ride = Ride.start(user.getId(), scooter.getId(), stationName, LocalDateTime.now());
         rideRepository.save(ride);
 
         return new RideStartResult(ride.getId(), scooter.getBatteryLevel());

@@ -36,4 +36,12 @@ public class InMemoryPassRepository implements PassRepository {
                 .filter(pass -> pass.getUserId().equals(userId))
                 .anyMatch(pass -> pass.isActiveOn(date));
     }
+
+    @Override
+    public Optional<Pass> findActivePassForUser(String userId, LocalDate date) {
+        return passes.values().stream()
+                .filter(pass -> pass.getUserId().equals(userId))
+                .filter(pass -> pass.isActiveOn(date))
+                .findFirst();
+    }
 }

@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.trotti.interfaces.rest.config;
 import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
+import ca.ulaval.glo4003.trotti.application.ride.ReturnRideUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
@@ -13,6 +14,7 @@ import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
+import ca.ulaval.glo4003.trotti.domain.ride.TripRepository;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
@@ -32,6 +34,7 @@ public class ApplicationContext {
     private final ScooterRepository scooterRepository;
     private final RideRepository rideRepository;
     private final RideCodeRepository rideCodeRepository;
+    private final TripRepository tripRepository;
 
     private final EmailService emailService;
     private final TokenGenerator tokenGenerator;
@@ -49,6 +52,7 @@ public class ApplicationContext {
 
     private final RequestRideCodeUseCase requestRideCodeUseCase;
     private final StartRideUseCase startRideUseCase;
+    private final ReturnRideUseCase returnRideUseCase;
 
     private ApplicationContext() {
         this.userRepository = new InMemoryUserRepository();
@@ -57,6 +61,7 @@ public class ApplicationContext {
         this.scooterRepository = new InMemoryScooterRepository();
         this.rideRepository = new InMemoryRideRepository();
         this.rideCodeRepository = new InMemoryRideCodeRepository();
+        this.tripRepository = new InMemoryTripRepository();
 
         this.emailService = new MailtrapEmailAdapter();
         this.tokenGenerator = new JwtTokenService();
@@ -72,6 +77,7 @@ public class ApplicationContext {
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
         this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService);
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase);
+        this.returnRideUseCase = new ReturnRideUseCase(rideRepository, passRepository, stationRepository, scooterRepository, tripRepository);
 
         initializeData();
     }
@@ -122,6 +128,10 @@ public class ApplicationContext {
 
     public StartRideUseCase getStartRideUseCase() {
         return startRideUseCase;
+    }
+
+    public ReturnRideUseCase getReturnRideUseCase() {
+        return returnRideUseCase;
     }
 
     public UserRepository getUserRepository() {

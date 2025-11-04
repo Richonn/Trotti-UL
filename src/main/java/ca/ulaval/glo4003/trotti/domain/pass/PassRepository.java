@@ -12,4 +12,6 @@ public interface PassRepository {
     List<Pass> findByUserId(String userId);
 
     boolean hasActivePassForUser(String userId, LocalDate date);
+
+    Optional<Pass> findActivePassForUser(String userId, LocalDate date);
 }
