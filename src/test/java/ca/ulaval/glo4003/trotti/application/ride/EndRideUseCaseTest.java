@@ -79,7 +79,6 @@ class EndRideUseCaseTest {
 
     @Test
     void givenValidRequest_whenEndingRide_thenRideIsEnded() {
-        // Given
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("Station B")).thenReturn(Optional.of(station));
@@ -87,10 +86,8 @@ class EndRideUseCaseTest {
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(Money.zero());
         when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
-        // When
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 
-        // Then
         verify(rideRepository).save(any(Ride.class));
         verify(scooterRepository).save(any(Scooter.class));
         assertThat(result).isNotNull();
@@ -99,59 +96,50 @@ class EndRideUseCaseTest {
 
     @Test
     void givenUserNotFound_whenEndingRide_thenThrowsUserNotFoundException() {
-        // Given
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(UserNotFoundException.class,
                 () -> endRideUseCase.execute("test@example.com", "Station B", 2));
     }
 
     @Test
     void givenNoActiveRide_whenEndingRide_thenThrowsNoActiveRideException() {
-        // Given
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(NoActiveRideException.class,
                 () -> endRideUseCase.execute("test@example.com", "Station B", 2));
     }
 
     @Test
     void givenStationNotFound_whenEndingRide_thenThrowsStationNotFoundException() {
-        // Given
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("Station B")).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(StationNotFoundException.class,
                 () -> endRideUseCase.execute("test@example.com", "Station B", 2));
     }
 
     @Test
     void givenScooterNotFound_whenEndingRide_thenThrowsScooterNotFoundException() {
-        // Given
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("Station B")).thenReturn(Optional.of(station));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(ScooterNotFoundException.class,
                 () -> endRideUseCase.execute("test@example.com", "Station B", 2));
     }
 
     @Test
     void givenRideWithAdditionalFeesAndMonthlyBilling_whenEndingRide_thenFeesAddedToMonthlyBalance() {
-        // Given
         Money additionalFees = new Money(new BigDecimal("1.50"));
         Pass monthlyPass = Pass.purchase(
                 user.getId(),
                 Session.getInstance("A2025"),
                 0,
-                true,  // monthly billing
+                true,
                 new PricingPolicy()
         );
 
@@ -162,10 +150,8 @@ class EndRideUseCaseTest {
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(additionalFees);
         when(passRepository.findByUserId(user.getId())).thenReturn(List.of(monthlyPass));
 
-        // When
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 
-        // Then
         verify(userRepository).save(user);
         assertThat(result.isChargedImmediately()).isFalse();
         assertThat(result.getAdditionalFees()).isEqualTo(additionalFees);
@@ -174,13 +160,12 @@ class EndRideUseCaseTest {
 
     @Test
     void givenRideWithAdditionalFeesAndImmediateBilling_whenEndingRide_thenFeesChargedImmediately() {
-        // Given
         Money additionalFees = new Money(new BigDecimal("2.25"));
         Pass immediatePass = Pass.purchase(
                 user.getId(),
                 Session.getInstance("A2025"),
                 0,
-                false,  // immediate billing
+                false,
                 new PricingPolicy()
         );
 
@@ -191,17 +176,14 @@ class EndRideUseCaseTest {
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(additionalFees);
         when(passRepository.findByUserId(user.getId())).thenReturn(List.of(immediatePass));
 
-        // When
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 
-        // Then
         assertThat(result.isChargedImmediately()).isTrue();
         assertThat(result.getAdditionalFees()).isEqualTo(additionalFees);
     }
 
     @Test
     void givenRideWithNoAdditionalFees_whenEndingRide_thenNoFeesCharged() {
-        // Given
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("Station B")).thenReturn(Optional.of(station));
@@ -209,10 +191,8 @@ class EndRideUseCaseTest {
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(Money.zero());
         when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
-        // When
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 
-        // Then
         verify(userRepository, never()).save(user);
         assertThat(result.getAdditionalFees().getAmount()).isEqualByComparingTo(BigDecimal.ZERO);
     }
