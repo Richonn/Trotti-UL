@@ -1,0 +1,30 @@
+name: CI - Modular
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-job:
+    uses: ./.github/workflows/build.yml
+
+  tests-job:
+    uses: ./.github/workflows/tests-job.yml
+    needs: build-job
+
+  summary-job:
+    uses: ./.github/workflows/summary.yml
+    needs: [build-job, tests-job]
+    if: always()
+    with:
+      build-result: ${{ needs.build-job.result }}
+      tests-result: ${{ needs.tests-job.result }}
