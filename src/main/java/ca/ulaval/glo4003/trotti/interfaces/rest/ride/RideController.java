@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.ride;
 
+import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
+import ca.ulaval.glo4003.trotti.application.ride.RideEndResult;
 import ca.ulaval.glo4003.trotti.application.ride.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
@@ -8,6 +10,8 @@ import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideCodeResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideResponse;
@@ -22,12 +26,14 @@ import jakarta.ws.rs.core.Response;
 public class RideController {
     private final RequestRideCodeUseCase requestRideCodeUseCase;
     private final StartRideUseCase startRideUseCase;
+    private final EndRideUseCase endRideUseCase;
     private final TokenGenerator tokenGenerator;
 
     public RideController() {
         ApplicationContext context = ApplicationContext.getInstance();
         this.requestRideCodeUseCase = context.getRequestRideCodeUseCase();
         this.startRideUseCase = context.getStartRideUseCase();
+        this.endRideUseCase = context.getEndRideUseCase();
         this.tokenGenerator = context.getTokenGenerator();
     }
 
@@ -94,6 +100,60 @@ public class RideController {
         }
         if (simpleName.contains("NotActivated") || simpleName.contains("Code") || simpleName.contains("NoActive")) {
             return Response.Status.FORBIDDEN;
+        }
+        return Response.Status.BAD_REQUEST;
+    }
+
+    @POST
+    @Path("/end")
+    public Response endRide(@HeaderParam("Authorization") String authHeader, EndRideRequest request) {
+        try {
+            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+            String email = tokenGenerator.extractEmail(token);
+
+            RideEndResult result = endRideUseCase.execute(
+                    email,
+                    request.getStation(),
+                    Integer.parseInt(request.getSlot())
+            );
+
+            String billingMessage = result.isChargedImmediately()
+                    ? "Additional fees of $" + result.getAdditionalFeesAmount() + " have been charged to your card."
+                    : "Additional fees of $" + result.getAdditionalFeesAmount() + " added to your monthly balance.";
+
+            String message = String.format(
+                    "Ride ended successfully. Duration: %d minutes %d seconds. %s",
+                    result.getDurationInMinutes(),
+                    result.getDurationInSeconds(),
+                    result.getAdditionalFeesAmount().compareTo(java.math.BigDecimal.ZERO) > 0 ? billingMessage : "No additional fees."
+            );
+
+            return Response.ok(new EndRideResponse(
+                    result.getDurationInMinutes(),
+                    result.getDurationInSeconds(),
+                    result.getAdditionalFeesAmount(),
+                    result.isChargedImmediately(),
+                    result.getMonthlyBalanceAfter().getAmount(),
+                    message
+            )).build();
+        } catch (DomainException e) {
+            Response.Status status = determineStatusForEndRideException(e);
+            return ErrorResponseBuilder.buildErrorResponse(e, status);
+        } catch (Exception e) {
+            return ErrorResponseBuilder.buildInternalServerError(e);
+        }
+    }
+
+    private Response.Status determineStatusForEndRideException(DomainException e) {
+        String simpleName = e.getClass().getSimpleName();
+        if (simpleName.contains("NotFound")) {
+            return Response.Status.NOT_FOUND;
+        }
+        if (simpleName.contains("NoActiveRide")) {
+            return Response.Status.BAD_REQUEST;
+        }
+        if (simpleName.contains("PaymentDeclined")) {
+            return Response.Status.PAYMENT_REQUIRED;
         }
         return Response.Status.BAD_REQUEST;
     }
