@@ -6,10 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 
-/**
- * Test implementation of Clock that returns fixed dates.
- * Useful for testing time-dependent logic with deterministic dates.
- */
 public class FixedClock implements Clock {
     private final LocalDate fixedDate;
     private final LocalDateTime fixedDateTime;

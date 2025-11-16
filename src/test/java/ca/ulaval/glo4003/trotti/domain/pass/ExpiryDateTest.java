@@ -37,7 +37,7 @@ class ExpiryDateTest {
     void givenPastDate_whenCheckingIfExpired_thenReturnsTrue() {
         LocalDate today = LocalDate.of(2024, 1, 15);
         FixedClock clock = new FixedClock(today);
-        String dateString = "12/22"; // Décembre 2022
+        String dateString = "12/22";
 
         ExpiryDate expiryDate = new ExpiryDate(dateString);
 
