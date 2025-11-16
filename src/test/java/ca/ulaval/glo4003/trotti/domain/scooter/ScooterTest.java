@@ -32,7 +32,6 @@ class ScooterTest {
 
     @Test
     void givenFactoryMethod_whenCreatingScooter_thenAlwaysAvailable() {
-        // Test multiple times since battery is random
         for (int i = 0; i < 50; i++) {
             Scooter scooter = Scooter.create("station-1", i);
 
