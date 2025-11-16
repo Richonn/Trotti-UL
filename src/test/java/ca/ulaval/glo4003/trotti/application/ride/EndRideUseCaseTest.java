@@ -80,7 +80,7 @@ class EndRideUseCaseTest {
 
         scooter = new Scooter("scooter-1", 85.0, "Station A", 1);
         station = new Station("Station B", "Campus Location", 10);
-        ride = Ride.start(user.getId(), scooter.getId(), LocalDateTime.now().minusMinutes(20));
+        ride = Ride.start(user.getId(), scooter.getId(), clock.now().minusMinutes(20));
     }
 
     @Test
