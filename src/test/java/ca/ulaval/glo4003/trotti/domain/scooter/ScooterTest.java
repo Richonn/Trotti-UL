@@ -24,7 +24,23 @@ class ScooterTest {
         Scooter scooter = Scooter.create("station-1", 5);
 
         assertNotNull(scooter.getId());
-        assertTrue(scooter.getBatteryLevel() >= 0 && scooter.getBatteryLevel() <= 100);
+        assertTrue(scooter.getBatteryLevel() >= 20.0 && scooter.getBatteryLevel() <= 100.0,
+            "Battery level should be between 20% and 100%");
+        assertTrue(scooter.getBatteryLevel() > 15.0,
+            "Battery level must be > 15% to meet requirement");
+    }
+
+    @Test
+    void givenFactoryMethod_whenCreatingScooter_thenAlwaysAvailable() {
+        // Test multiple times since battery is random
+        for (int i = 0; i < 50; i++) {
+            Scooter scooter = Scooter.create("station-1", i);
+
+            assertTrue(scooter.isAvailable(),
+                "Scooter created at startup should always be available (battery: " + scooter.getBatteryLevel() + "%)");
+            assertFalse(scooter.isLowBattery(),
+                "Scooter created at startup should never have low battery (battery: " + scooter.getBatteryLevel() + "%)");
+        }
     }
 
     @Test

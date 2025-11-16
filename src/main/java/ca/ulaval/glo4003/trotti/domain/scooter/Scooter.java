@@ -25,7 +25,8 @@ public class Scooter {
     }
 
     public static Scooter create(String stationId, int slotNumber) {
-        return new Scooter(UUID.randomUUID().toString(), Math.random() * 100, stationId, slotNumber);
+        BatteryLevel battery = BatteryLevel.forInitialization();
+        return new Scooter(UUID.randomUUID().toString(), battery.getPercentage(), stationId, slotNumber);
     }
 
     public boolean isAvailable() {

@@ -38,11 +38,33 @@ class BatteryLevelTest {
     }
 
     @Test
-    void givenRandomFactory_whenCreatingBatteryLevel_thenReturnsValidLevel() {
-        BatteryLevel batteryLevel = BatteryLevel.random();
+    void givenForInitialization_whenCreatingBatteryLevel_thenReturnsValidLevel() {
+        BatteryLevel batteryLevel = BatteryLevel.forInitialization();
 
-        assertTrue(batteryLevel.getPercentage() >= 0.0);
+        assertTrue(batteryLevel.getPercentage() >= 20.0);
         assertTrue(batteryLevel.getPercentage() <= 100.0);
+    }
+
+    @Test
+    void givenForInitialization_whenCreatingBatteryLevel_thenNeverLowBattery() {
+        for (int i = 0; i < 100; i++) {
+            BatteryLevel batteryLevel = BatteryLevel.forInitialization();
+
+            assertFalse(batteryLevel.isLow(),
+                "Battery level " + batteryLevel.getPercentage() + "% should not be low (must be > 15%)");
+            assertTrue(batteryLevel.isSufficientForRide(),
+                "Battery level " + batteryLevel.getPercentage() + "% should be sufficient for ride");
+        }
+    }
+
+    @Test
+    void givenForInitialization_whenCreatingBatteryLevel_thenAlwaysAboveThreshold() {
+        for (int i = 0; i < 50; i++) {
+            BatteryLevel batteryLevel = BatteryLevel.forInitialization();
+
+            assertTrue(batteryLevel.getPercentage() > 15.0,
+                "Battery level must be > 15% for scooters to be available at startup");
+        }
     }
 
     @Test
