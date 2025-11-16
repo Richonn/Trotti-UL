@@ -24,6 +24,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,6 +41,7 @@ class EndRideUseCaseTest {
     private StationRepository stationRepository;
     private PassRepository passRepository;
     private RideFeeCalculator feeCalculator;
+    private Clock clock;
 
     private User user;
     private Ride ride;
@@ -52,6 +56,7 @@ class EndRideUseCaseTest {
         stationRepository = mock(StationRepository.class);
         passRepository = mock(PassRepository.class);
         feeCalculator = mock(RideFeeCalculator.class);
+        clock = new FixedClock(LocalDateTime.of(2025, 11, 16, 14, 0));
 
         endRideUseCase = new EndRideUseCase(
                 userRepository,
@@ -59,7 +64,8 @@ class EndRideUseCaseTest {
                 scooterRepository,
                 stationRepository,
                 passRepository,
-                feeCalculator
+                feeCalculator,
+                clock
         );
 
         user = User.register(

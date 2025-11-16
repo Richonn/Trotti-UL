@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.ride;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -23,8 +25,8 @@ public class RideCode {
         return expirationTime;
     }
 
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expirationTime);
+    public boolean isExpired(Clock clock) {
+        return clock.now().isAfter(expirationTime);
     }
 
     public boolean matches(String inputCode) {

@@ -17,6 +17,8 @@ import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +38,7 @@ class StartRideUseCaseTest {
     private ScooterRepository scooterRepository;
     private RideRepository rideRepository;
     private RequestRideCodeUseCase requestRideCodeUseCase;
+    private Clock clock;
 
     @BeforeEach
     void setUp() {
@@ -45,10 +48,11 @@ class StartRideUseCaseTest {
         scooterRepository = mock(ScooterRepository.class);
         rideRepository = mock(RideRepository.class);
         requestRideCodeUseCase = mock(RequestRideCodeUseCase.class);
+        clock = new FixedClock(LocalDate.of(2025, 11, 16));
 
         startRideUseCase = new StartRideUseCase(
             userRepository, passRepository, stationRepository,
-            scooterRepository, rideRepository, requestRideCodeUseCase
+            scooterRepository, rideRepository, requestRideCodeUseCase, clock
         );
     }
 
@@ -169,10 +173,10 @@ class StartRideUseCaseTest {
         );
         user.activate();
 
-        RideCode expiredCode = new RideCode("ABC123", LocalDateTime.now().minusMinutes(1));
+        RideCode expiredCode = new RideCode("ABC123", clock.now().minusMinutes(1));
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.hasActivePassForUser(user.getId(), LocalDate.now())).thenReturn(true);
+        when(passRepository.hasActivePassForUser(user.getId(), clock.today())).thenReturn(true);
         when(requestRideCodeUseCase.getUserCode(email)).thenReturn(expiredCode);
 
         assertThrows(ExpiredRideCodeException.class, () ->

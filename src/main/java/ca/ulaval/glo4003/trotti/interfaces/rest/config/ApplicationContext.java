@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.trotti.domain.ride.RideFeeCalculator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
@@ -24,6 +25,7 @@ import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.email.MailtrapEmailAdapter;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.*;
 import ca.ulaval.glo4003.trotti.infrastructure.security.JwtTokenService;
+import ca.ulaval.glo4003.trotti.infrastructure.time.SystemClock;
 
 public class ApplicationContext {
     private static ApplicationContext instance;
@@ -37,6 +39,7 @@ public class ApplicationContext {
 
     private final EmailService emailService;
     private final TokenGenerator tokenGenerator;
+    private final Clock clock;
 
     private final PricingPolicy pricingPolicy;
     private final RideCodeGenerator rideCodeGenerator;
@@ -64,20 +67,21 @@ public class ApplicationContext {
 
         this.emailService = new MailtrapEmailAdapter();
         this.tokenGenerator = new JwtTokenService();
+        this.clock = new SystemClock();
 
         this.pricingPolicy = new PricingPolicy();
-        this.rideCodeGenerator = new RideCodeGenerator();
+        this.rideCodeGenerator = new RideCodeGenerator(clock);
         this.rideFeeCalculator = new RideFeeCalculator();
 
         this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService);
         this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
         this.activateAccountUseCase = new ActivateAccountUseCase(userRepository, emailService);
         this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
-        this.purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy);
+        this.purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy, clock);
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
-        this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService);
-        this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase);
-        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator);
+        this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService, clock);
+        this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase, clock);
+        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, clock);
 
         initializeData();
     }

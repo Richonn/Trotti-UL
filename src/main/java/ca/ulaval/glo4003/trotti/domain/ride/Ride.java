@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.ride;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -37,8 +39,8 @@ public class Ride {
         this.status = RideStatus.COMPLETED;
     }
 
-    public Duration getDuration() {
-        LocalDateTime end = endTime != null ? endTime : LocalDateTime.now();
+    public Duration getDuration(Clock clock) {
+        LocalDateTime end = endTime != null ? endTime : clock.now();
         return Duration.between(startTime, end);
     }
 

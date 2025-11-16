@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.domain.ride;
 
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,10 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class RideCodeGeneratorTest {
 
     private RideCodeGenerator generator;
+    private FixedClock clock;
 
     @BeforeEach
     void setUp() {
-        generator = new RideCodeGenerator();
+        clock = new FixedClock(LocalDateTime.of(2024, 1, 1, 12, 0));
+        generator = new RideCodeGenerator(clock);
     }
 
     @Test
@@ -44,15 +47,13 @@ class RideCodeGeneratorTest {
 
     @Test
     void whenGeneratingCode_thenExpirationTimeIs60SecondsInFuture() {
-        LocalDateTime before = LocalDateTime.now();
+        LocalDateTime now = clock.now();
 
         RideCode rideCode = generator.generate();
 
-        LocalDateTime after = LocalDateTime.now();
         LocalDateTime expirationTime = rideCode.getExpirationTime();
 
-        assertTrue(expirationTime.isAfter(before.plusSeconds(59)));
-        assertTrue(expirationTime.isBefore(after.plusSeconds(61)));
+        assertEquals(now.plusSeconds(60), expirationTime);
     }
 
     @Test
@@ -77,7 +78,7 @@ class RideCodeGeneratorTest {
     void whenGeneratingCode_thenRideCodeIsNotExpiredImmediately() {
         RideCode rideCode = generator.generate();
 
-        assertFalse(rideCode.isExpired(),
+        assertFalse(rideCode.isExpired(clock),
             "Newly generated code should not be expired");
     }
 }
