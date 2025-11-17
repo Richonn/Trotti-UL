@@ -23,6 +23,11 @@ import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
+import ca.ulaval.glo4003.trotti.domain.user.Email;
+import ca.ulaval.glo4003.trotti.domain.user.Gender;
+import ca.ulaval.glo4003.trotti.domain.user.Password;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
+import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.email.MailtrapEmailAdapter;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.*;
@@ -99,6 +104,17 @@ public class ApplicationContext {
         for (Station station : stationRepository.findAll()) {
             scooterRepo.initializeScootersForStation(station.getId(), station.getCapacity());
         }
+
+        User gerard = User.register(
+            new Email("gerard@trotti.ul"), 
+            new Password("G3R4rdIsTh3B3st<3"), 
+            "Gerard Jugnot", 
+            "1968-05-03", 
+            "H", 
+            "gejug568", 
+            Role.TECHNICIAN
+        );
+        this.userRepository.save(gerard);
     }
 
     public static ApplicationContext getInstance() {
