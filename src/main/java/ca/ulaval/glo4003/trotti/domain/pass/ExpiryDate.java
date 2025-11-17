@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.pass;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Objects;
@@ -24,16 +26,16 @@ public class ExpiryDate {
             throw new IllegalArgumentException("Invalid month in expiry date");
         }
 
-        if (isExpired(month, year)) {
-            throw new IllegalArgumentException("Card is expired");
-        }
-
         this.value = value;
     }
 
-    private boolean isExpired(int month, int year) {
-        int currentYear = Year.now().getValue() % 100;
-        int currentMonth = LocalDate.now().getMonthValue();
+    public boolean isExpired(Clock clock) {
+        String[] parts = value.split("/");
+        int month = Integer.parseInt(parts[0]);
+        int year = Integer.parseInt(parts[1]);
+
+        int currentYear = clock.currentYear().getValue() % 100;
+        int currentMonth = clock.today().getMonthValue();
         return year < currentYear || (year == currentYear && month < currentMonth);
     }
 

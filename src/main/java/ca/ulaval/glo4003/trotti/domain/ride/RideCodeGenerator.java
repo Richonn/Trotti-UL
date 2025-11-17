@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.ride;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -9,10 +11,15 @@ public class RideCodeGenerator {
     private static final int CODE_VALIDITY_SECONDS = 60;
 
     private final Random random = new Random();
+    private final Clock clock;
+
+    public RideCodeGenerator(Clock clock) {
+        this.clock = clock;
+    }
 
     public RideCode generate() {
         String code = generateNumericCode(MIN_CODE_LENGTH, MAX_CODE_LENGTH);
-        LocalDateTime expirationTime = LocalDateTime.now().plusSeconds(CODE_VALIDITY_SECONDS);
+        LocalDateTime expirationTime = clock.now().plusSeconds(CODE_VALIDITY_SECONDS);
         return new RideCode(code, expirationTime);
     }
 

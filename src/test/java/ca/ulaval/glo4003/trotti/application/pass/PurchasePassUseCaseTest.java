@@ -1,16 +1,19 @@
 package ca.ulaval.glo4003.trotti.application.pass;
 
 import ca.ulaval.glo4003.trotti.domain.pass.*;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,13 +25,15 @@ class PurchasePassUseCaseTest {
     private UserRepository userRepository;
     private PassRepository passRepository;
     private PricingPolicy pricingPolicy;
+    private Clock clock;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         passRepository = mock(PassRepository.class);
         pricingPolicy = new PricingPolicy();
-        purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy);
+        clock = new FixedClock(LocalDate.of(2024, 1, 15));
+        purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy, clock);
     }
 
     @Test

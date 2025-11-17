@@ -5,6 +5,7 @@ import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
@@ -12,6 +13,7 @@ import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,6 +33,7 @@ class RequestRideCodeUseCaseTest {
     private RideCodeGenerator rideCodeGenerator;
     private RideCodeRepository rideCodeRepository;
     private EmailService emailService;
+    private Clock clock;
 
     @BeforeEach
     void setUp() {
@@ -39,10 +42,11 @@ class RequestRideCodeUseCaseTest {
         rideCodeGenerator = mock(RideCodeGenerator.class);
         rideCodeRepository = mock(RideCodeRepository.class);
         emailService = mock(EmailService.class);
+        clock = new FixedClock(LocalDate.of(2025, 11, 16));
 
         requestRideCodeUseCase = new RequestRideCodeUseCase(
             userRepository, passRepository, rideCodeGenerator,
-            rideCodeRepository, emailService
+            rideCodeRepository, emailService, clock
         );
     }
 

@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.pass;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+
 import java.util.Objects;
 
 public class PaymentInfo {
@@ -46,6 +48,10 @@ public class PaymentInfo {
 
     public String getCvv() {
         return cvv;
+    }
+
+    public boolean isExpired(Clock clock) {
+        return expiryDate.isExpired(clock);
     }
 
     @Override

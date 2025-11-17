@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.trotti.domain.user;
 
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
 import ca.ulaval.glo4003.trotti.domain.pass.PaymentInfo;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
 
 import java.time.LocalDate;
@@ -57,8 +58,8 @@ public class User {
         return activated && password.matches(rawPassword);
     }
 
-    public int getAge() {
-        return Period.between(dateOfBirth, LocalDate.now()).getYears();
+    public int getAge(Clock clock) {
+        return Period.between(dateOfBirth, clock.today()).getYears();
     }
 
     public String getId() {

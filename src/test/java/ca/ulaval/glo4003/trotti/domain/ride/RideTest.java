@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.domain.ride;
 
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -55,22 +56,26 @@ class RideTest {
 
     @Test
     void givenActiveRide_whenGettingDuration_thenReturnsTimeSinceStart() {
-        LocalDateTime startTime = LocalDateTime.now().minusMinutes(10);
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+        LocalDateTime startTime = now.minusMinutes(10);
+        FixedClock clock = new FixedClock(now);
         Ride ride = Ride.start("user-123", "scooter-456", startTime);
 
-        Duration duration = ride.getDuration();
+        Duration duration = ride.getDuration(clock);
 
-        assertTrue(duration.toMinutes() >= 9 && duration.toMinutes() <= 11);
+        assertEquals(10, duration.toMinutes());
     }
 
     @Test
     void givenCompletedRide_whenGettingDuration_thenReturnsActualDuration() {
-        LocalDateTime startTime = LocalDateTime.now().minusMinutes(30);
-        LocalDateTime endTime = LocalDateTime.now().minusMinutes(10);
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+        LocalDateTime startTime = now.minusMinutes(30);
+        LocalDateTime endTime = now.minusMinutes(10);
+        FixedClock clock = new FixedClock(now);
         Ride ride = Ride.start("user-123", "scooter-456", startTime);
         ride.end(endTime);
 
-        Duration duration = ride.getDuration();
+        Duration duration = ride.getDuration(clock);
 
         assertEquals(20, duration.toMinutes());
     }
