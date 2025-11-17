@@ -10,6 +10,7 @@ public class RideFeeCalculator {
     private static final int FREE_MINUTES = 15;
     private static final BigDecimal COST_PER_MINUTE = new BigDecimal("0.075");
     private static final int ROUNDING_THRESHOLD_SECONDS = 15;
+    private static final BigDecimal QUOTA_EXCEEDED_FEE = new BigDecimal("5.00");
 
     public Money calculateAdditionalFees(Duration rideDuration) {
         long totalSeconds = rideDuration.getSeconds();
@@ -30,5 +31,9 @@ public class RideFeeCalculator {
         fee = fee.setScale(2, RoundingMode.HALF_UP);
 
         return new Money(fee);
+    }
+
+    public Money getQuotaExceededFee() {
+        return new Money(QUOTA_EXCEEDED_FEE);
     }
 }

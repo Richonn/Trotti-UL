@@ -57,6 +57,7 @@ class EndRideUseCaseTest {
         passRepository = mock(PassRepository.class);
         feeCalculator = mock(RideFeeCalculator.class);
         clock = new FixedClock(LocalDateTime.of(2025, 11, 16, 14, 0));
+        DailyUsageTracker dailyUsageTracker = new DailyUsageTracker();
 
         endRideUseCase = new EndRideUseCase(
                 userRepository,
@@ -65,6 +66,7 @@ class EndRideUseCaseTest {
                 stationRepository,
                 passRepository,
                 feeCalculator,
+                dailyUsageTracker,
                 clock
         );
 
@@ -80,7 +82,7 @@ class EndRideUseCaseTest {
 
         scooter = new Scooter("scooter-1", 85.0, "Station A", 1);
         station = new Station("Station B", "Campus Location", 10);
-        ride = Ride.start(user.getId(), scooter.getId(), clock.now().minusMinutes(20));
+        ride = Ride.start(user.getId(), scooter.getId(), "Station A", clock.now().minusMinutes(20));
     }
 
     @Test

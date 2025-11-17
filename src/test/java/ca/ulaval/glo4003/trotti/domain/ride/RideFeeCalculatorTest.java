@@ -97,4 +97,11 @@ class RideFeeCalculatorTest {
 
         assertThat(fees.getAmount()).isEqualByComparingTo(new BigDecimal("3.38"));
     }
+
+    @Test
+    void whenGettingQuotaExceededFee_thenReturns5Dollars() {
+        Money fee = calculator.getQuotaExceededFee();
+
+        assertThat(fee.getAmount()).isEqualByComparingTo(new BigDecimal("5.00"));
+    }
 }
