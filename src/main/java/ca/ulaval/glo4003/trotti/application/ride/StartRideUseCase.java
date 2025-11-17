@@ -66,10 +66,6 @@ public class StartRideUseCase {
         Scooter scooter = scooterRepository.findByStationIdAndSlotNumber(stationName, slotNumber)
                 .orElseThrow(() -> new SlotNotAvailableException("Scooter not found at the given slot"));
 
-        if (scooter.isLowBattery()) {
-            throw new SlotNotAvailableException("Scooter battery too low: " + scooter.getBatteryLevel() + "%");
-        }
-
         scooter.rentTo(user.getId());
         scooterRepository.save(scooter);
 

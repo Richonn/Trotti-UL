@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.trotti.domain.ride.exception.ExpiredRideCodeException;
 import ca.ulaval.glo4003.trotti.domain.ride.exception.InvalidRideCodeException;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
+import ca.ulaval.glo4003.trotti.domain.scooter.exception.LowBatteryException;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 import ca.ulaval.glo4003.trotti.domain.station.exception.SlotNotAvailableException;
@@ -246,7 +247,7 @@ class StartRideUseCaseTest {
     }
 
     @Test
-    void givenScooterWithLowBattery_whenStartingRide_thenThrowsSlotNotAvailableException() {
+    void givenScooterWithLowBattery_whenStartingRide_thenThrowsLowBatteryException() {
         String email = "test@example.com";
         User user = User.register(
             new Email(email),
@@ -269,7 +270,7 @@ class StartRideUseCaseTest {
         when(stationRepository.findById("station-1")).thenReturn(Optional.of(station));
         when(scooterRepository.findByStationIdAndSlotNumber("station-1", 5)).thenReturn(Optional.of(scooter));
 
-        assertThrows(SlotNotAvailableException.class, () ->
+        assertThrows(LowBatteryException.class, () ->
             startRideUseCase.execute(email, "station-1", 5, "ABC123")
         );
     }
