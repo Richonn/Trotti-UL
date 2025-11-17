@@ -11,6 +11,8 @@ import org.mockito.ArgumentCaptor;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class ActivateAccountUseCaseTest {
@@ -35,7 +37,8 @@ class ActivateAccountUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
@@ -79,7 +82,8 @@ class ActivateAccountUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 

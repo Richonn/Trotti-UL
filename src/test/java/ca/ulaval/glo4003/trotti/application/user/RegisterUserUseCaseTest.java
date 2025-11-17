@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.trotti.application.user;
 
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserAlreadyExistsException;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class RegisterUserUseCaseTest {
@@ -36,7 +38,7 @@ class RegisterUserUseCaseTest {
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
 
-        String userId = registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul);
+        String userId = registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul, Role.USER);
 
         assertNotNull(userId);
 
@@ -61,7 +63,7 @@ class RegisterUserUseCaseTest {
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(true);
 
         assertThrows(UserAlreadyExistsException.class, () ->
-            registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul)
+            registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul, Role.USER)
         );
 
         verify(userRepository, never()).save(any(User.class));
@@ -77,7 +79,7 @@ class RegisterUserUseCaseTest {
         String idul = "johdo123";
 
         assertThrows(IllegalArgumentException.class, () ->
-            registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul)
+            registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul, Role.USER)
         );
 
         verify(userRepository, never()).save(any(User.class));
@@ -95,7 +97,7 @@ class RegisterUserUseCaseTest {
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () ->
-            registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul)
+            registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul, Role.USER)
         );
 
         verify(userRepository, never()).save(any(User.class));
@@ -112,7 +114,7 @@ class RegisterUserUseCaseTest {
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
 
-        registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul);
+        registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul, Role.USER);
 
         ArgumentCaptor<Email> emailCaptor = ArgumentCaptor.forClass(Email.class);
         verify(userRepository).existsByEmail(emailCaptor.capture());

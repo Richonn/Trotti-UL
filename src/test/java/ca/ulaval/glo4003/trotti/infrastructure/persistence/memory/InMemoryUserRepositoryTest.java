@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.trotti.infrastructure.persistence.memory;
 
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,8 @@ class InMemoryUserRepositoryTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         repository.save(user);
@@ -47,7 +49,8 @@ class InMemoryUserRepositoryTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         repository.save(user);
@@ -80,7 +83,8 @@ class InMemoryUserRepositoryTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         repository.save(user);
 
@@ -104,7 +108,8 @@ class InMemoryUserRepositoryTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         User user2 = User.register(
             new Email("test2@example.com"),
@@ -112,7 +117,8 @@ class InMemoryUserRepositoryTest {
             "Jane Doe",
             "2000-01-15",
             "F",
-            "jando456"
+            "jando456",
+            Role.USER
         );
 
         repository.save(user1);
@@ -133,7 +139,8 @@ class InMemoryUserRepositoryTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         repository.save(user);
 
@@ -151,7 +158,8 @@ class InMemoryUserRepositoryTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         repository.save(user);

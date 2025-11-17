@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class LoginUserUseCaseTest {
@@ -36,7 +38,8 @@ class LoginUserUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
@@ -74,7 +77,8 @@ class LoginUserUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
@@ -111,7 +115,8 @@ class LoginUserUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));

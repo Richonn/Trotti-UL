@@ -17,7 +17,8 @@ class UserTest {
                 "John Doe",
                 "2000-01-15",
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
 
         assertNotNull(user.getId());
@@ -37,7 +38,8 @@ class UserTest {
                 "John Doe",
                 "2000-01-15",
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
 
         user.activate();
@@ -53,7 +55,8 @@ class UserTest {
                 "John Doe",
                 "2000-01-15",
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
         user.activate();
 
@@ -68,7 +71,8 @@ class UserTest {
                 "John Doe",
                 "2000-01-15",
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
         user.activate();
 
@@ -83,7 +87,8 @@ class UserTest {
                 "John Doe",
                 "2000-01-15",
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
         user.activate();
 
@@ -98,7 +103,8 @@ class UserTest {
                 "John Doe",
                 "2000-01-15",
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
 
         assertFalse(user.canLogin("ValidPass123!"));
@@ -113,7 +119,8 @@ class UserTest {
                 "John Doe",
                 birthDate.toString(),
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
 
         int age = user.getAge();
@@ -129,7 +136,8 @@ class UserTest {
                 "John Doe",
                 "2000-01-15",
                 "H",
-                "johdo123"
+                "johdo123",
+                Role.USER
         );
         User user2 = User.register(
                 new Email("test2@example.com"),
@@ -137,7 +145,8 @@ class UserTest {
                 "Jane Doe",
                 "2000-01-15",
                 "F",
-                "jando456"
+                "jando456",
+                Role.USER
         );
 
         assertNotEquals(user1, user2);
