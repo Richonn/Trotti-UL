@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.trotti.infrastructure.persistence.memory;
 import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,12 +27,5 @@ public class InMemoryPassRepository implements PassRepository {
         return passes.values().stream()
                 .filter(pass -> pass.getUserId().equals(userId))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean hasActivePassForUser(String userId, LocalDate date) {
-        return passes.values().stream()
-                .filter(pass -> pass.getUserId().equals(userId))
-                .anyMatch(pass -> pass.isActiveOn(date));
     }
 }

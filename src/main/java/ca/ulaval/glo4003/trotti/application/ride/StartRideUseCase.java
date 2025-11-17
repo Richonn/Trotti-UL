@@ -48,7 +48,7 @@ public class StartRideUseCase {
             throw new AccountNotActivatedException();
         }
 
-        if (!passRepository.hasActivePassForUser(user.getId(), clock.today())) {
+        if (!user.hasActivePass(passRepository.findByUserId(user.getId()), clock.today())) {
             throw new NoActivePassException();
         }
 
