@@ -23,6 +23,6 @@ public class GetRideHistoryUseCase {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
-        return rideRepository.findByUserId(user.getId());
+        return rideRepository.findCompletedRidesByUserId(user.getId());
     }
 }

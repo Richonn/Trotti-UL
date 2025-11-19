@@ -12,7 +12,7 @@ import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
-import ca.ulaval.glo4003.trotti.domain.ride.DailyUsageTracker;
+import ca.ulaval.glo4003.trotti.domain.ride.DailyUsageRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideFeeCalculator;
@@ -46,7 +46,7 @@ public class ApplicationContext {
     private final PricingPolicy pricingPolicy;
     private final RideCodeGenerator rideCodeGenerator;
     private final RideFeeCalculator rideFeeCalculator;
-    private final DailyUsageTracker dailyUsageTracker;
+    private final DailyUsageRepository dailyUsageRepository;
 
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUserUseCase loginUserUseCase;
@@ -76,7 +76,7 @@ public class ApplicationContext {
         this.pricingPolicy = new PricingPolicy();
         this.rideCodeGenerator = new RideCodeGenerator(clock);
         this.rideFeeCalculator = new RideFeeCalculator();
-        this.dailyUsageTracker = new DailyUsageTracker();
+        this.dailyUsageRepository = new InMemoryDailyUsageRepository();
 
         this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService);
         this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
@@ -86,7 +86,7 @@ public class ApplicationContext {
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
         this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService, clock);
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase, clock);
-        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageTracker, clock);
+        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
         this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
 
         initializeData();

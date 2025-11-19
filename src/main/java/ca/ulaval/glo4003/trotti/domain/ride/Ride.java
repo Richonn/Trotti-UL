@@ -49,6 +49,20 @@ public class Ride {
         return Duration.between(startTime, end);
     }
 
+    public int getDurationMinutes() {
+        if (endTime == null) {
+            throw new IllegalStateException("Ride is not completed");
+        }
+        return (int) Duration.between(startTime, endTime).toMinutes();
+    }
+
+    public int getDurationSeconds() {
+        if (endTime == null) {
+            throw new IllegalStateException("Ride is not completed");
+        }
+        return (int) (Duration.between(startTime, endTime).getSeconds() % 60);
+    }
+
     public String getId() {
         return id;
     }

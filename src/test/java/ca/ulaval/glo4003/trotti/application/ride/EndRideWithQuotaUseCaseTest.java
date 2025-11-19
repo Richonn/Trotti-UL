@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
+import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.InMemoryDailyUsageRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class EndRideWithQuotaUseCaseTest {
     private PassRepository passRepository;
 
     private RideFeeCalculator feeCalculator;
-    private DailyUsageTracker dailyUsageTracker;
+    private DailyUsageRepository dailyUsageRepository;
     private FixedClock clock;
     private EndRideUseCase endRideUseCase;
 
@@ -55,7 +56,7 @@ class EndRideWithQuotaUseCaseTest {
     @BeforeEach
     void setUp() {
         feeCalculator = new RideFeeCalculator();
-        dailyUsageTracker = new DailyUsageTracker();
+        dailyUsageRepository = new InMemoryDailyUsageRepository();
         clock = new FixedClock(LocalDateTime.of(2026, 2, 16, 14, 0));
 
         endRideUseCase = new EndRideUseCase(
@@ -65,7 +66,7 @@ class EndRideWithQuotaUseCaseTest {
                 stationRepository,
                 passRepository,
                 feeCalculator,
-                dailyUsageTracker,
+                dailyUsageRepository,
                 clock
         );
 
@@ -120,7 +121,7 @@ class EndRideWithQuotaUseCaseTest {
 
     @Test
     void givenRideUnder15Minutes_whenQuotaExceeded_thenCharge5Dollars() {
-        dailyUsageTracker.recordUsage(user.getId(), clock.today(), 45);
+        dailyUsageRepository.recordUsage(user.getId(), clock.today(), 45);
 
         Ride ride = Ride.start(user.getId(), scooter.getId(), "VACHON", clock.now().minusMinutes(10));
 
@@ -138,7 +139,7 @@ class EndRideWithQuotaUseCaseTest {
 
     @Test
     void givenRideUnder15Minutes_whenWithinQuota_thenNoFees() {
-        dailyUsageTracker.recordUsage(user.getId(), clock.today(), 30);
+        dailyUsageRepository.recordUsage(user.getId(), clock.today(), 30);
 
         Ride ride = Ride.start(user.getId(), scooter.getId(), "VACHON", clock.now().minusMinutes(14));
 

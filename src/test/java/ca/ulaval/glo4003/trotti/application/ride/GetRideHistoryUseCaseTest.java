@@ -58,7 +58,7 @@ class GetRideHistoryUseCaseTest {
 
         Email email = new Email(userEmail);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        when(rideRepository.findByUserId(user.getId())).thenReturn(expectedRides);
+        when(rideRepository.findCompletedRidesByUserId(user.getId())).thenReturn(expectedRides);
 
         List<Ride> rides = useCase.execute(userEmail);
 
@@ -77,7 +77,7 @@ class GetRideHistoryUseCaseTest {
     @Test
     void givenUserWithNoRides_whenExecute_thenReturnsEmptyList() {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(rideRepository.findByUserId(user.getId())).thenReturn(Arrays.asList());
+        when(rideRepository.findCompletedRidesByUserId(user.getId())).thenReturn(Arrays.asList());
 
         List<Ride> rides = useCase.execute(userEmail);
 

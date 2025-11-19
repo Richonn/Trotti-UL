@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.InMemoryDailyUsageRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,7 +58,7 @@ class EndRideUseCaseTest {
         passRepository = mock(PassRepository.class);
         feeCalculator = mock(RideFeeCalculator.class);
         clock = new FixedClock(LocalDateTime.of(2025, 11, 16, 14, 0));
-        DailyUsageTracker dailyUsageTracker = new DailyUsageTracker();
+        DailyUsageRepository dailyUsageRepository = new InMemoryDailyUsageRepository();
 
         endRideUseCase = new EndRideUseCase(
                 userRepository,
@@ -66,7 +67,7 @@ class EndRideUseCaseTest {
                 stationRepository,
                 passRepository,
                 feeCalculator,
-                dailyUsageTracker,
+                dailyUsageRepository,
                 clock
         );
 

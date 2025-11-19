@@ -10,5 +10,5 @@ public interface RideRepository {
 
     Optional<Ride> findActiveRideByUserId(String userId);
 
-    List<Ride> findByUserId(String userId);
+    List<Ride> findCompletedRidesByUserId(String userId);
 }

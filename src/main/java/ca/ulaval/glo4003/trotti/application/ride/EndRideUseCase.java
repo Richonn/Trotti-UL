@@ -26,20 +26,20 @@ public class EndRideUseCase {
     private final StationRepository stationRepository;
     private final PassRepository passRepository;
     private final RideFeeCalculator feeCalculator;
-    private final DailyUsageTracker dailyUsageTracker;
+    private final DailyUsageRepository dailyUsageRepository;
     private final Clock clock;
 
     public EndRideUseCase(UserRepository userRepository, RideRepository rideRepository,
                           ScooterRepository scooterRepository, StationRepository stationRepository,
                           PassRepository passRepository, RideFeeCalculator feeCalculator,
-                          DailyUsageTracker dailyUsageTracker, Clock clock) {
+                          DailyUsageRepository dailyUsageRepository, Clock clock) {
         this.userRepository = userRepository;
         this.rideRepository = rideRepository;
         this.scooterRepository = scooterRepository;
         this.stationRepository = stationRepository;
         this.passRepository = passRepository;
         this.feeCalculator = feeCalculator;
-        this.dailyUsageTracker = dailyUsageTracker;
+        this.dailyUsageRepository = dailyUsageRepository;
         this.clock = clock;
     }
 
@@ -75,23 +75,20 @@ public class EndRideUseCase {
         boolean chargedImmediately = false;
         Money monthlyBalanceAfter = user.getMonthlyBalance().getAmount();
 
-        int dailyQuota = 30;
-        if (activePass != null) {
-            dailyQuota += activePass.getExtraMinutesPerDay();
-        }
-
-        int usedToday = dailyUsageTracker.getUsageForDay(user.getId(), clock.today());
-        int newUsedToday = usedToday + (int) rideMinutes;
+        int dailyQuota = user.getDailyQuota(activePass);
 
         if (rideMinutes <= 15) {
+            int usedToday = dailyUsageRepository.getUsageForDay(user.getId(), clock.today());
+            int newUsedToday = usedToday + (int) rideMinutes;
+
             if (newUsedToday > dailyQuota) {
                 additionalFees = feeCalculator.getQuotaExceededFee();
             }
+
+            dailyUsageRepository.recordUsage(user.getId(), clock.today(), (int) rideMinutes);
         } else {
             additionalFees = feeCalculator.calculateAdditionalFees(rideDuration);
         }
-
-        dailyUsageTracker.recordUsage(user.getId(), clock.today(), (int) rideMinutes);
 
         if (additionalFees.getAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
             if (activePass != null && activePass.isMonthlyBilling()) {

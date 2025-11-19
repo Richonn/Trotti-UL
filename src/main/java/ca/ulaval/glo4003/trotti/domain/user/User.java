@@ -64,6 +64,11 @@ public class User {
         return Period.between(dateOfBirth, clock.today()).getYears();
     }
 
+    public int getDailyQuota(Pass activePass) {
+        int baseQuota = 30;
+        return activePass != null ? baseQuota + activePass.getExtraMinutesPerDay() : baseQuota;
+    }
+
     public String getId() {
         return id;
     }

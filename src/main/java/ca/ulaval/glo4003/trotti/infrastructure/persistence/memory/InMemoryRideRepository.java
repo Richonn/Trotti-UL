@@ -32,7 +32,7 @@ public class InMemoryRideRepository implements RideRepository {
     }
 
     @Override
-    public List<Ride> findByUserId(String userId) {
+    public List<Ride> findCompletedRidesByUserId(String userId) {
         return rides.values().stream()
                 .filter(ride -> ride.getUserId().equals(userId))
                 .filter(ride -> ride.getStatus() == RideStatus.COMPLETED)

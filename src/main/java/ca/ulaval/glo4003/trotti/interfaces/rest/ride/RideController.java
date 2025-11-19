@@ -23,7 +23,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -177,21 +176,15 @@ public class RideController {
             List<Ride> rides = getRideHistoryUseCase.execute(email);
 
             List<RideHistoryResponse.RideHistoryItem> rideItems = rides.stream()
-                    .map(ride -> {
-                        Duration duration = Duration.between(ride.getStartTime(), ride.getEndTime());
-                        int durationMinutes = (int) duration.toMinutes();
-                        int durationSeconds = (int) (duration.getSeconds() % 60);
-
-                        return new RideHistoryResponse.RideHistoryItem(
-                                ride.getId(),
-                                ride.getStartStationId(),
-                                ride.getEndStationId(),
-                                ride.getStartTime().toString(),
-                                ride.getEndTime().toString(),
-                                durationMinutes,
-                                durationSeconds
-                        );
-                    })
+                    .map(ride -> new RideHistoryResponse.RideHistoryItem(
+                            ride.getId(),
+                            ride.getStartStationId(),
+                            ride.getEndStationId(),
+                            ride.getStartTime().toString(),
+                            ride.getEndTime().toString(),
+                            ride.getDurationMinutes(),
+                            ride.getDurationSeconds()
+                    ))
                     .collect(Collectors.toList());
 
             return Response.ok(new RideHistoryResponse(rideItems)).build();
