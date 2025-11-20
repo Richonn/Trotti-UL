@@ -1,11 +1,14 @@
 package ca.ulaval.glo4003.trotti.domain.user;
 
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
+import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.pass.PaymentInfo;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,8 +63,13 @@ public class User {
         return activated && password.matches(rawPassword);
     }
 
-    public int getAge() {
-        return Period.between(dateOfBirth, LocalDate.now()).getYears();
+    public int getAge(Clock clock) {
+        return Period.between(dateOfBirth, clock.today()).getYears();
+    }
+
+    public int getDailyQuota(Pass activePass) {
+        int baseQuota = 30;
+        return activePass != null ? baseQuota + activePass.getExtraMinutesPerDay() : baseQuota;
     }
 
     public String getId() {
@@ -114,6 +122,12 @@ public class User {
 
     public MonthlyBalance getMonthlyBalance() {
         return monthlyBalance;
+    }
+
+    public boolean hasActivePass(List<Pass> passes, LocalDate date) {
+        return passes.stream()
+                .filter(pass -> pass.getUserId().equals(this.id))
+                .anyMatch(pass -> pass.isActiveOn(date));
     }
 
     @Override

@@ -16,8 +16,9 @@ public class BatteryLevel {
         this.percentage = percentage;
     }
 
-    public static BatteryLevel random() {
-        return new BatteryLevel(Math.random() * 100);
+    public static BatteryLevel forInitialization() {
+        double percentage = 20 + (Math.random() * 80);
+        return new BatteryLevel(percentage);
     }
 
     public boolean isLow() {

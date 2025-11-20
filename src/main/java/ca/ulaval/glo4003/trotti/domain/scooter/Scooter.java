@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.scooter;
 
+import ca.ulaval.glo4003.trotti.domain.scooter.exception.LowBatteryException;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +29,8 @@ public class Scooter {
     }
 
     public static Scooter create(String stationId, int slotNumber) {
-        return new Scooter(UUID.randomUUID().toString(), Math.random() * 100, stationId, slotNumber);
+        BatteryLevel battery = BatteryLevel.forInitialization();
+        return new Scooter(UUID.randomUUID().toString(), battery.getPercentage(), stationId, slotNumber);
     }
 
     public boolean isAvailable() {
@@ -61,6 +64,9 @@ public class Scooter {
     }
 
     public void rentTo(String userId) {
+        if (isLowBattery()) {
+            throw new LowBatteryException(this.batteryLevel);
+        }
         if (!isAvailable()) {
             throw new IllegalStateException("Scooter is not available for rent");
         }

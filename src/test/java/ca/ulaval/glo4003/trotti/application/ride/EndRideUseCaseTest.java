@@ -25,6 +25,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.InMemoryDailyUsageRepository;
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,6 +43,7 @@ class EndRideUseCaseTest {
     private StationRepository stationRepository;
     private PassRepository passRepository;
     private RideFeeCalculator feeCalculator;
+    private Clock clock;
 
     private User user;
     private Ride ride;
@@ -53,6 +58,8 @@ class EndRideUseCaseTest {
         stationRepository = mock(StationRepository.class);
         passRepository = mock(PassRepository.class);
         feeCalculator = mock(RideFeeCalculator.class);
+        clock = new FixedClock(LocalDateTime.of(2025, 11, 16, 14, 0));
+        DailyUsageRepository dailyUsageRepository = new InMemoryDailyUsageRepository();
 
         endRideUseCase = new EndRideUseCase(
                 userRepository,
@@ -60,7 +67,10 @@ class EndRideUseCaseTest {
                 scooterRepository,
                 stationRepository,
                 passRepository,
-                feeCalculator);
+                feeCalculator,
+                dailyUsageRepository,
+                clock
+        );
 
         user = User.register(
                 new Email("test@example.com"),
@@ -76,7 +86,7 @@ class EndRideUseCaseTest {
 
         scooter = new Scooter("scooter-1", 85.0, "Station A", 1);
         station = new Station("Station B", "Campus Location", 10);
-        ride = Ride.start(user.getId(), scooter.getId(), LocalDateTime.now().minusMinutes(20));
+        ride = Ride.start(user.getId(), scooter.getId(), "Station A", clock.now().minusMinutes(20));
     }
 
     @Test

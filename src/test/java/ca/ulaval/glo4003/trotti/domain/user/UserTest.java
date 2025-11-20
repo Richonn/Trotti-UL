@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.user;
 
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -112,7 +113,9 @@ class UserTest {
 
     @Test
     void givenUserWithDateOfBirth_whenGettingAge_thenReturnsCorrectAge() {
-        LocalDate birthDate = LocalDate.now().minusYears(25).minusMonths(3);
+        LocalDate today = LocalDate.of(2024, 4, 15);
+        LocalDate birthDate = today.minusYears(25).minusMonths(3);
+        FixedClock clock = new FixedClock(today);
         User user = User.register(
                 new Email("test@example.com"),
                 new Password("ValidPass123!"),
@@ -123,7 +126,7 @@ class UserTest {
                 Role.USER
         );
 
-        int age = user.getAge();
+        int age = user.getAge(clock);
 
         assertEquals(25, age);
     }

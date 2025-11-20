@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.domain.ride;
 
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -9,24 +11,28 @@ public class Ride {
     private final String id;
     private final String userId;
     private final String scooterId;
+    private final String startStationId;
     private final LocalDateTime startTime;
     private LocalDateTime endTime;
+    private String endStationId;
     private RideStatus status;
 
-    private Ride(String id, String userId, String scooterId, LocalDateTime startTime) {
+    private Ride(String id, String userId, String scooterId, String startStationId, LocalDateTime startTime) {
         this.id = Objects.requireNonNull(id, "Ride ID cannot be null");
         this.userId = Objects.requireNonNull(userId, "User ID cannot be null");
         this.scooterId = Objects.requireNonNull(scooterId, "Scooter ID cannot be null");
+        this.startStationId = Objects.requireNonNull(startStationId, "Start station ID cannot be null");
         this.startTime = Objects.requireNonNull(startTime, "Start time cannot be null");
         this.endTime = null;
+        this.endStationId = null;
         this.status = RideStatus.ACTIVE;
     }
 
-    public static Ride start(String userId, String scooterId, LocalDateTime startTime) {
-        return new Ride(UUID.randomUUID().toString(), userId, scooterId, startTime);
+    public static Ride start(String userId, String scooterId, String startStationId, LocalDateTime startTime) {
+        return new Ride(UUID.randomUUID().toString(), userId, scooterId, startStationId, startTime);
     }
 
-    public void end(LocalDateTime endTime) {
+    public void end(LocalDateTime endTime, String endStationId) {
         if (status == RideStatus.COMPLETED) {
             throw new IllegalStateException("Ride is already completed");
         }
@@ -34,12 +40,27 @@ public class Ride {
             throw new IllegalArgumentException("End time cannot be before start time");
         }
         this.endTime = endTime;
+        this.endStationId = Objects.requireNonNull(endStationId, "End station ID cannot be null");
         this.status = RideStatus.COMPLETED;
     }
 
-    public Duration getDuration() {
-        LocalDateTime end = endTime != null ? endTime : LocalDateTime.now();
+    public Duration getDuration(Clock clock) {
+        LocalDateTime end = endTime != null ? endTime : clock.now();
         return Duration.between(startTime, end);
+    }
+
+    public int getDurationMinutes() {
+        if (endTime == null) {
+            throw new IllegalStateException("Ride is not completed");
+        }
+        return (int) Duration.between(startTime, endTime).toMinutes();
+    }
+
+    public int getDurationSeconds() {
+        if (endTime == null) {
+            throw new IllegalStateException("Ride is not completed");
+        }
+        return (int) (Duration.between(startTime, endTime).getSeconds() % 60);
     }
 
     public String getId() {
@@ -58,8 +79,16 @@ public class Ride {
         return startTime;
     }
 
+    public String getStartStationId() {
+        return startStationId;
+    }
+
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public String getEndStationId() {
+        return endStationId;
     }
 
     public RideStatus getStatus() {

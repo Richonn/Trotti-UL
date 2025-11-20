@@ -5,6 +5,7 @@ import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
@@ -13,7 +14,6 @@ import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class RequestRideCodeUseCase {
@@ -22,15 +22,17 @@ public class RequestRideCodeUseCase {
     private final RideCodeGenerator rideCodeGenerator;
     private final RideCodeRepository rideCodeRepository;
     private final EmailService emailService;
+    private final Clock clock;
 
     public RequestRideCodeUseCase(UserRepository userRepository, PassRepository passRepository,
                                    RideCodeGenerator rideCodeGenerator, RideCodeRepository rideCodeRepository,
-                                   EmailService emailService) {
+                                   EmailService emailService, Clock clock) {
         this.userRepository = userRepository;
         this.passRepository = passRepository;
         this.rideCodeGenerator = rideCodeGenerator;
         this.rideCodeRepository = rideCodeRepository;
         this.emailService = emailService;
+        this.clock = clock;
     }
 
     public RideCode execute(String userEmail) {
@@ -42,7 +44,7 @@ public class RequestRideCodeUseCase {
             throw new AccountNotActivatedException();
         }
 
-        if (!passRepository.hasActivePassForUser(user.getId(), LocalDate.now()) && user.getRole() != Role.TECHNICIAN) {
+        if (!user.hasActivePass(passRepository.findByUserId(user.getId()), clock.today()) && user.getRole() != Role.TECHNICIAN) {
             throw new NoActivePassException();
         }
 

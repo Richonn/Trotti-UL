@@ -1,10 +1,14 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
+import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
+import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
+import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
@@ -13,12 +17,14 @@ import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +40,7 @@ class RequestRideCodeUseCaseTest {
     private RideCodeGenerator rideCodeGenerator;
     private RideCodeRepository rideCodeRepository;
     private EmailService emailService;
+    private Clock clock;
 
     @BeforeEach
     void setUp() {
@@ -42,10 +49,11 @@ class RequestRideCodeUseCaseTest {
         rideCodeGenerator = mock(RideCodeGenerator.class);
         rideCodeRepository = mock(RideCodeRepository.class);
         emailService = mock(EmailService.class);
+        clock = new FixedClock(LocalDate.of(2025, 11, 16));
 
         requestRideCodeUseCase = new RequestRideCodeUseCase(
             userRepository, passRepository, rideCodeGenerator,
-            rideCodeRepository, emailService
+            rideCodeRepository, emailService, clock
         );
     }
 
@@ -65,8 +73,9 @@ class RequestRideCodeUseCaseTest {
 
         RideCode expectedCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
+        Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.hasActivePassForUser(user.getId(), LocalDate.now())).thenReturn(true);
+        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeGenerator.generate()).thenReturn(expectedCode);
 
         RideCode result = requestRideCodeUseCase.execute(email);
@@ -119,7 +128,7 @@ class RequestRideCodeUseCaseTest {
             requestRideCodeUseCase.execute(email)
         );
 
-        verify(passRepository, never()).hasActivePassForUser(anyString(), any(LocalDate.class));
+        verify(passRepository, never()).findByUserId(anyString());
         verify(rideCodeGenerator, never()).generate();
     }
 
@@ -138,7 +147,7 @@ class RequestRideCodeUseCaseTest {
         user.activate();
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.hasActivePassForUser(user.getId(), LocalDate.now())).thenReturn(false);
+        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
         assertThrows(NoActivePassException.class, () ->
             requestRideCodeUseCase.execute(email)

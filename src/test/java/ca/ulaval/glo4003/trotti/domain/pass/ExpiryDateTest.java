@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.domain.pass;
 
+import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -33,11 +34,14 @@ class ExpiryDateTest {
     }
 
     @Test
-    void givenPastDate_whenCreatingExpiryDate_thenThrowsException() {
-        int pastYear = (Year.now().getValue() - 2) % 100;
-        String dateString = String.format("12/%02d", pastYear);
+    void givenPastDate_whenCheckingIfExpired_thenReturnsTrue() {
+        LocalDate today = LocalDate.of(2024, 1, 15);
+        FixedClock clock = new FixedClock(today);
+        String dateString = "12/22";
 
-        assertThrows(IllegalArgumentException.class, () -> new ExpiryDate(dateString));
+        ExpiryDate expiryDate = new ExpiryDate(dateString);
+
+        assertTrue(expiryDate.isExpired(clock));
     }
 
     @Test
