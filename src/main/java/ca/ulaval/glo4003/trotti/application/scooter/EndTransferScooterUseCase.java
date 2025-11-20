@@ -1,9 +1,13 @@
 package ca.ulaval.glo4003.trotti.application.scooter;
 
+import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterState;
+import ca.ulaval.glo4003.trotti.domain.scooter.exception.ScooterNotFoundException;
+import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 import ca.ulaval.glo4003.trotti.domain.station.StationState;
+import ca.ulaval.glo4003.trotti.domain.station.exception.StationNotFoundException;
 
 public class EndTransferScooterUseCase {
 
@@ -16,28 +20,27 @@ public class EndTransferScooterUseCase {
     }
 
     public void execute(String scooterId, int slotNumber, String stationId) {
-        var scooterOptional = scooterRepository.findById(scooterId);
-            var scooter = scooterOptional.get();
+        Scooter scooter = scooterRepository.findById(scooterId).orElseThrow(
+            () -> new ScooterNotFoundException()
+        );
 
-            var stationOptional = stationRepository.findById(stationId);
-            if (stationOptional.isEmpty()) {
-                throw new IllegalArgumentException("Station not found");
-            }
+        Station station = stationRepository.findById(stationId).orElseThrow(
+            () -> new StationNotFoundException()
+        );
 
-            var station = stationOptional.get();
-            if (station.getState() == StationState.UNDER_MAINTENANCE) {
-                throw new IllegalStateException("Cannot transfer scooter to a station under maintenance");
-            }
+        if (station.getState() == StationState.UNDER_MAINTENANCE) {
+            throw new IllegalStateException("Cannot transfer scooter to a station under maintenance");
+        }
 
-            if (scooterRepository.findByStationIdAndSlotNumber(stationId, slotNumber).isPresent()) {
-                throw new IllegalStateException("Slot " + slotNumber + " is not available at station " + stationId);
-            }
+        if (scooterRepository.findByStationIdAndSlotNumber(stationId, slotNumber).isPresent()) {
+            throw new IllegalStateException("Slot " + slotNumber + " is not available at station " + stationId);
+        }
 
-            if (scooter.getState() != ScooterState.IN_TRANSFER) {
-                throw new IllegalStateException("Scooter is not in transfer state");
-            }
+        if (scooter.getState() != ScooterState.IN_TRANSFER) {
+            throw new IllegalStateException("Scooter is not in transfer state");
+        }
 
-            scooter.completeTransfer(stationId, slotNumber);
-            scooterRepository.save(scooter);
+        scooter.completeTransfer(stationId, slotNumber);
+        scooterRepository.save(scooter);
     }
 }
