@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.trotti.interfaces.rest.config;
 import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
+import ca.ulaval.glo4003.trotti.application.ride.GetRideHistoryUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
@@ -11,6 +12,7 @@ import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
+import ca.ulaval.glo4003.trotti.domain.ride.DailyUsageRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideFeeCalculator;
@@ -44,6 +46,7 @@ public class ApplicationContext {
     private final PricingPolicy pricingPolicy;
     private final RideCodeGenerator rideCodeGenerator;
     private final RideFeeCalculator rideFeeCalculator;
+    private final DailyUsageRepository dailyUsageRepository;
 
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUserUseCase loginUserUseCase;
@@ -56,6 +59,7 @@ public class ApplicationContext {
     private final RequestRideCodeUseCase requestRideCodeUseCase;
     private final StartRideUseCase startRideUseCase;
     private final EndRideUseCase endRideUseCase;
+    private final GetRideHistoryUseCase getRideHistoryUseCase;
 
     private ApplicationContext() {
         this.userRepository = new InMemoryUserRepository();
@@ -72,6 +76,7 @@ public class ApplicationContext {
         this.pricingPolicy = new PricingPolicy();
         this.rideCodeGenerator = new RideCodeGenerator(clock);
         this.rideFeeCalculator = new RideFeeCalculator();
+        this.dailyUsageRepository = new InMemoryDailyUsageRepository();
 
         this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService);
         this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
@@ -81,7 +86,8 @@ public class ApplicationContext {
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
         this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService, clock);
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase, clock);
-        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, clock);
+        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
+        this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
 
         initializeData();
     }
@@ -136,6 +142,10 @@ public class ApplicationContext {
 
     public EndRideUseCase getEndRideUseCase() {
         return endRideUseCase;
+    }
+
+    public GetRideHistoryUseCase getGetRideHistoryUseCase() {
+        return getRideHistoryUseCase;
     }
 
     public UserRepository getUserRepository() {

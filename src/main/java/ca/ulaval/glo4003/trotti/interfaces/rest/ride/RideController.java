@@ -1,10 +1,12 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.ride;
 
 import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
+import ca.ulaval.glo4003.trotti.application.ride.GetRideHistoryUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RideEndResult;
 import ca.ulaval.glo4003.trotti.application.ride.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
+import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
@@ -13,12 +15,16 @@ import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideCodeResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideHistoryResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/ride")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +33,7 @@ public class RideController {
     private final RequestRideCodeUseCase requestRideCodeUseCase;
     private final StartRideUseCase startRideUseCase;
     private final EndRideUseCase endRideUseCase;
+    private final GetRideHistoryUseCase getRideHistoryUseCase;
     private final TokenGenerator tokenGenerator;
 
     public RideController() {
@@ -34,6 +41,7 @@ public class RideController {
         this.requestRideCodeUseCase = context.getRequestRideCodeUseCase();
         this.startRideUseCase = context.getStartRideUseCase();
         this.endRideUseCase = context.getEndRideUseCase();
+        this.getRideHistoryUseCase = context.getGetRideHistoryUseCase();
         this.tokenGenerator = context.getTokenGenerator();
     }
 
@@ -156,5 +164,35 @@ public class RideController {
             return Response.Status.PAYMENT_REQUIRED;
         }
         return Response.Status.BAD_REQUEST;
+    }
+
+    @GET
+    @Path("/history")
+    public Response getRideHistory(@HeaderParam("Authorization") String authHeader) {
+        try {
+            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+            String email = tokenGenerator.extractEmail(token);
+
+            List<Ride> rides = getRideHistoryUseCase.execute(email);
+
+            List<RideHistoryResponse.RideHistoryItem> rideItems = rides.stream()
+                    .map(ride -> new RideHistoryResponse.RideHistoryItem(
+                            ride.getId(),
+                            ride.getStartStationId(),
+                            ride.getEndStationId(),
+                            ride.getStartTime().toString(),
+                            ride.getEndTime().toString(),
+                            ride.getDurationMinutes(),
+                            ride.getDurationSeconds()
+                    ))
+                    .collect(Collectors.toList());
+
+            return Response.ok(new RideHistoryResponse(rideItems)).build();
+        } catch (DomainException e) {
+            Response.Status status = determineStatusForException(e);
+            return ErrorResponseBuilder.buildErrorResponse(e, status);
+        } catch (Exception e) {
+            return ErrorResponseBuilder.buildInternalServerError(e);
+        }
     }
 }

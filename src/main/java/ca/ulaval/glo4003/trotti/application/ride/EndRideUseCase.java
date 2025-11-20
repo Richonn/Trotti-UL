@@ -26,18 +26,20 @@ public class EndRideUseCase {
     private final StationRepository stationRepository;
     private final PassRepository passRepository;
     private final RideFeeCalculator feeCalculator;
+    private final DailyUsageRepository dailyUsageRepository;
     private final Clock clock;
 
     public EndRideUseCase(UserRepository userRepository, RideRepository rideRepository,
                           ScooterRepository scooterRepository, StationRepository stationRepository,
                           PassRepository passRepository, RideFeeCalculator feeCalculator,
-                          Clock clock) {
+                          DailyUsageRepository dailyUsageRepository, Clock clock) {
         this.userRepository = userRepository;
         this.rideRepository = rideRepository;
         this.scooterRepository = scooterRepository;
         this.stationRepository = stationRepository;
         this.passRepository = passRepository;
         this.feeCalculator = feeCalculator;
+        this.dailyUsageRepository = dailyUsageRepository;
         this.clock = clock;
     }
 
@@ -57,11 +59,11 @@ public class EndRideUseCase {
         scooter.returnToStation(stationName, slotNumber);
         scooterRepository.save(scooter);
 
-        ride.end(clock.now());
+        ride.end(clock.now(), stationName);
         rideRepository.save(ride);
 
         Duration rideDuration = ride.getDuration(clock);
-        Money additionalFees = feeCalculator.calculateAdditionalFees(rideDuration);
+        long rideMinutes = rideDuration.toMinutes();
 
         List<Pass> userPasses = passRepository.findByUserId(user.getId());
         Pass activePass = userPasses.stream()
@@ -69,8 +71,24 @@ public class EndRideUseCase {
                 .findFirst()
                 .orElse(null);
 
+        Money additionalFees = Money.zero();
         boolean chargedImmediately = false;
         Money monthlyBalanceAfter = user.getMonthlyBalance().getAmount();
+
+        int dailyQuota = user.getDailyQuota(activePass);
+
+        if (rideMinutes <= 15) {
+            int usedToday = dailyUsageRepository.getUsageForDay(user.getId(), clock.today());
+            int newUsedToday = usedToday + (int) rideMinutes;
+
+            if (newUsedToday > dailyQuota) {
+                additionalFees = feeCalculator.getQuotaExceededFee();
+            }
+
+            dailyUsageRepository.recordUsage(user.getId(), clock.today(), (int) rideMinutes);
+        } else {
+            additionalFees = feeCalculator.calculateAdditionalFees(rideDuration);
+        }
 
         if (additionalFees.getAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
             if (activePass != null && activePass.isMonthlyBilling()) {
@@ -79,7 +97,6 @@ public class EndRideUseCase {
                 chargedImmediately = false;
             } else {
                 chargedImmediately = true;
-
             }
             userRepository.save(user);
         }
