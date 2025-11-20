@@ -7,6 +7,7 @@ import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.application.scooter.TransferScooterUseCase;
 import ca.ulaval.glo4003.trotti.application.station.EndStationMaintenanceUseCase;
+import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
@@ -24,7 +25,6 @@ import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
-import ca.ulaval.glo4003.trotti.domain.user.Gender;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
@@ -64,6 +64,7 @@ public class ApplicationContext {
 
     private final StartStationMaintenanceUseCase startStationMaintenanceUseCase;
     private final EndStationMaintenanceUseCase endStationMaintenanceUseCase;
+    private final RequestStationMaintenanceUseCase requestStationMaintenanceUseCase;
 
     private final TransferScooterUseCase transferScooterUseCase;
 
@@ -92,6 +93,7 @@ public class ApplicationContext {
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase);
         this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator);        this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase();
         this.endStationMaintenanceUseCase = new EndStationMaintenanceUseCase();
+        this.requestStationMaintenanceUseCase = new RequestStationMaintenanceUseCase(userRepository, stationRepository, emailService);
         this. transferScooterUseCase = new TransferScooterUseCase();
 
         initializeData();
@@ -166,6 +168,10 @@ public class ApplicationContext {
 
     public EndStationMaintenanceUseCase getEndStationMaintenanceUseCase() {
         return endStationMaintenanceUseCase;
+    }
+
+    public RequestStationMaintenanceUseCase getRequestStationMaintenanceUseCase() {
+        return requestStationMaintenanceUseCase;
     }
 
     public TransferScooterUseCase getTransferScooterUseCase() {

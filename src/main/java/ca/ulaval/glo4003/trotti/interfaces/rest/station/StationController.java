@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.station;
 
 import ca.ulaval.glo4003.trotti.application.station.EndStationMaintenanceUseCase;
+import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
@@ -25,12 +26,14 @@ public class StationController {
 
     private final StartStationMaintenanceUseCase startStationMaintenanceUseCase;
     private final EndStationMaintenanceUseCase endStationMaintenanceUseCase;
+    private final RequestStationMaintenanceUseCase requestStationMaintenanceUseCase;
     private final TokenGenerator tokenGenerator;
 
     public StationController() {
         ApplicationContext context = ApplicationContext.getInstance();
         this.startStationMaintenanceUseCase = context.getStartStationMaintenanceUseCase();
         this.endStationMaintenanceUseCase = context.getEndStationMaintenanceUseCase();
+        this.requestStationMaintenanceUseCase = context.getRequestStationMaintenanceUseCase();
         this.tokenGenerator = context.getTokenGenerator();
     }
 
@@ -65,6 +68,25 @@ public class StationController {
             RoleChecker.check(email, Role.TECHNICIAN);
 
             // Implement Use Case
+
+            return Response.ok().build();
+        } catch (DomainException e) {
+            return ErrorResponseBuilder.buildErrorResponse(e);
+        } catch (Exception e) {
+            return ErrorResponseBuilder.buildInternalServerError(e);
+        }
+    }
+
+    @POST
+    @Path("/{stationId}/maintenance")
+    public Response requestMaintenance(
+            @HeaderParam("Authorization") String authHeader,
+            @PathParam("stationId") String stationId) {
+        try {
+            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+            String email = tokenGenerator.extractEmail(token);
+
+            this.requestStationMaintenanceUseCase.execute(stationId, email);
 
             return Response.ok().build();
         } catch (DomainException e) {
