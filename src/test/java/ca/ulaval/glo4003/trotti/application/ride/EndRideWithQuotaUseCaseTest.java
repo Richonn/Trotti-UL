@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.InMemoryDailyUsageRepository;
@@ -76,7 +77,8 @@ class EndRideWithQuotaUseCaseTest {
                 "Alexandra",
                 "2000-01-01",
                 "F",
-                "ALEX12345678"
+                "ALEX12345678",
+                Role.USER
         );
         user.activate();
 
