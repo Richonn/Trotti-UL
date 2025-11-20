@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.station;
 
+import org.checkerframework.checker.units.qual.s;
+
 import ca.ulaval.glo4003.trotti.application.station.EndStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
@@ -47,7 +49,7 @@ public class StationController {
             String email = tokenGenerator.extractEmail(token);
             RoleChecker.check(email, Role.TECHNICIAN);
 
-            // Implement Use Case
+            startStationMaintenanceUseCase.execute(stationId);
 
             return Response.ok().build();
         } catch (DomainException e) {
@@ -67,7 +69,7 @@ public class StationController {
             String email = tokenGenerator.extractEmail(token);
             RoleChecker.check(email, Role.TECHNICIAN);
 
-            // Implement Use Case
+            endStationMaintenanceUseCase.execute(stationId);
 
             return Response.ok().build();
         } catch (DomainException e) {

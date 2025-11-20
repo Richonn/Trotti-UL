@@ -7,10 +7,13 @@ import ca.ulaval.glo4003.trotti.domain.ride.exception.ExpiredRideCodeException;
 import ca.ulaval.glo4003.trotti.domain.ride.exception.InvalidRideCodeException;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
+import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
+import ca.ulaval.glo4003.trotti.domain.station.StationState;
 import ca.ulaval.glo4003.trotti.domain.station.exception.SlotNotAvailableException;
 import ca.ulaval.glo4003.trotti.domain.station.exception.StationNotFoundException;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
@@ -47,7 +50,7 @@ public class StartRideUseCase {
             throw new AccountNotActivatedException();
         }
 
-        if (!passRepository.hasActivePassForUser(user.getId(), LocalDate.now())) {
+        if (!passRepository.hasActivePassForUser(user.getId(), LocalDate.now()) && user.getRole() != Role.TECHNICIAN) {
             throw new NoActivePassException();
         }
 
@@ -59,8 +62,12 @@ public class StartRideUseCase {
             throw new ExpiredRideCodeException();
         }
 
-        stationRepository.findById(stationName)
+        Station station = stationRepository.findById(stationName)
                 .orElseThrow(StationNotFoundException::new);
+
+        if (station.getState() == StationState.UNDER_MAINTENANCE) {
+            throw new SlotNotAvailableException("Station " + stationName + " is under maintenance");
+        }
 
         Scooter scooter = scooterRepository.findByStationIdAndSlotNumber(stationName, slotNumber)
                 .orElseThrow(() -> new SlotNotAvailableException("Scooter not found at the given slot"));

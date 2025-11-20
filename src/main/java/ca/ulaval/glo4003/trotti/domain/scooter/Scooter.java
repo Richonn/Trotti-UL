@@ -12,6 +12,7 @@ public class Scooter {
     private String currentStationId;
     private Integer slotNumber;
     private String rentedByUserId;
+    private ScooterState state;
 
     public Scooter(String id, double batteryLevel, String stationId, int slotNumber) {
         this.id = Objects.requireNonNull(id, "Scooter ID cannot be null");
@@ -22,6 +23,7 @@ public class Scooter {
         this.currentStationId = stationId;
         this.slotNumber = slotNumber;
         this.rentedByUserId = null;
+        this.state = ScooterState.AVAILABLE;
     }
 
     public static Scooter create(String stationId, int slotNumber) {
@@ -29,11 +31,33 @@ public class Scooter {
     }
 
     public boolean isAvailable() {
-        return rentedByUserId == null && !isLowBattery();
+        return rentedByUserId == null && !isLowBattery() && state == ScooterState.AVAILABLE;
     }
 
     public boolean isLowBattery() {
         return batteryLevel <= LOW_BATTERY_THRESHOLD;
+    }
+
+    public void startTransfer() {
+        if (state != ScooterState.AVAILABLE) {
+            throw new IllegalStateException("Scooter is already in transfer");
+        }
+        this.state = ScooterState.IN_TRANSFER;
+        this.currentStationId = null;
+        this.slotNumber = null;
+    }
+
+    public void completeTransfer(String stationId, int slotNumber) {
+        if (state != ScooterState.IN_TRANSFER) {
+            throw new IllegalStateException("Scooter is not in transfer");
+        }
+        this.state = ScooterState.AVAILABLE;
+        this.currentStationId = stationId;
+        this.slotNumber = slotNumber;
+    }
+
+    public ScooterState getState() {
+        return state;
     }
 
     public void rentTo(String userId) {

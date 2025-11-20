@@ -5,7 +5,8 @@ import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
-import ca.ulaval.glo4003.trotti.application.scooter.TransferScooterUseCase;
+import ca.ulaval.glo4003.trotti.application.scooter.EndTransferScooterUseCase;
+import ca.ulaval.glo4003.trotti.application.scooter.StartTransferScooterUseCase;
 import ca.ulaval.glo4003.trotti.application.station.EndStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
@@ -66,7 +67,8 @@ public class ApplicationContext {
     private final EndStationMaintenanceUseCase endStationMaintenanceUseCase;
     private final RequestStationMaintenanceUseCase requestStationMaintenanceUseCase;
 
-    private final TransferScooterUseCase transferScooterUseCase;
+    private final StartTransferScooterUseCase startTransferScooterUseCase;
+    private final EndTransferScooterUseCase endTransferScooterUseCase;
 
     private ApplicationContext() {
         this.userRepository = new InMemoryUserRepository();
@@ -91,10 +93,12 @@ public class ApplicationContext {
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
         this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService);
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, requestRideCodeUseCase);
-        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator);        this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase();
-        this.endStationMaintenanceUseCase = new EndStationMaintenanceUseCase();
+        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator);
+        this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase(stationRepository);
+        this.endStationMaintenanceUseCase = new EndStationMaintenanceUseCase(stationRepository);
         this.requestStationMaintenanceUseCase = new RequestStationMaintenanceUseCase(userRepository, stationRepository, emailService);
-        this. transferScooterUseCase = new TransferScooterUseCase();
+        this.startTransferScooterUseCase = new StartTransferScooterUseCase(stationRepository, scooterRepository);
+        this.endTransferScooterUseCase = new EndTransferScooterUseCase(stationRepository, scooterRepository);
 
         initializeData();
     }
@@ -108,12 +112,12 @@ public class ApplicationContext {
         }
 
         User gerard = User.register(
-            new Email("gerard@trotti.ul"), 
-            new Password("G3R4rdIsTh3B3st<3"), 
-            "Gerard Jugnot", 
-            "1968-05-03", 
-            "H", 
-            "gejug568", 
+            new Email("gerard@trotti.ul"),
+            new Password("G3R4rdIsTh3B3st!"),
+            "Gerard Jugnot",
+            "1968-05-03",
+            "H",
+            "gejug568",
             Role.TECHNICIAN
         );
         this.userRepository.save(gerard);
@@ -174,8 +178,12 @@ public class ApplicationContext {
         return requestStationMaintenanceUseCase;
     }
 
-    public TransferScooterUseCase getTransferScooterUseCase() {
-        return transferScooterUseCase;
+    public StartTransferScooterUseCase getStartTransferScooterUseCase() {
+        return startTransferScooterUseCase;
+    }
+
+    public EndTransferScooterUseCase getEndTransferScooterUseCase() {
+        return endTransferScooterUseCase;
     }
 
     public UserRepository getUserRepository() {

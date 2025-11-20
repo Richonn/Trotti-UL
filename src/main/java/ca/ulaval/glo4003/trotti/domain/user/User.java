@@ -18,10 +18,10 @@ public class User {
     private final LocalDate dateOfBirth;
     private final Gender gender;
     private final Idul idul;
+    private final Role role;
     private boolean activated;
     private PaymentInfo savedPaymentInfo;
     private MonthlyBalance monthlyBalance;
-    private Role role;
 
     private User(String id, Email email, Password password, String name, LocalDate dateOfBirth, Gender gender, Idul idul, Role role) {
         this.id = Objects.requireNonNull(id, "User ID cannot be null");
@@ -31,6 +31,7 @@ public class User {
         this.dateOfBirth = Objects.requireNonNull(dateOfBirth, "Date of birth cannot be null");
         this.gender = Objects.requireNonNull(gender, "Gender cannot be null");
         this.idul = Objects.requireNonNull(idul, "IDUL cannot be null");
+        this.role = Objects.requireNonNull(role, "Role cannot be null");
         this.activated = false;
         this.monthlyBalance = new MonthlyBalance();
     }
