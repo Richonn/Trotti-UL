@@ -48,7 +48,7 @@ public class StartRideUseCase {
             throw new AccountNotActivatedException();
         }
 
-        if (!passRepository.hasActivePassForUser(user.getId(), clock.today())) {
+        if (!user.hasActivePass(passRepository.findByUserId(user.getId()), clock.today())) {
             throw new NoActivePassException();
         }
 
@@ -65,10 +65,6 @@ public class StartRideUseCase {
 
         Scooter scooter = scooterRepository.findByStationIdAndSlotNumber(stationName, slotNumber)
                 .orElseThrow(() -> new SlotNotAvailableException("Scooter not found at the given slot"));
-
-        if (scooter.isLowBattery()) {
-            throw new SlotNotAvailableException("Scooter battery too low: " + scooter.getBatteryLevel() + "%");
-        }
 
         scooter.rentTo(user.getId());
         scooterRepository.save(scooter);

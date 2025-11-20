@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.domain.scooter;
 
+import ca.ulaval.glo4003.trotti.domain.scooter.exception.LowBatteryException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,10 +88,10 @@ class ScooterTest {
     }
 
     @Test
-    void givenUnavailableScooter_whenRenting_thenThrowsException() {
+    void givenScooterWithLowBattery_whenRenting_thenThrowsLowBatteryException() {
         Scooter scooter = new Scooter("scooter-123", 10.0, "station-1", 5);
 
-        assertThrows(IllegalStateException.class, () -> scooter.rentTo("user-123"));
+        assertThrows(LowBatteryException.class, () -> scooter.rentTo("user-123"));
     }
 
     @Test

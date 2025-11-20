@@ -1,6 +1,9 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
+import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
+import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
+import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
@@ -20,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,8 +69,9 @@ class RequestRideCodeUseCaseTest {
 
         RideCode expectedCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
+        Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.hasActivePassForUser(user.getId(), LocalDate.now())).thenReturn(true);
+        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeGenerator.generate()).thenReturn(expectedCode);
 
         RideCode result = requestRideCodeUseCase.execute(email);
@@ -118,7 +123,7 @@ class RequestRideCodeUseCaseTest {
             requestRideCodeUseCase.execute(email)
         );
 
-        verify(passRepository, never()).hasActivePassForUser(anyString(), any(LocalDate.class));
+        verify(passRepository, never()).findByUserId(anyString());
         verify(rideCodeGenerator, never()).generate();
     }
 
@@ -136,7 +141,7 @@ class RequestRideCodeUseCaseTest {
         user.activate();
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.hasActivePassForUser(user.getId(), LocalDate.now())).thenReturn(false);
+        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
         assertThrows(NoActivePassException.class, () ->
             requestRideCodeUseCase.execute(email)
