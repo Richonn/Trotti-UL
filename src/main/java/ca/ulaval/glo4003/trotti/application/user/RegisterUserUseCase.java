@@ -13,14 +13,14 @@ public class RegisterUserUseCase {
         this.emailService = emailService;
     }
 
-    public String execute(String email, String password, String name, String dateOfBirth, String gender, String idul) {
+    public String execute(String email, String password, String name, String dateOfBirth, String gender, String idul, Role role) {
         Email userEmail = new Email(email);
 
         if (userRepository.existsByEmail(userEmail)) {
             throw new UserAlreadyExistsException();
         }
 
-        User user = User.register(userEmail, new Password(password), name, dateOfBirth, gender, idul);
+        User user = User.register(userEmail, new Password(password), name, dateOfBirth, gender, idul, role);
         userRepository.save(user);
 
         return user.getId();

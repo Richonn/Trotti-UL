@@ -6,6 +6,7 @@ public class Station {
     private final String id;
     private final String location;
     private final int capacity;
+    private StationState state;
 
     public Station(String id, String location, int capacity) {
         this.id = Objects.requireNonNull(id, "Station ID cannot be null");
@@ -14,6 +15,18 @@ public class Station {
             throw new IllegalArgumentException("Capacity must be positive");
         }
         this.capacity = capacity;
+    }
+
+    public void startMaintenance() {
+        this.state = StationState.UNDER_MAINTENANCE;
+    }
+
+    public void endMaintenance() {
+        this.state = StationState.OPERATIONAL;
+    }
+
+    public StationState getState() {
+        return state;
     }
 
     public String getId() {

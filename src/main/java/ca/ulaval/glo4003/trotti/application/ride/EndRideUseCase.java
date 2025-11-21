@@ -8,8 +8,10 @@ import ca.ulaval.glo4003.trotti.domain.ride.exception.NoActiveRideException;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.scooter.exception.ScooterNotFoundException;
+import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
+import ca.ulaval.glo4003.trotti.domain.station.StationState;
 import ca.ulaval.glo4003.trotti.domain.station.exception.StationNotFoundException;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.User;
@@ -51,8 +53,12 @@ public class EndRideUseCase {
         Ride ride = rideRepository.findActiveRideByUserId(user.getId())
                 .orElseThrow(NoActiveRideException::new);
 
-        stationRepository.findById(stationName)
+        Station station = stationRepository.findById(stationName)
                 .orElseThrow(StationNotFoundException::new);
+
+        if (station.getState() == StationState.UNDER_MAINTENANCE) {
+            throw new IllegalStateException("Cannot end ride at a station under maintenance");
+        }
 
         Scooter scooter = scooterRepository.findById(ride.getScooterId())
                 .orElseThrow(ScooterNotFoundException::new);

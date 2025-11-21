@@ -6,6 +6,7 @@ import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
@@ -50,7 +51,8 @@ public class UserController {
                     request.getName(),
                     request.getDateOfBirth(),
                     request.getGender(),
-                    request.getIdul()
+                    request.getIdul(),
+                    Role.USER
             );
 
             ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User userDto = new ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User();

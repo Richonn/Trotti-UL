@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 import ca.ulaval.glo4003.trotti.domain.station.exception.StationNotFoundException;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
@@ -77,7 +78,9 @@ class EndRideUseCaseTest {
                 "Test User",
                 "2000-01-01",
                 "H",
-                "TEUS12345678"
+                "TEUS12345678",
+                Role.USER
+
         );
         user.activate();
 
@@ -149,8 +152,7 @@ class EndRideUseCaseTest {
                 Session.getInstance("A2025"),
                 0,
                 true,
-                new PricingPolicy()
-        );
+                new PricingPolicy());
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
@@ -175,8 +177,7 @@ class EndRideUseCaseTest {
                 Session.getInstance("A2025"),
                 0,
                 false,
-                new PricingPolicy()
-        );
+                new PricingPolicy());
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));

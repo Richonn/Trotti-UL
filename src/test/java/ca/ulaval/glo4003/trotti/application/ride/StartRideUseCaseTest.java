@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.trotti.domain.station.exception.SlotNotAvailableExcepti
 import ca.ulaval.glo4003.trotti.domain.station.exception.StationNotFoundException;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class StartRideUseCaseTest {
@@ -70,7 +72,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 
@@ -111,7 +114,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
@@ -130,7 +134,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 
@@ -151,7 +156,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 
@@ -176,7 +182,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 
@@ -201,7 +208,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 
@@ -227,7 +235,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 
@@ -255,7 +264,8 @@ class StartRideUseCaseTest {
             "John Doe",
             "2000-01-15",
             "H",
-            "johdo123"
+            "johdo123",
+            Role.USER
         );
         user.activate();
 

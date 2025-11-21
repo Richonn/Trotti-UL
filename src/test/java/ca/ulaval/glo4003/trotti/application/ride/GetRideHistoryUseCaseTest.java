@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
@@ -46,7 +47,8 @@ class GetRideHistoryUseCaseTest {
                 "Test User",
                 "2000-01-01",
                 "H",
-                "AAAA00000001"
+                "AAAA00000001",
+                Role.USER
         );
     }
 

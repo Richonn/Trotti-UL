@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
+import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
@@ -43,7 +44,7 @@ public class RequestRideCodeUseCase {
             throw new AccountNotActivatedException();
         }
 
-        if (!user.hasActivePass(passRepository.findByUserId(user.getId()), clock.today())) {
+        if (!user.hasActivePass(passRepository.findByUserId(user.getId()), clock.today()) && user.getRole() != Role.TECHNICIAN) {
             throw new NoActivePassException();
         }
 
