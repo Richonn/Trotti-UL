@@ -65,7 +65,6 @@ public class User {
         }
         this.activated = true;
 
-        // Envoyer l'email de bienvenue
         ActivationEmail email = new ActivationEmail(this.email.getValue(), this.name);
         emailService.send(email);
     }
