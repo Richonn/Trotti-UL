@@ -44,6 +44,7 @@ class EndRideUseCaseTest {
     private PassRepository passRepository;
     private RideFeeCalculator feeCalculator;
     private Clock clock;
+    private ca.ulaval.glo4003.trotti.domain.shared.EmailService emailService;
 
     private User user;
     private Ride ride;
@@ -58,6 +59,7 @@ class EndRideUseCaseTest {
         stationRepository = mock(StationRepository.class);
         passRepository = mock(PassRepository.class);
         feeCalculator = mock(RideFeeCalculator.class);
+        emailService = mock(ca.ulaval.glo4003.trotti.domain.shared.EmailService.class);
         clock = new FixedClock(LocalDateTime.of(2025, 11, 16, 14, 0));
         DailyUsageRepository dailyUsageRepository = new InMemoryDailyUsageRepository();
 
@@ -82,7 +84,7 @@ class EndRideUseCaseTest {
                 Role.USER
 
         );
-        user.activate();
+        user.activate(emailService);
 
         scooter = new Scooter("scooter-1", 85.0, "Station A", 1);
         station = new Station("Station B", "Campus Location", 10);

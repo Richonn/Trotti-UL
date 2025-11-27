@@ -21,20 +21,7 @@ public class ActivateAccountUseCase {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(UserNotFoundException::new);
 
-        user.activate();
+        user.activate(emailService);
         userRepository.save(user);
-
-        emailService.sendEmail(
-            email,
-            "Bienvenue à TrottiUL - Compte activé !",
-            "Bonjour " + user.getName() + ",\n\n" +
-            "Félicitations ! Votre compte TrottiUL a été activé avec succès.\n\n" +
-            "Vous pouvez maintenant :\n" +
-            "- Acheter un laissez-passer pour la session en cours\n" +
-            "- Demander des codes de déverrouillage\n" +
-            "- Commencer à louer des trottinettes\n\n" +
-            "Cordialement,\n" +
-            "L'équipe TrottiUL"
-        );
     }
 }

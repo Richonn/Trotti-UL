@@ -54,8 +54,7 @@ class UserFunctionalTest {
                 .then()
                 .statusCode(201)
                 .body("email", equalTo(email))
-                .body("name", equalTo("Test User"))
-                .body("age", notNullValue());
+                .body("name", equalTo("Test User"));
     }
 
     @Test

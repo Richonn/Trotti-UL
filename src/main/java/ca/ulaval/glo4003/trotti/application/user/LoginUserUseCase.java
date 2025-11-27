@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.user;
 
+import ca.ulaval.glo4003.trotti.application.auth.AuthResult;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.User;
@@ -15,7 +16,7 @@ public class LoginUserUseCase {
         this.tokenGenerator = tokenGenerator;
     }
 
-    public String execute(String email, String password) {
+    public AuthResult execute(String email, String password) {
         Email userEmail = new Email(email);
 
         User user = userRepository.findByEmail(userEmail)
@@ -25,6 +26,7 @@ public class LoginUserUseCase {
             throw new InvalidCredentialsException("Invalid password");
         }
 
-        return tokenGenerator.generateToken(email);
+        String token = tokenGenerator.generateToken(email);
+        return new AuthResult(email, user.isActivated(), token);
     }
 }

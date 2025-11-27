@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.user;
 
+import ca.ulaval.glo4003.trotti.application.auth.AuthResult;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.user.*;
 import ca.ulaval.glo4003.trotti.domain.user.exception.InvalidCredentialsException;
@@ -45,9 +46,11 @@ class LoginUserUseCaseTest {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(tokenGenerator.generateToken(email)).thenReturn(expectedToken);
 
-        String token = loginUserUseCase.execute(email, password);
+        AuthResult authResult = loginUserUseCase.execute(email, password);
 
-        assertEquals(expectedToken, token);
+        assertEquals(expectedToken, authResult.getToken());
+        assertEquals(email, authResult.getUserEmail());
+        assertFalse(authResult.isActivated());
         verify(tokenGenerator).generateToken(email);
     }
 
@@ -122,9 +125,10 @@ class LoginUserUseCaseTest {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(tokenGenerator.generateToken(email)).thenReturn(expectedToken);
 
-        String token = loginUserUseCase.execute(email, password);
+        AuthResult authResult = loginUserUseCase.execute(email, password);
 
-        assertEquals(expectedToken, token);
+        assertEquals(expectedToken, authResult.getToken());
         assertFalse(user.isActivated());
+        assertFalse(authResult.isActivated());
     }
 }

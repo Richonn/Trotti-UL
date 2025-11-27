@@ -6,7 +6,6 @@ public class RegisterResponse {
     private String name;
     private String dateOfBirth;
     private String gender;
-    private Integer age;
     private String idul;
     private String email;
 
@@ -14,7 +13,6 @@ public class RegisterResponse {
         this.name = user.getName();
         this.dateOfBirth = user.getDateOfBirth();
         this.gender = user.getGender();
-        this.age = user.getAge();
         this.idul = user.getIdul();
         this.email = user.getEmail();
     }
@@ -22,7 +20,6 @@ public class RegisterResponse {
     public String getName() { return name; }
     public String getDateOfBirth() { return dateOfBirth; }
     public String getGender() { return gender; }
-    public Integer getAge() { return age; }
     public String getIdul() { return idul; }
     public String getEmail() { return email; }
 }

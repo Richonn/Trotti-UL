@@ -3,8 +3,15 @@ package ca.ulaval.glo4003.trotti.domain.user;
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
 import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.pass.PaymentInfo;
+import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
+import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
+import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
+import ca.ulaval.glo4003.trotti.domain.ride.email.RideCodeEmail;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
+import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
+import ca.ulaval.glo4003.trotti.domain.user.email.ActivationEmail;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
+import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -52,11 +59,14 @@ public class User {
         );
     }
 
-    public void activate() {
+    public void activate(EmailService emailService) {
         if (activated) {
             throw new AccountAlreadyActivatedException();
         }
         this.activated = true;
+
+        ActivationEmail email = new ActivationEmail(this.email.getValue(), this.name);
+        emailService.send(email);
     }
 
     public boolean canLogin(String rawPassword) {
@@ -128,6 +138,23 @@ public class User {
         return passes.stream()
                 .filter(pass -> pass.getUserId().equals(this.id))
                 .anyMatch(pass -> pass.isActiveOn(date));
+    }
+
+    public RideCode requestRideCode(List<Pass> passes, Clock clock, RideCodeGenerator rideCodeGenerator, EmailService emailService) {
+        if (!this.activated) {
+            throw new AccountNotActivatedException();
+        }
+
+        if (!hasActivePass(passes, clock.today()) && this.role != Role.TECHNICIAN) {
+            throw new NoActivePassException();
+        }
+
+        RideCode rideCode = rideCodeGenerator.generate();
+
+        RideCodeEmail email = new RideCodeEmail(this.email.getValue(), this.name, rideCode);
+        emailService.send(email);
+
+        return rideCode;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.infrastructure.email;
 
+import ca.ulaval.glo4003.trotti.domain.shared.EmailMessage;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -73,6 +74,11 @@ public class MailtrapEmailAdapter implements EmailService {
             e.printStackTrace();
             throw new RuntimeException("Erreur envoi mail: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void send(EmailMessage email) {
+        sendEmail(email.getRecipient(), email.getSubject(), email.getBody());
     }
 
     private String urlEncode(String value) {
