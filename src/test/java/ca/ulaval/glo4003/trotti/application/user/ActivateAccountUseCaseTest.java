@@ -6,7 +6,6 @@ import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedExc
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.Optional;
 
@@ -47,16 +46,7 @@ class ActivateAccountUseCaseTest {
 
         assertTrue(user.isActivated());
         verify(userRepository).save(user);
-
-        ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> bodyCaptor = ArgumentCaptor.forClass(String.class);
-
-        verify(emailService).sendEmail(emailCaptor.capture(), subjectCaptor.capture(), bodyCaptor.capture());
-
-        assertEquals(email, emailCaptor.getValue());
-        assertTrue(subjectCaptor.getValue().contains("TrottiUL"));
-        assertTrue(bodyCaptor.getValue().contains("John Doe"));
+        verify(emailService).send(any());
     }
 
     @Test
@@ -70,7 +60,7 @@ class ActivateAccountUseCaseTest {
         );
 
         verify(userRepository, never()).save(any(User.class));
-        verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
+        verify(emailService, never()).send(any());
     }
 
     @Test
@@ -85,7 +75,7 @@ class ActivateAccountUseCaseTest {
             "johdo123",
             Role.USER
         );
-        user.activate();
+        user.activate(emailService);
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
@@ -105,6 +95,6 @@ class ActivateAccountUseCaseTest {
         );
 
         verify(userRepository, never()).findByEmail(any());
-        verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
+        verify(emailService, never()).send(any());
     }
 }

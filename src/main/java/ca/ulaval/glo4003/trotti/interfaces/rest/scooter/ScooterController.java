@@ -2,13 +2,13 @@ package ca.ulaval.glo4003.trotti.interfaces.rest.scooter;
 
 import ca.ulaval.glo4003.trotti.application.scooter.EndTransferScooterUseCase;
 import ca.ulaval.glo4003.trotti.application.scooter.StartTransferScooterUseCase;
-import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndTransferRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartTransferRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.RoleChecker;
 import jakarta.ws.rs.Consumes;
@@ -26,13 +26,13 @@ public class ScooterController {
 
     private final StartTransferScooterUseCase startTransferScooterUseCase;
     private final EndTransferScooterUseCase endTransferScooterUseCase;
-    private final TokenGenerator tokenGenerator;
+    private final AuthenticationService authenticationService;
 
     public ScooterController() {
         ApplicationContext context = ApplicationContext.getInstance();
         this.startTransferScooterUseCase = context.getStartTransferScooterUseCase();
         this.endTransferScooterUseCase = context.getEndTransferScooterUseCase();
-        this.tokenGenerator = context.getTokenGenerator();
+        this.authenticationService = context.getAuthenticationService();
     }
 
     @Path("/transfer/start")
@@ -42,7 +42,7 @@ public class ScooterController {
             StartTransferRequest request) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
             RoleChecker.check(email, Role.TECHNICIAN);
 
             String scooterId = startTransferScooterUseCase.execute(Integer.parseInt(request.getSlot()), request.getStation());
@@ -62,7 +62,7 @@ public class ScooterController {
             EndTransferRequest request) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
             RoleChecker.check(email, Role.TECHNICIAN);
 
             endTransferScooterUseCase.execute(request.getScooterId(), Integer.parseInt(request.getSlot()), request.getStation());

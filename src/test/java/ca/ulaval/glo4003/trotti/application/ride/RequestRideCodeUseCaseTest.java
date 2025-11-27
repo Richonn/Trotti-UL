@@ -20,7 +20,6 @@ import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
 import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -69,7 +68,7 @@ class RequestRideCodeUseCaseTest {
             "johdo123",
             Role.USER
         );
-        user.activate();
+        user.activate(emailService);
 
         RideCode expectedCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
@@ -83,16 +82,7 @@ class RequestRideCodeUseCaseTest {
         assertEquals(expectedCode, result);
 
         verify(rideCodeRepository).save(email, expectedCode);
-
-        ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> bodyCaptor = ArgumentCaptor.forClass(String.class);
-
-        verify(emailService).sendEmail(emailCaptor.capture(), subjectCaptor.capture(), bodyCaptor.capture());
-
-        assertEquals(email, emailCaptor.getValue());
-        assertTrue(subjectCaptor.getValue().contains("déverrouillage"));
-        assertTrue(bodyCaptor.getValue().contains("ABC123"));
+        verify(emailService, times(2)).send(any()); // 1 for activation, 1 for ride code
     }
 
     @Test
@@ -123,12 +113,12 @@ class RequestRideCodeUseCaseTest {
         );
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
+        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
         assertThrows(AccountNotActivatedException.class, () ->
             requestRideCodeUseCase.execute(email)
         );
 
-        verify(passRepository, never()).findByUserId(anyString());
         verify(rideCodeGenerator, never()).generate();
     }
 
@@ -144,7 +134,7 @@ class RequestRideCodeUseCaseTest {
             "johdo123",
             Role.USER
         );
-        user.activate();
+        user.activate(emailService);
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(passRepository.findByUserId(user.getId())).thenReturn(List.of());

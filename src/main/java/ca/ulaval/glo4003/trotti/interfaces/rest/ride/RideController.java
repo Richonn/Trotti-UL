@@ -8,10 +8,10 @@ import ca.ulaval.glo4003.trotti.application.ride.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
-import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
+import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideCodeResponse;
@@ -34,7 +34,7 @@ public class RideController {
     private final StartRideUseCase startRideUseCase;
     private final EndRideUseCase endRideUseCase;
     private final GetRideHistoryUseCase getRideHistoryUseCase;
-    private final TokenGenerator tokenGenerator;
+    private final AuthenticationService authenticationService;
 
     public RideController() {
         ApplicationContext context = ApplicationContext.getInstance();
@@ -42,7 +42,7 @@ public class RideController {
         this.startRideUseCase = context.getStartRideUseCase();
         this.endRideUseCase = context.getEndRideUseCase();
         this.getRideHistoryUseCase = context.getGetRideHistoryUseCase();
-        this.tokenGenerator = context.getTokenGenerator();
+        this.authenticationService = context.getAuthenticationService();
     }
 
     @POST
@@ -50,7 +50,7 @@ public class RideController {
     public Response requestRideCode(@HeaderParam("Authorization") String authHeader) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
 
             RideCode rideCode = requestRideCodeUseCase.execute(email);
 
@@ -70,7 +70,7 @@ public class RideController {
     public Response startRide(@HeaderParam("Authorization") String authHeader, StartRideRequest request) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
 
             RideStartResult result = startRideUseCase.execute(
                     email,
@@ -117,7 +117,7 @@ public class RideController {
     public Response endRide(@HeaderParam("Authorization") String authHeader, EndRideRequest request) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
 
             RideEndResult result = endRideUseCase.execute(
                     email,
@@ -171,7 +171,7 @@ public class RideController {
     public Response getRideHistory(@HeaderParam("Authorization") String authHeader) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
 
             List<Ride> rides = getRideHistoryUseCase.execute(email);
 

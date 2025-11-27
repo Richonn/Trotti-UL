@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.application.user;
 
+import ca.ulaval.glo4003.trotti.application.user.dto.UserDTO;
+import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
@@ -10,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -19,12 +23,15 @@ class RegisterUserUseCaseTest {
     private RegisterUserUseCase registerUserUseCase;
     private UserRepository userRepository;
     private EmailService emailService;
+    private Clock clock;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         emailService = mock(EmailService.class);
-        registerUserUseCase = new RegisterUserUseCase(userRepository, emailService);
+        clock = mock(Clock.class);
+        when(clock.today()).thenReturn(LocalDate.of(2025, 11, 26));
+        registerUserUseCase = new RegisterUserUseCase(userRepository, emailService, clock);
     }
 
     @Test
@@ -38,9 +45,15 @@ class RegisterUserUseCaseTest {
 
         when(userRepository.existsByEmail(any(Email.class))).thenReturn(false);
 
-        String userId = registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul, Role.USER);
+        UserDTO userDTO = registerUserUseCase.execute(email, password, name, dateOfBirth, gender, idul, Role.USER);
 
-        assertNotNull(userId);
+        assertNotNull(userDTO);
+        assertEquals(email, userDTO.getEmail());
+        assertEquals(name, userDTO.getName());
+        assertEquals(dateOfBirth, userDTO.getDateOfBirth());
+        assertEquals(gender, userDTO.getGender());
+        assertEquals(idul, userDTO.getIdul());
+        assertFalse(userDTO.isActivated());
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());

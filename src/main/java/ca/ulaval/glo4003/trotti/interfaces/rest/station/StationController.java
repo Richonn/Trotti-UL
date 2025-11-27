@@ -5,11 +5,11 @@ import org.checkerframework.checker.units.qual.s;
 import ca.ulaval.glo4003.trotti.application.station.EndStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
-import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
+import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.RoleChecker;
 import jakarta.ws.rs.Consumes;
@@ -29,14 +29,14 @@ public class StationController {
     private final StartStationMaintenanceUseCase startStationMaintenanceUseCase;
     private final EndStationMaintenanceUseCase endStationMaintenanceUseCase;
     private final RequestStationMaintenanceUseCase requestStationMaintenanceUseCase;
-    private final TokenGenerator tokenGenerator;
+    private final AuthenticationService authenticationService;
 
     public StationController() {
         ApplicationContext context = ApplicationContext.getInstance();
         this.startStationMaintenanceUseCase = context.getStartStationMaintenanceUseCase();
         this.endStationMaintenanceUseCase = context.getEndStationMaintenanceUseCase();
         this.requestStationMaintenanceUseCase = context.getRequestStationMaintenanceUseCase();
-        this.tokenGenerator = context.getTokenGenerator();
+        this.authenticationService = context.getAuthenticationService();
     }
 
     @POST
@@ -46,7 +46,7 @@ public class StationController {
             @PathParam("stationId") String stationId) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
             RoleChecker.check(email, Role.TECHNICIAN);
 
             startStationMaintenanceUseCase.execute(stationId);
@@ -66,7 +66,7 @@ public class StationController {
             @PathParam("stationId") String stationId) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
             RoleChecker.check(email, Role.TECHNICIAN);
 
             endStationMaintenanceUseCase.execute(stationId);
@@ -86,7 +86,7 @@ public class StationController {
             @PathParam("stationId") String stationId) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
 
             this.requestStationMaintenanceUseCase.execute(stationId, email);
 

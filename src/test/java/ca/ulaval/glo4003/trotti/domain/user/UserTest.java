@@ -1,14 +1,23 @@
 package ca.ulaval.glo4003.trotti.domain.user;
 
+import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
 import ca.ulaval.glo4003.trotti.infrastructure.time.FixedClock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class UserTest {
+    private EmailService emailService;
+
+    @BeforeEach
+    void setUp() {
+        emailService = mock(EmailService.class);
+    }
 
     @Test
     void givenValidData_whenRegisteringUser_thenSucceeds() {
@@ -43,7 +52,7 @@ class UserTest {
                 Role.USER
         );
 
-        user.activate();
+        user.activate(emailService);
 
         assertTrue(user.isActivated());
     }
@@ -59,9 +68,9 @@ class UserTest {
                 "johdo123",
                 Role.USER
         );
-        user.activate();
+        user.activate(emailService);
 
-        assertThrows(AccountAlreadyActivatedException.class, user::activate);
+        assertThrows(AccountAlreadyActivatedException.class, () -> user.activate(emailService));
     }
 
     @Test
@@ -75,7 +84,7 @@ class UserTest {
                 "johdo123",
                 Role.USER
         );
-        user.activate();
+        user.activate(emailService);
 
         assertTrue(user.canLogin("ValidPass123!"));
     }
@@ -91,7 +100,7 @@ class UserTest {
                 "johdo123",
                 Role.USER
         );
-        user.activate();
+        user.activate(emailService);
 
         assertFalse(user.canLogin("WrongPassword456!"));
     }

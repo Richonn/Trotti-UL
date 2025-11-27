@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +48,7 @@ class EndRideWithQuotaUseCaseTest {
     private DailyUsageRepository dailyUsageRepository;
     private FixedClock clock;
     private EndRideUseCase endRideUseCase;
+    private ca.ulaval.glo4003.trotti.domain.shared.EmailService emailService;
 
     private User user;
     private Scooter scooter;
@@ -59,6 +61,7 @@ class EndRideWithQuotaUseCaseTest {
         feeCalculator = new RideFeeCalculator();
         dailyUsageRepository = new InMemoryDailyUsageRepository();
         clock = new FixedClock(LocalDateTime.of(2026, 2, 16, 14, 0));
+        emailService = mock(ca.ulaval.glo4003.trotti.domain.shared.EmailService.class);
 
         endRideUseCase = new EndRideUseCase(
                 userRepository,
@@ -80,7 +83,7 @@ class EndRideWithQuotaUseCaseTest {
                 "ALEX12345678",
                 Role.USER
         );
-        user.activate();
+        user.activate(emailService);
 
         scooter = new Scooter("scooter-1", 85.0, "VACHON", 1);
         startStation = new Station("VACHON", "Campus Location", 10);

@@ -23,12 +23,6 @@ public class User {
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
 
-    public Integer getAge() {
-        if (dateOfBirth == null) return 0;
-        LocalDate birthDate = LocalDate.parse(this.dateOfBirth);
-        return Period.between(birthDate, LocalDate.now()).getYears();
-    }
-
     public String getIdul() { return idul; }
     public void setIdul(String idul) { this.idul = idul; }
 

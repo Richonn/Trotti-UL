@@ -60,8 +60,7 @@ class ApiFunctionalTest {
                 .body("email", equalTo(TEST_EMAIL))
                 .body("name", equalTo("Alice Test"))
                 .body("gender", equalTo("F"))
-                .body("idul", equalTo("alice123"))
-                .body("age", notNullValue());
+                .body("idul", equalTo("alice123"));
     }
 
     @Test

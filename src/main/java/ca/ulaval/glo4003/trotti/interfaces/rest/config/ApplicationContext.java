@@ -37,6 +37,7 @@ import ca.ulaval.glo4003.trotti.infrastructure.email.MailtrapEmailAdapter;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.*;
 import ca.ulaval.glo4003.trotti.infrastructure.security.JwtTokenService;
 import ca.ulaval.glo4003.trotti.infrastructure.time.SystemClock;
+import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 
 public class ApplicationContext {
     private static ApplicationContext instance;
@@ -51,6 +52,7 @@ public class ApplicationContext {
     private final EmailService emailService;
     private final TokenGenerator tokenGenerator;
     private final Clock clock;
+    private final AuthenticationService authenticationService;
 
     private final PricingPolicy pricingPolicy;
     private final RideCodeGenerator rideCodeGenerator;
@@ -88,16 +90,17 @@ public class ApplicationContext {
         this.emailService = new MailtrapEmailAdapter();
         this.tokenGenerator = new JwtTokenService();
         this.clock = new SystemClock();
+        this.authenticationService = new AuthenticationService(tokenGenerator);
 
         this.pricingPolicy = new PricingPolicy();
         this.rideCodeGenerator = new RideCodeGenerator(clock);
         this.rideFeeCalculator = new RideFeeCalculator();
         this.dailyUsageRepository = new InMemoryDailyUsageRepository();
 
-        this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService);
+        this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService, clock);
         this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
         this.activateAccountUseCase = new ActivateAccountUseCase(userRepository, emailService);
-        this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
+        this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository, clock);
         this.purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy, clock);
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
         this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase(stationRepository);
@@ -206,5 +209,9 @@ public class ApplicationContext {
 
     public TokenGenerator getTokenGenerator() {
         return tokenGenerator;
+    }
+
+    public AuthenticationService getAuthenticationService() {
+        return authenticationService;
     }
 }

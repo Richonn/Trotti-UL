@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.infrastructure.persistence.memory;
 
+import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
@@ -11,14 +12,17 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class InMemoryUserRepositoryTest {
 
     private InMemoryUserRepository repository;
+    private EmailService emailService;
 
     @BeforeEach
     void setUp() {
         repository = new InMemoryUserRepository();
+        emailService = mock(EmailService.class);
     }
 
     @Test
@@ -163,7 +167,7 @@ class InMemoryUserRepositoryTest {
         );
 
         repository.save(user);
-        user.activate();
+        user.activate(emailService);
         repository.save(user);
 
         Optional<User> result = repository.findById(user.getId());

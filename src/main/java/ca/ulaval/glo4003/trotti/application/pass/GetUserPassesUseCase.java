@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.trotti.application.pass;
 
-import ca.ulaval.glo4003.trotti.domain.pass.Pass;
+import ca.ulaval.glo4003.trotti.application.pass.dto.PassDTO;
+import ca.ulaval.glo4003.trotti.application.pass.mapper.PassMapper;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.User;
@@ -8,6 +9,7 @@ import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GetUserPassesUseCase {
     private final UserRepository userRepository;
@@ -18,11 +20,13 @@ public class GetUserPassesUseCase {
         this.passRepository = passRepository;
     }
 
-    public List<Pass> execute(String email) {
+    public List<PassDTO> execute(String email) {
         Email userEmail = new Email(email);
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(UserNotFoundException::new);
 
-        return passRepository.findByUserId(user.getId());
+        return passRepository.findByUserId(user.getId()).stream()
+            .map(PassMapper::toDTO)
+            .collect(Collectors.toList());
     }
 }

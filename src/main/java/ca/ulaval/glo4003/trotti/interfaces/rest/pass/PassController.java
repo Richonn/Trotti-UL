@@ -3,12 +3,12 @@ package ca.ulaval.glo4003.trotti.interfaces.rest.pass;
 import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
-import ca.ulaval.glo4003.trotti.domain.pass.Pass;
+import ca.ulaval.glo4003.trotti.application.pass.dto.PassDTO;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
-import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
+import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
@@ -26,13 +26,13 @@ import java.util.List;
 public class PassController {
     private final PurchasePassUseCase purchasePassUseCase;
     private final GetUserPassesUseCase getUserPassesUseCase;
-    private final TokenGenerator tokenGenerator;
+    private final AuthenticationService authenticationService;
 
     public PassController() {
         ApplicationContext context = ApplicationContext.getInstance();
         this.purchasePassUseCase = context.getPurchasePassUseCase();
         this.getUserPassesUseCase = context.getGetUserPassesUseCase();
-        this.tokenGenerator = context.getTokenGenerator();
+        this.authenticationService = context.getAuthenticationService();
     }
 
     @POST
@@ -40,7 +40,7 @@ public class PassController {
     public Response purchase(@HeaderParam("Authorization") String authHeader, PurchaseRequest request) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
 
             PassPurchaseResult result = purchasePassUseCase.execute(
                     email,
@@ -80,18 +80,18 @@ public class PassController {
     public Response getMyPurchases(@HeaderParam("Authorization") String authHeader) {
         try {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = tokenGenerator.extractEmail(token);
+            String email = authenticationService.extractEmailFromToken(token);
 
-            List<Pass> passes = getUserPassesUseCase.execute(email);
+            List<PassDTO> passes = getUserPassesUseCase.execute(email);
 
-            List<PassDto> passDtos = passes.stream()
-                    .map(pass -> new PassDto(
-                            pass.getId(),
-                            pass.getSession().name(),
-                            pass.getExtraMinutesPerDay(),
-                            pass.isMonthlyBilling(),
-                            pass.getTotalPrice(),
-                            pass.isActive()
+            List<ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto> passDtos = passes.stream()
+                    .map(passDTO -> new ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto(
+                            passDTO.getId(),
+                            passDTO.getSession(),
+                            passDTO.getExtraMinutesPerDay(),
+                            passDTO.isMonthlyBilling(),
+                            passDTO.getTotalPrice(),
+                            passDTO.isActive()
                     ))
                     .toList();
 
