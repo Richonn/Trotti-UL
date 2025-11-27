@@ -71,8 +71,9 @@ public class EndRideUseCase {
         Duration rideDuration = ride.getDuration(clock);
         long rideMinutes = rideDuration.toMinutes();
 
-        List<Pass> userPasses = passRepository.findByUserId(user.getId());
-        Pass activePass = userPasses.stream()
+        passRepository.findByUserId(user.getId()).forEach(user::addPass);
+
+        Pass activePass = user.getPasses().stream()
                 .filter(pass -> pass.isActiveOn(clock.today()))
                 .findFirst()
                 .orElse(null);

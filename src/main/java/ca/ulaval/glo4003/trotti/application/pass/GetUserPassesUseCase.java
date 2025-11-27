@@ -25,7 +25,10 @@ public class GetUserPassesUseCase {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(UserNotFoundException::new);
 
-        return passRepository.findByUserId(user.getId()).stream()
+        List<ca.ulaval.glo4003.trotti.domain.pass.Pass> passes = passRepository.findByUserId(user.getId());
+        passes.forEach(user::addPass);
+
+        return user.getPasses().stream()
             .map(PassMapper::toDTO)
             .collect(Collectors.toList());
     }

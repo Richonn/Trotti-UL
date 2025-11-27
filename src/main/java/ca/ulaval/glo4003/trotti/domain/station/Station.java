@@ -1,5 +1,10 @@
 package ca.ulaval.glo4003.trotti.domain.station;
 
+import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
+import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
+import ca.ulaval.glo4003.trotti.domain.station.exception.SlotNotAvailableException;
+import ca.ulaval.glo4003.trotti.domain.station.exception.StationUnderMaintenanceException;
+
 import java.util.Objects;
 
 public class Station {
@@ -39,6 +44,22 @@ public class Station {
 
     public int getCapacity() {
         return capacity;
+    }
+
+    public Scooter rentScooter(int slotNumber, String userId, ScooterRepository scooterRepository) {
+        if (this.state == StationState.UNDER_MAINTENANCE) {
+            throw new StationUnderMaintenanceException(this.id);
+        }
+
+        Scooter scooter = scooterRepository.findByStationIdAndSlotNumber(this.id, slotNumber)
+                .orElseThrow(() -> new SlotNotAvailableException("Scooter not found at slot " + slotNumber));
+
+        scooter.rentTo(userId);
+        return scooter;
+    }
+
+    public void returnScooter(Scooter scooter, int slotNumber) {
+        scooter.returnToStation(this.id, slotNumber);
     }
 
     @Override

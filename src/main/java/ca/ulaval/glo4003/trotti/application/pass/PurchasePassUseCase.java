@@ -35,7 +35,6 @@ public class PurchasePassUseCase {
                 throw new IllegalArgumentException("Card is expired");
             }
             user.savePaymentInfo(paymentInfo);
-            userRepository.save(user);
         } else {
             paymentInfo = user.getSavedPaymentInfo()
                     .orElseThrow(() -> new IllegalArgumentException("No payment information available. Please provide card details."));
@@ -46,8 +45,9 @@ public class PurchasePassUseCase {
 
         Session session = Session.getInstance(sessionCode);
 
-        Pass pass = Pass.purchase(user.getId(), session, extraMinutesPerDay, monthlyBilling, pricingPolicy);
+        Pass pass = user.purchasePass(session, extraMinutesPerDay, monthlyBilling, pricingPolicy);
         passRepository.save(pass);
+        userRepository.save(user);
 
         return new PassPurchaseResult(
                 pass.getId(),

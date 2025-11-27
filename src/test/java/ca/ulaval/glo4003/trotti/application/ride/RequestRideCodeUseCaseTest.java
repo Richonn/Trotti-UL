@@ -82,7 +82,7 @@ class RequestRideCodeUseCaseTest {
         assertEquals(expectedCode, result);
 
         verify(rideCodeRepository).save(email, expectedCode);
-        verify(emailService, times(2)).send(any()); // 1 for activation, 1 for ride code
+        verify(emailService, times(2)).send(any());
     }
 
     @Test
