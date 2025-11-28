@@ -10,8 +10,6 @@ import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
-import ca.ulaval.glo4003.trotti.domain.station.StationState;
-import ca.ulaval.glo4003.trotti.domain.station.exception.SlotNotAvailableException;
 import ca.ulaval.glo4003.trotti.domain.station.exception.StationNotFoundException;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
@@ -26,19 +24,19 @@ public class StartRideUseCase {
     private final StationRepository stationRepository;
     private final ScooterRepository scooterRepository;
     private final RideRepository rideRepository;
-    private final RequestRideCodeUseCase requestRideCodeUseCase;
+    private final RideCodeRepository rideCodeRepository;
     private final Clock clock;
 
     public StartRideUseCase(UserRepository userRepository, PassRepository passRepository,
                              StationRepository stationRepository, ScooterRepository scooterRepository,
-                             RideRepository rideRepository, RequestRideCodeUseCase requestRideCodeUseCase,
+                             RideRepository rideRepository, RideCodeRepository rideCodeRepository,
                              Clock clock) {
         this.userRepository = userRepository;
         this.passRepository = passRepository;
         this.stationRepository = stationRepository;
         this.scooterRepository = scooterRepository;
         this.rideRepository = rideRepository;
-        this.requestRideCodeUseCase = requestRideCodeUseCase;
+        this.rideCodeRepository = rideCodeRepository;
         this.clock = clock;
     }
 
@@ -47,38 +45,29 @@ public class StartRideUseCase {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!user.isActivated()) {
-            throw new AccountNotActivatedException();
-        }
-
-        if (!user.hasActivePass(passRepository.findByUserId(user.getId()), clock.today()) && user.getRole() != Role.TECHNICIAN) {
-            throw new NoActivePassException();
-        }
-
-        RideCode userCode = requestRideCodeUseCase.getUserCode(userEmail);
-        if (userCode == null || !userCode.matches(inputCode)) {
-            throw new InvalidRideCodeException();
-        }
-        if (userCode.isExpired(clock)) {
-            throw new ExpiredRideCodeException();
-        }
-
         Station station = stationRepository.findById(stationName)
                 .orElseThrow(StationNotFoundException::new);
 
-        if (station.getState() == StationState.UNDER_MAINTENANCE) {
-            throw new SlotNotAvailableException("Station " + stationName + " is under maintenance");
-        }
+        passRepository.findByUserId(user.getId()).forEach(user::addPass);
 
-        Scooter scooter = scooterRepository.findByStationIdAndSlotNumber(stationName, slotNumber)
-                .orElseThrow(() -> new SlotNotAvailableException("Scooter not found at the given slot"));
+        Ride ride = user.startRide(
+                clock,
+                rideCodeRepository,
+                inputCode,
+                station,
+                slotNumber,
+                scooterRepository
+        );
 
-        scooter.rentTo(user.getId());
-        scooterRepository.save(scooter);
+        scooterRepository.findByStationIdAndSlotNumber(stationName, slotNumber)
+                .ifPresent(scooterRepository::save);
 
-        Ride ride = Ride.start(user.getId(), scooter.getId(), stationName, clock.now());
         rideRepository.save(ride);
 
-        return new RideStartResult(ride.getId(), scooter.getBatteryLevel());
+        double batteryLevel = scooterRepository.findById(ride.getScooterId())
+                .map(Scooter::getBatteryLevel)
+                .orElse(0.0);
+
+        return new RideStartResult(ride.getId(), batteryLevel);
     }
 }

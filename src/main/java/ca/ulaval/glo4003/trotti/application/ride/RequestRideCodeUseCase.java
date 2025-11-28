@@ -35,8 +35,9 @@ public class RequestRideCodeUseCase {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
+        passRepository.findByUserId(user.getId()).forEach(user::addPass);
+
         RideCode rideCode = user.requestRideCode(
-                passRepository.findByUserId(user.getId()),
                 clock,
                 rideCodeGenerator,
                 emailService
@@ -49,5 +50,9 @@ public class RequestRideCodeUseCase {
 
     public RideCode getUserCode(String userEmail) {
         return rideCodeRepository.findByUserEmail(userEmail).orElse(null);
+    }
+
+    public RideCodeRepository getRideCodeRepository() {
+        return rideCodeRepository;
     }
 }

@@ -3,18 +3,29 @@ package ca.ulaval.glo4003.trotti.domain.user;
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
 import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.pass.PaymentInfo;
+import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
+import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
+import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCodeGenerator;
+import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.email.RideCodeEmail;
+import ca.ulaval.glo4003.trotti.domain.ride.exception.ExpiredRideCodeException;
+import ca.ulaval.glo4003.trotti.domain.ride.exception.InvalidRideCodeException;
+import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
+import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
+import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.user.email.ActivationEmail;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +43,7 @@ public class User {
     private boolean activated;
     private PaymentInfo savedPaymentInfo;
     private MonthlyBalance monthlyBalance;
+    private final List<Pass> passes;
 
     private User(String id, Email email, Password password, String name, LocalDate dateOfBirth, Gender gender, Idul idul, Role role) {
         this.id = Objects.requireNonNull(id, "User ID cannot be null");
@@ -44,6 +56,7 @@ public class User {
         this.role = Objects.requireNonNull(role, "Role cannot be null");
         this.activated = false;
         this.monthlyBalance = new MonthlyBalance();
+        this.passes = new ArrayList<>();
     }
 
     public static User register(Email email, Password password, String name, String dateOfBirth, String gender, String idul, Role role) {
@@ -134,18 +147,37 @@ public class User {
         return monthlyBalance;
     }
 
+    public List<Pass> getPasses() {
+        return Collections.unmodifiableList(passes);
+    }
+
+    public void addPass(Pass pass) {
+        this.passes.add(pass);
+    }
+
+    public Pass purchasePass(Session session, int extraMinutesPerDay, boolean monthlyBilling, PricingPolicy pricingPolicy) {
+        Pass pass = Pass.purchase(this.id, session, extraMinutesPerDay, monthlyBilling, pricingPolicy);
+        this.passes.add(pass);
+        return pass;
+    }
+
+    public boolean hasActivePass(LocalDate date) {
+        return passes.stream()
+                .anyMatch(pass -> pass.isActiveOn(date));
+    }
+
     public boolean hasActivePass(List<Pass> passes, LocalDate date) {
         return passes.stream()
                 .filter(pass -> pass.getUserId().equals(this.id))
                 .anyMatch(pass -> pass.isActiveOn(date));
     }
 
-    public RideCode requestRideCode(List<Pass> passes, Clock clock, RideCodeGenerator rideCodeGenerator, EmailService emailService) {
+    public RideCode requestRideCode(Clock clock, RideCodeGenerator rideCodeGenerator, EmailService emailService) {
         if (!this.activated) {
             throw new AccountNotActivatedException();
         }
 
-        if (!hasActivePass(passes, clock.today()) && this.role != Role.TECHNICIAN) {
+        if (!hasActivePass(clock.today()) && this.role != Role.TECHNICIAN) {
             throw new NoActivePassException();
         }
 
@@ -155,6 +187,30 @@ public class User {
         emailService.send(email);
 
         return rideCode;
+    }
+
+    public Ride startRide(Clock clock, RideCodeRepository rideCodeRepository,
+                         String inputCode, Station station, int slotNumber,
+                         ScooterRepository scooterRepository) {
+        if (!this.activated) {
+            throw new AccountNotActivatedException();
+        }
+
+        if (!hasActivePass(clock.today()) && this.role != Role.TECHNICIAN) {
+            throw new NoActivePassException();
+        }
+
+        RideCode userCode = rideCodeRepository.findByUserEmail(this.email.getValue()).orElse(null);
+        if (userCode == null || !userCode.matches(inputCode)) {
+            throw new InvalidRideCodeException();
+        }
+        if (userCode.isExpired(clock)) {
+            throw new ExpiredRideCodeException();
+        }
+
+        Scooter scooter = station.rentScooter(slotNumber, this.id, scooterRepository);
+
+        return Ride.start(this.id, scooter.getId(), station.getId(), clock.now());
     }
 
     @Override
