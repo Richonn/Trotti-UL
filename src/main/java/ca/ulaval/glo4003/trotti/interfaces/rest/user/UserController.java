@@ -1,25 +1,36 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.user;
 
+import ca.ulaval.glo4003.trotti.application.pass.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
+import ca.ulaval.glo4003.trotti.application.user.GetUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.dto.UserDTO;
+import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.InvoiceDto;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.AccountActivationResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.GetUserBalanceResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.LoginRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.LoginResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.PaymentResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.RegisterResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
+import java.util.Date;
 import java.util.List;
 
 @Path("/user")
@@ -30,6 +41,7 @@ public class UserController {
     private final LoginUserUseCase loginUserUseCase;
     private final ActivateAccountUseCase activateAccountUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
+    private final GetUserBalanceUseCase getUserBalanceUseCase;
     private final AuthenticationService authenticationService;
 
     public UserController() {
@@ -38,6 +50,7 @@ public class UserController {
         this.loginUserUseCase = context.getLoginUserUseCase();
         this.activateAccountUseCase = context.getActivateAccountUseCase();
         this.getAllUsersUseCase = context.getGetAllUsersUseCase();
+        this.getUserBalanceUseCase = context.getGetUserBalanceUseCase();
         this.authenticationService = context.getAuthenticationService();
     }
 
@@ -52,8 +65,7 @@ public class UserController {
                     request.getDateOfBirth(),
                     request.getGender(),
                     request.getIdul(),
-                    Role.USER
-            );
+                    Role.USER);
 
             ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User userResponseModel = new ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User();
             userResponseModel.setName(userDTO.getName());
@@ -78,13 +90,12 @@ public class UserController {
         try {
             if (request == null || request.getEmail() == null || request.getPassword() == null) {
                 return ErrorResponseBuilder.buildErrorResponse(
-                    new IllegalArgumentException("Email and password required."),
-                    Response.Status.BAD_REQUEST
-                );
+                        new IllegalArgumentException("Email and password required."),
+                        Response.Status.BAD_REQUEST);
             }
 
-            ca.ulaval.glo4003.trotti.application.auth.AuthResult authResult =
-                loginUserUseCase.execute(request.getEmail(), request.getPassword());
+            ca.ulaval.glo4003.trotti.application.auth.AuthResult authResult = loginUserUseCase
+                    .execute(request.getEmail(), request.getPassword());
             return Response.ok(new LoginResponse(authResult.getToken())).build();
         } catch (DomainException e) {
             return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.UNAUTHORIZED);
@@ -100,19 +111,19 @@ public class UserController {
             List<UserDTO> users = getAllUsersUseCase.execute();
 
             List<ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User> userDtos = users.stream()
-                .map(userDTO -> {
-                    ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User dto = new ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User();
-                    dto.setName(userDTO.getName());
-                    dto.setEmail(userDTO.getEmail());
-                    dto.setDateOfBirth(userDTO.getDateOfBirth());
-                    dto.setGender(userDTO.getGender());
-                    dto.setIdul(userDTO.getIdul());
-                    if (userDTO.isActivated()) {
-                        dto.activate();
-                    }
-                    return dto;
-                })
-                .toList();
+                    .map(userDTO -> {
+                        ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User dto = new ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User();
+                        dto.setName(userDTO.getName());
+                        dto.setEmail(userDTO.getEmail());
+                        dto.setDateOfBirth(userDTO.getDateOfBirth());
+                        dto.setGender(userDTO.getGender());
+                        dto.setIdul(userDTO.getIdul());
+                        if (userDTO.isActivated()) {
+                            dto.activate();
+                        }
+                        return dto;
+                    })
+                    .toList();
 
             return Response.ok(userDtos).build();
         } catch (Exception e) {
@@ -135,6 +146,46 @@ public class UserController {
         }
     }
 
+    @GET
+    @Path("/balance")
+    public Response getUserBalance(@HeaderParam("Authorization") String authHeader) {
+        try {
+            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+            String email = authenticationService.extractEmailFromToken(token);
+
+            BigDecimal amount = getUserBalanceUseCase.execute(email);
+
+            return Response.ok(new GetUserBalanceResponse(amount)).build();
+        } catch (DomainException e) {
+            return ErrorResponseBuilder.buildErrorResponse(e);
+        } catch (Exception e) {
+            return ErrorResponseBuilder.buildInternalServerError(e);
+        }
+    }
+
+    @POST
+    @Path("/balance/pay")
+    public Response purchase(@HeaderParam("Authorization") String authHeader) {
+        try {
+            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+            String email = authenticationService.extractEmailFromToken(token);
+
+            // TODO: Make a real invoice
+            InvoiceDto invoice = new InvoiceDto(
+                    new BigDecimal(0), true, LocalDate.of(2025, Month.NOVEMBER, 1), LocalDate.of(2025, Month.NOVEMBER, 30));
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(new PaymentResponse("Purchase successful", invoice))
+                    .build();
+        } catch (DomainException e) {
+            return ErrorResponseBuilder.buildErrorResponse(e);
+        } catch (IllegalArgumentException e) {
+            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
+        } catch (Exception e) {
+            return ErrorResponseBuilder.buildInternalServerError(e);
+        }
+    }
+
     public static class UserRegistrationRequest {
         private String name;
         private String dateOfBirth;
@@ -143,22 +194,52 @@ public class UserController {
         private String email;
         private String password;
 
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
+        public String getName() {
+            return name;
+        }
 
-        public String getDateOfBirth() { return dateOfBirth; }
-        public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-        public String getGender() { return gender; }
-        public void setGender(String gender) { this.gender = gender; }
+        public String getDateOfBirth() {
+            return dateOfBirth;
+        }
 
-        public String getIdul() { return idul; }
-        public void setIdul(String idul) { this.idul = idul; }
+        public void setDateOfBirth(String dateOfBirth) {
+            this.dateOfBirth = dateOfBirth;
+        }
 
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
+        public String getGender() {
+            return gender;
+        }
 
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
+        public void setGender(String gender) {
+            this.gender = gender;
+        }
+
+        public String getIdul() {
+            return idul;
+        }
+
+        public void setIdul(String idul) {
+            this.idul = idul;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 }

@@ -13,6 +13,7 @@ import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUse
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
+import ca.ulaval.glo4003.trotti.application.user.GetUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
@@ -63,6 +64,7 @@ public class ApplicationContext {
     private final LoginUserUseCase loginUserUseCase;
     private final ActivateAccountUseCase activateAccountUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
+    private final GetUserBalanceUseCase getUserBalanceUseCase;
 
     private final PurchasePassUseCase purchasePassUseCase;
     private final GetUserPassesUseCase getUserPassesUseCase;
@@ -101,6 +103,7 @@ public class ApplicationContext {
         this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
         this.activateAccountUseCase = new ActivateAccountUseCase(userRepository, emailService);
         this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository, clock);
+        this.getUserBalanceUseCase = new GetUserBalanceUseCase(userRepository);
         this.purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy, clock);
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
         this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase(stationRepository);
@@ -157,6 +160,10 @@ public class ApplicationContext {
 
     public GetAllUsersUseCase getGetAllUsersUseCase() {
         return getAllUsersUseCase;
+    }
+
+    public GetUserBalanceUseCase getGetUserBalanceUseCase() {
+        return getUserBalanceUseCase;
     }
 
     public PurchasePassUseCase getPurchasePassUseCase() {
