@@ -147,6 +147,10 @@ public class User {
         return monthlyBalance;
     }
 
+    public void resetMonthlyBalance() {
+        this.monthlyBalance = new MonthlyBalance(Money.zero());
+    }
+
     public List<Pass> getPasses() {
         return Collections.unmodifiableList(passes);
     }
