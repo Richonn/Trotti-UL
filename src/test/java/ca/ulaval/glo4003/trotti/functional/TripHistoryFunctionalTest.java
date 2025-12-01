@@ -31,6 +31,17 @@ class TripHistoryFunctionalTest {
     private static final String TEST_EMAIL = "test-trip-history@ulaval.ca";
     private static final String TEST_PASSWORD = "TestPassword123!";
 
+    private static final int EXTRA_MINUTES_PER_DAY = 30;
+    private static final int NUMBER_OF_TEST_TRIPS = 3;
+    private static final String START_STATION = "VACHON";
+    private static final String END_STATION = "PEPS";
+    private static final String START_SLOT = "1";
+    private static final String END_SLOT = "2";
+
+    private static final int HTTP_OK = 200;
+    private static final int HTTP_CREATED = 201;
+    private static final int HTTP_SERVER_ERROR = 500;
+
     @BeforeAll
     static void setUp() {
         server = Main.startServer();
@@ -86,30 +97,30 @@ class TripHistoryFunctionalTest {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .contentType(ContentType.JSON)
-                .body("""
+                .body(String.format("""
                 {
                     "session": "A2025",
-                    "extraMinutesPerDay": 30,
+                    "extraMinutesPerDay": %d,
                     "monthlyBilling": false,
                     "cardNumber": "4242424242424242",
                     "cardHolder": "Test User",
                     "expiryDate": "12/26",
                     "cvv": "123"
                 }
-                """)
+                """, EXTRA_MINUTES_PER_DAY))
                 .when()
                 .post("/pass/purchase")
                 .then()
-                .statusCode(201);
+                .statusCode(HTTP_CREATED);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < NUMBER_OF_TEST_TRIPS; i++) {
             String rideCode = given()
                     .header("Authorization", "Bearer " + authToken)
                     .contentType(ContentType.JSON)
                     .when()
                     .post("/ride/request-code")
                     .then()
-                    .statusCode(anyOf(is(200), is(500)))
+                    .statusCode(anyOf(is(HTTP_OK), is(HTTP_SERVER_ERROR)))
                     .extract()
                     .path("rideCode.code");
 
@@ -119,29 +130,29 @@ class TripHistoryFunctionalTest {
                         .contentType(ContentType.JSON)
                         .body(String.format("""
                         {
-                            "station": "VACHON",
-                            "slot": "1",
+                            "station": "%s",
+                            "slot": "%s",
                             "code": "%s"
                         }
-                        """, rideCode))
+                        """, START_STATION, START_SLOT, rideCode))
                         .when()
                         .post("/ride/start")
                         .then()
-                        .statusCode(200);
+                        .statusCode(HTTP_OK);
 
                 given()
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(ContentType.JSON)
-                        .body("""
+                        .body(String.format("""
                         {
-                            "station": "PEPS",
-                            "slot": "2"
+                            "station": "%s",
+                            "slot": "%s"
                         }
-                        """)
+                        """, END_STATION, END_SLOT))
                         .when()
                         .post("/ride/end")
                         .then()
-                        .statusCode(200);
+                        .statusCode(HTTP_OK);
             }
         }
 
@@ -150,7 +161,7 @@ class TripHistoryFunctionalTest {
                 .when()
                 .get("/ride/trip-history")
                 .then()
-                .statusCode(200)
+                .statusCode(HTTP_OK)
                 .body("trips", notNullValue())
                 .body("summary", notNullValue())
                 .body("summary.totalTrips", greaterThanOrEqualTo(0))
@@ -165,7 +176,7 @@ class TripHistoryFunctionalTest {
                 .when()
                 .get("/ride/trip-history")
                 .then()
-                .statusCode(200)
+                .statusCode(HTTP_OK)
                 .body("trips", notNullValue())
                 .body("summary", notNullValue())
                 .body("summary.totalTrips", greaterThanOrEqualTo(0))

@@ -11,10 +11,16 @@ import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 
 public class GetTripHistoryWithSummaryUseCase {
+    private static final int FIRST_DAY_OF_MONTH = 1;
+    private static final int END_OF_DAY_HOUR = 23;
+    private static final int END_OF_DAY_MINUTE = 59;
+    private static final int END_OF_DAY_SECOND = 59;
+
     private final UserRepository userRepository;
     private final RideRepository rideRepository;
     private final Clock clock;
@@ -32,8 +38,8 @@ public class GetTripHistoryWithSummaryUseCase {
 
         LocalDate today = clock.today();
         YearMonth currentMonth = YearMonth.from(today);
-        LocalDateTime startOfMonth = currentMonth.atDay(1).atStartOfDay();
-        LocalDateTime endOfMonth = currentMonth.atEndOfMonth().atTime(23, 59, 59);
+        LocalDateTime startOfMonth = currentMonth.atDay(FIRST_DAY_OF_MONTH).atStartOfDay();
+        LocalDateTime endOfMonth = currentMonth.atEndOfMonth().atTime(END_OF_DAY_HOUR, END_OF_DAY_MINUTE, END_OF_DAY_SECOND);
 
         List<Ride> rides = rideRepository.findCompletedRidesByUserIdInDateRange(
                 user.getId(),
