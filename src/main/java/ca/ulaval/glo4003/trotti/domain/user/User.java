@@ -21,6 +21,7 @@ import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.user.email.ActivationEmail;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountAlreadyActivatedException;
 import ca.ulaval.glo4003.trotti.domain.user.exception.AccountNotActivatedException;
+import ca.ulaval.glo4003.trotti.domain.user.exception.UnpaidInvoiceException;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -44,6 +45,7 @@ public class User {
     private PaymentInfo savedPaymentInfo;
     private MonthlyBalance monthlyBalance;
     private final List<Pass> passes;
+    private boolean autoPay;
 
     private User(String id, Email email, Password password, String name, LocalDate dateOfBirth, Gender gender, Idul idul, Role role) {
         this.id = Objects.requireNonNull(id, "User ID cannot be null");
@@ -57,6 +59,7 @@ public class User {
         this.activated = false;
         this.monthlyBalance = new MonthlyBalance();
         this.passes = new ArrayList<>();
+        this.autoPay = false;
     }
 
     public static User register(Email email, Password password, String name, String dateOfBirth, String gender, String idul, Role role) {
@@ -131,6 +134,13 @@ public class User {
         return activated;
     }
 
+    public boolean isAutoPayEnabled() {
+        return autoPay;
+    }
+    public void setAutoPayEnabled(boolean autoPayEnabled) {
+        this.autoPay = autoPayEnabled;
+    }
+
     public void savePaymentInfo(PaymentInfo paymentInfo) {
         this.savedPaymentInfo = paymentInfo;
     }
@@ -143,12 +153,20 @@ public class User {
         this.monthlyBalance = this.monthlyBalance.add(amount);
     }
 
+    public void addToMonthlyBalance(Money amount, LocalDate currentDate) {
+        this.monthlyBalance = this.monthlyBalance.add(amount, currentDate);
+    }
+
     public MonthlyBalance getMonthlyBalance() {
         return monthlyBalance;
     }
 
     public void resetMonthlyBalance() {
         this.monthlyBalance = new MonthlyBalance(Money.zero());
+    }
+
+    public boolean hasOverduePayment(Clock clock) {
+        return monthlyBalance.isOverdue(clock.today(), 10);
     }
 
     public List<Pass> getPasses() {
@@ -185,6 +203,10 @@ public class User {
             throw new NoActivePassException();
         }
 
+        if (hasOverduePayment(clock) && this.role != Role.TECHNICIAN) {
+            throw new UnpaidInvoiceException();
+        }
+
         RideCode rideCode = rideCodeGenerator.generate();
 
         RideCodeEmail email = new RideCodeEmail(this.email.getValue(), this.name, rideCode);
@@ -202,6 +224,10 @@ public class User {
 
         if (!hasActivePass(clock.today()) && this.role != Role.TECHNICIAN) {
             throw new NoActivePassException();
+        }
+
+        if (hasOverduePayment(clock) && this.role != Role.TECHNICIAN) {
+            throw new UnpaidInvoiceException();
         }
 
         RideCode userCode = rideCodeRepository.findByUserEmail(this.email.getValue()).orElse(null);
