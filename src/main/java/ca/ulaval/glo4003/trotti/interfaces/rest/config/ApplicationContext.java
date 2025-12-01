@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.config;
 
+import ca.ulaval.glo4003.trotti.application.billing.SendPaymentReminderUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
@@ -81,6 +82,8 @@ public class ApplicationContext {
     private final StartTransferScooterUseCase startTransferScooterUseCase;
     private final EndTransferScooterUseCase endTransferScooterUseCase;
 
+    private final SendPaymentReminderUseCase sendPaymentReminderUseCase;
+
     private ApplicationContext() {
         this.userRepository = new InMemoryUserRepository();
         this.passRepository = new InMemoryPassRepository();
@@ -115,6 +118,7 @@ public class ApplicationContext {
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, rideCodeRepository, clock);
         this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
         this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
+        this.sendPaymentReminderUseCase = new SendPaymentReminderUseCase(userRepository, emailService);
 
         initializeData();
     }
@@ -209,6 +213,8 @@ public class ApplicationContext {
     public GetRideHistoryUseCase getGetRideHistoryUseCase() {
         return getRideHistoryUseCase;
     }
+
+    public SendPaymentReminderUseCase getSendPaymentReminderUseCase() {return sendPaymentReminderUseCase;}
 
     public UserRepository getUserRepository() {
         return userRepository;
