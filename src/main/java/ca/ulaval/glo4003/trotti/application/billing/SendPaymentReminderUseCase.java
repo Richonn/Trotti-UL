@@ -20,15 +20,15 @@ public class SendPaymentReminderUseCase {
 
     public void execute() {
         List<User> users = userRepository.findAll().stream()
-                .filter(user -> user.getMonthlyBalance().getAmount().isZero())
+                .filter(user -> !user.getMonthlyBalance().getAmount().isZero())
                 .toList();
 
         users.forEach(user -> {
             BigDecimal amount = user.getMonthlyBalance().getAmount().getAmount();
             NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.CANADA);
             String formattedAmount = formatter.format(amount);
-            emailService.sendEmail(user.getEmail().getValue(), "Sole impayé",
-                    String.format("Il vous reste un solde de %s a payé pour le mois dernier", formattedAmount));
+            emailService.sendEmail(user.getEmail().getValue(), "Solde impayé",
+                    String.format("Il vous reste un solde de %s à payer pour le mois dernier", formattedAmount));
         });
     }
 }

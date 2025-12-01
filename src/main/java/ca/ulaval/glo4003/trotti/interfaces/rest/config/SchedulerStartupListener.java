@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.config;
 
+import ca.ulaval.glo4003.trotti.infrastructure.scheduling.AutoPaymentScheduler;
 import ca.ulaval.glo4003.trotti.infrastructure.scheduling.PaymentReminderScheduler;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebListener;
@@ -7,21 +8,27 @@ import jakarta.servlet.annotation.WebListener;
 @WebListener
 public class SchedulerStartupListener implements ServletContextListener {
 
-    private PaymentReminderScheduler scheduler;
+    private PaymentReminderScheduler paymentReminderScheduler;
+    private AutoPaymentScheduler  autoPaymentScheduler;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ApplicationContext ctx = ApplicationContext.getInstance();
 
-        scheduler = new PaymentReminderScheduler(
+        autoPaymentScheduler = new AutoPaymentScheduler(
+                ctx.getAutomaticPaymentUseCase()
+        );
+        paymentReminderScheduler = new PaymentReminderScheduler(
                 ctx.getSendPaymentReminderUseCase()
         );
 
-        scheduler.start();
+        autoPaymentScheduler.start();
+        paymentReminderScheduler.start();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        if (scheduler != null) scheduler.stop();
+        if (autoPaymentScheduler != null) autoPaymentScheduler.stop();
+        if (paymentReminderScheduler != null) paymentReminderScheduler.stop();
     }
 }
