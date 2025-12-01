@@ -1,21 +1,19 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.user;
 
 import ca.ulaval.glo4003.trotti.application.billing.UpdateAutoPayPreferenceUseCase;
-import ca.ulaval.glo4003.trotti.application.pass.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
+import ca.ulaval.glo4003.trotti.application.user.PayUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
+import ca.ulaval.glo4003.trotti.application.user.dto.MonthlyInvoiceDto;
 import ca.ulaval.glo4003.trotti.application.user.dto.UserDTO;
-import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.*;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import jakarta.ws.rs.*;
@@ -23,9 +21,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Date;
 import java.util.List;
 
 @Path("/user")
@@ -37,6 +32,7 @@ public class UserController {
     private final ActivateAccountUseCase activateAccountUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
     private final GetUserBalanceUseCase getUserBalanceUseCase;
+    private final PayUserBalanceUseCase payUserBalanceUseCase;
     private final AuthenticationService authenticationService;
     private final UpdateAutoPayPreferenceUseCase updateAutoPayPreferenceUseCase;
 
@@ -47,6 +43,7 @@ public class UserController {
         this.activateAccountUseCase = context.getActivateAccountUseCase();
         this.getAllUsersUseCase = context.getGetAllUsersUseCase();
         this.getUserBalanceUseCase = context.getGetUserBalanceUseCase();
+        this.payUserBalanceUseCase = context.getPayUserBalanceUseCase();
         this.authenticationService = context.getAuthenticationService();
         this.updateAutoPayPreferenceUseCase = context.getUpdateAutoPayPreferenceUseCase();
     }
@@ -167,9 +164,13 @@ public class UserController {
             String token = AuthorizationHeaderExtractor.extractToken(authHeader);
             String email = authenticationService.extractEmailFromToken(token);
 
-            // TODO: Make a real invoice
+            MonthlyInvoiceDto invoiceDto = payUserBalanceUseCase.execute(email);
+
             InvoiceDto invoice = new InvoiceDto(
-                    new BigDecimal(0), true, LocalDate.of(2025, Month.NOVEMBER, 1), LocalDate.of(2025, Month.NOVEMBER, 30));
+                    invoiceDto.getAmount().getAmount(),
+                    true,
+                    invoiceDto.getStart(),
+                    invoiceDto.getEnd());
 
             return Response.status(Response.Status.CREATED)
                     .entity(new PaymentResponse("Purchase successful", invoice))

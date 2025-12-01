@@ -10,7 +10,6 @@ import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
