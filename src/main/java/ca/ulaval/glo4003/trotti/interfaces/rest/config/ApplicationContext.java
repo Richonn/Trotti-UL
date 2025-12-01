@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.GetRideHistoryUseCase;
+import ca.ulaval.glo4003.trotti.application.ride.GetTripHistoryWithSummaryUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.application.scooter.EndTransferScooterUseCase;
@@ -71,6 +72,7 @@ public class ApplicationContext {
     private final StartRideUseCase startRideUseCase;
     private final EndRideUseCase endRideUseCase;
     private final GetRideHistoryUseCase getRideHistoryUseCase;
+    private final GetTripHistoryWithSummaryUseCase getTripHistoryWithSummaryUseCase;
 
     private final StartStationMaintenanceUseCase startStationMaintenanceUseCase;
     private final EndStationMaintenanceUseCase endStationMaintenanceUseCase;
@@ -112,6 +114,7 @@ public class ApplicationContext {
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, rideCodeRepository, clock);
         this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
         this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
+        this.getTripHistoryWithSummaryUseCase = new GetTripHistoryWithSummaryUseCase(userRepository, rideRepository, clock);
 
         initializeData();
     }
@@ -201,6 +204,10 @@ public class ApplicationContext {
 
     public GetRideHistoryUseCase getGetRideHistoryUseCase() {
         return getRideHistoryUseCase;
+    }
+
+    public GetTripHistoryWithSummaryUseCase getGetTripHistoryWithSummaryUseCase() {
+        return getTripHistoryWithSummaryUseCase;
     }
 
     public UserRepository getUserRepository() {
