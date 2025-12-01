@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.user;
 
+import ca.ulaval.glo4003.trotti.application.billing.UpdateAutoPayPreferenceUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
@@ -12,17 +13,11 @@ import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.InvoiceDto;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.*;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.AccountActivationResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.GetUserBalanceResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.LoginRequest;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.LoginResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.PaymentResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.RegisterResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -43,6 +38,7 @@ public class UserController {
     private final GetAllUsersUseCase getAllUsersUseCase;
     private final GetUserBalanceUseCase getUserBalanceUseCase;
     private final AuthenticationService authenticationService;
+    private final UpdateAutoPayPreferenceUseCase updateAutoPayPreferenceUseCase;
 
     public UserController() {
         ApplicationContext context = ApplicationContext.getInstance();
@@ -52,6 +48,7 @@ public class UserController {
         this.getAllUsersUseCase = context.getGetAllUsersUseCase();
         this.getUserBalanceUseCase = context.getGetUserBalanceUseCase();
         this.authenticationService = context.getAuthenticationService();
+        this.updateAutoPayPreferenceUseCase = context.getUpdateAutoPayPreferenceUseCase();
     }
 
     @POST
@@ -181,6 +178,23 @@ public class UserController {
             return ErrorResponseBuilder.buildErrorResponse(e);
         } catch (IllegalArgumentException e) {
             return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
+        } catch (Exception e) {
+            return ErrorResponseBuilder.buildInternalServerError(e);
+        }
+    }
+
+    @PUT
+    @Path("/settings/auto-pay")
+    public Response updateAutoPayPreference(@HeaderParam("Authorization") String authHeader, AutoPayRequest request) {
+        try {
+            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+            String email = authenticationService.extractEmailFromToken(token);
+
+            updateAutoPayPreferenceUseCase.execute(email, request.isEnabled());
+
+            return Response.ok().build();
+        } catch (DomainException e) {
+            return ErrorResponseBuilder.buildErrorResponse(e);
         } catch (Exception e) {
             return ErrorResponseBuilder.buildInternalServerError(e);
         }

@@ -45,6 +45,7 @@ public class User {
     private PaymentInfo savedPaymentInfo;
     private MonthlyBalance monthlyBalance;
     private final List<Pass> passes;
+    private boolean autoPay;
 
     private User(String id, Email email, Password password, String name, LocalDate dateOfBirth, Gender gender, Idul idul, Role role) {
         this.id = Objects.requireNonNull(id, "User ID cannot be null");
@@ -58,6 +59,7 @@ public class User {
         this.activated = false;
         this.monthlyBalance = new MonthlyBalance();
         this.passes = new ArrayList<>();
+        this.autoPay = false;
     }
 
     public static User register(Email email, Password password, String name, String dateOfBirth, String gender, String idul, Role role) {
@@ -130,6 +132,13 @@ public class User {
 
     public boolean isActivated() {
         return activated;
+    }
+
+    public boolean isAutoPayEnabled() {
+        return autoPay;
+    }
+    public void setAutoPayEnabled(boolean autoPayEnabled) {
+        this.autoPay = autoPayEnabled;
     }
 
     public void savePaymentInfo(PaymentInfo paymentInfo) {
