@@ -1,5 +1,9 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.config;
 
+import ca.ulaval.glo4003.trotti.application.billing.AutomaticPaymentUseCase;
+import ca.ulaval.glo4003.trotti.application.billing.PayUserBalanceUseCase;
+import ca.ulaval.glo4003.trotti.application.billing.SendPaymentReminderUseCase;
+import ca.ulaval.glo4003.trotti.application.billing.UpdateAutoPayPreferenceUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
@@ -14,6 +18,7 @@ import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUse
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
+import ca.ulaval.glo4003.trotti.application.user.GetUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
@@ -64,6 +69,8 @@ public class ApplicationContext {
     private final LoginUserUseCase loginUserUseCase;
     private final ActivateAccountUseCase activateAccountUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
+    private final GetUserBalanceUseCase getUserBalanceUseCase;
+    private final PayUserBalanceUseCase payUserBalanceUseCase;
 
     private final PurchasePassUseCase purchasePassUseCase;
     private final GetUserPassesUseCase getUserPassesUseCase;
@@ -80,6 +87,10 @@ public class ApplicationContext {
 
     private final StartTransferScooterUseCase startTransferScooterUseCase;
     private final EndTransferScooterUseCase endTransferScooterUseCase;
+
+    private final SendPaymentReminderUseCase sendPaymentReminderUseCase;
+    private final UpdateAutoPayPreferenceUseCase updateAutoPayPreferenceUseCase;
+    private final AutomaticPaymentUseCase automaticPaymentUseCase;
 
     private ApplicationContext() {
         this.userRepository = new InMemoryUserRepository();
@@ -103,6 +114,8 @@ public class ApplicationContext {
         this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
         this.activateAccountUseCase = new ActivateAccountUseCase(userRepository, emailService);
         this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository, clock);
+        this.getUserBalanceUseCase = new GetUserBalanceUseCase(userRepository);
+        this.payUserBalanceUseCase = new PayUserBalanceUseCase(userRepository, this.clock);
         this.purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy, clock);
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
         this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase(stationRepository);
@@ -114,8 +127,10 @@ public class ApplicationContext {
         this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, rideCodeRepository, clock);
         this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
         this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
+        this.sendPaymentReminderUseCase = new SendPaymentReminderUseCase(userRepository, emailService);
+        this.updateAutoPayPreferenceUseCase = new UpdateAutoPayPreferenceUseCase(userRepository);
+        this.automaticPaymentUseCase = new AutomaticPaymentUseCase(userRepository);
         this.getTripHistoryWithSummaryUseCase = new GetTripHistoryWithSummaryUseCase(userRepository, rideRepository, clock);
-
         initializeData();
     }
 
@@ -162,6 +177,14 @@ public class ApplicationContext {
         return getAllUsersUseCase;
     }
 
+    public GetUserBalanceUseCase getGetUserBalanceUseCase() {
+        return getUserBalanceUseCase;
+    }
+
+    public PayUserBalanceUseCase getPayUserBalanceUseCase() {
+        return payUserBalanceUseCase;
+    }
+
     public PurchasePassUseCase getPurchasePassUseCase() {
         return purchasePassUseCase;
     }
@@ -205,6 +228,12 @@ public class ApplicationContext {
     public GetRideHistoryUseCase getGetRideHistoryUseCase() {
         return getRideHistoryUseCase;
     }
+
+    public SendPaymentReminderUseCase getSendPaymentReminderUseCase() {return sendPaymentReminderUseCase;}
+
+    public UpdateAutoPayPreferenceUseCase getUpdateAutoPayPreferenceUseCase() {return updateAutoPayPreferenceUseCase;}
+
+    public AutomaticPaymentUseCase getAutomaticPaymentUseCase() {return automaticPaymentUseCase;}
 
     public GetTripHistoryWithSummaryUseCase getGetTripHistoryWithSummaryUseCase() {
         return getTripHistoryWithSummaryUseCase;

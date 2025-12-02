@@ -44,6 +44,14 @@ public class Money {
         return this.amount.compareTo(other.amount);
     }
 
+    public boolean isZero() {
+        return amount.compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    public boolean isPositive() {
+        return amount.compareTo(BigDecimal.ZERO) > 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

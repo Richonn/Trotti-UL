@@ -99,7 +99,7 @@ public class EndRideUseCase {
 
         if (additionalFees.getAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
             if (activePass != null && activePass.isMonthlyBilling()) {
-                user.addToMonthlyBalance(additionalFees);
+                user.addToMonthlyBalance(additionalFees, clock.today());
                 monthlyBalanceAfter = user.getMonthlyBalance().getAmount();
                 chargedImmediately = false;
             } else {
