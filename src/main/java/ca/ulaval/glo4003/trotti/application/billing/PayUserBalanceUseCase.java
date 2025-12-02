@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.trotti.application.user;
+package ca.ulaval.glo4003.trotti.application.billing;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,7 +28,9 @@ public class PayUserBalanceUseCase {
     public MonthlyInvoiceDto execute(String email) {
         User user = userRepository.findByEmail(new Email(email)).orElseThrow(UserNotFoundException::new);
 
-        if (user.getMonthlyBalance().getAmount().getAmount() == new BigDecimal(0))
+        System.out.println(user.getMonthlyBalance().toString());
+
+        if (user.getMonthlyBalance().getAmount().getAmount().equals(new BigDecimal(0)))
             throw new BalanceEmptyException();
 
         Money amount = user.getMonthlyBalance().getAmount();
@@ -55,7 +57,7 @@ public class PayUserBalanceUseCase {
             else
                 lastDayOfMonth = 28;
         } else {
-            if (previousMonth.getValue() % 2 == 1)
+            if (previousMonth.getValue() % 2 == 0)
                 lastDayOfMonth = 31;
             else
                 lastDayOfMonth = 30;

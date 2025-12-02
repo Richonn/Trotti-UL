@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "b5be0d03-6cb6-43ed-b4b6-d30c659462f9",
+		"_postman_id": "63b95d01-d2a1-44c1-9c09-d7df40a6416e",
 		"name": "Trotti-UL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "35988341"
+		"_exporter_id": "9240786"
 	},
 	"item": [
 		{
@@ -426,6 +426,109 @@
 						"api",
 						"ride",
 						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "End Ride",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODUzODcsImV4cCI6MTc2NDY4ODk4N30.c4ImxMp7QdJec6C4bHY4jLtCYAixEV-N_FO-SWd3Nas",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"station\": \"VACHON\",\n    \"slot\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/ride/end",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ride",
+						"end"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Balance",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODUzODcsImV4cCI6MTc2NDY4ODk4N30.c4ImxMp7QdJec6C4bHY4jLtCYAixEV-N_FO-SWd3Nas",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/user/balance",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pay Balance",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODc3NzIsImV4cCI6MTc2NDY5MTM3Mn0.flwDjFpQ5nEYTqifVe--SJ8_m59U56QHOqyI10H6I2Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/user/balance/pay",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"balance",
+						"pay"
 					]
 				}
 			},

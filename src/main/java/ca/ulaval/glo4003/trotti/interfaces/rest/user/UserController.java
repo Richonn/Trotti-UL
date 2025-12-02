@@ -1,11 +1,11 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.user;
 
+import ca.ulaval.glo4003.trotti.application.billing.PayUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.billing.UpdateAutoPayPreferenceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.ActivateAccountUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
-import ca.ulaval.glo4003.trotti.application.user.PayUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.dto.MonthlyInvoiceDto;
 import ca.ulaval.glo4003.trotti.application.user.dto.UserDTO;

@@ -25,11 +25,4 @@ public class InvoiceDto {
         return monthlyBilling;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
 }
