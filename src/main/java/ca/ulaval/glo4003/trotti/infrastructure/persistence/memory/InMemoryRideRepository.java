@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.RideStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +37,16 @@ public class InMemoryRideRepository implements RideRepository {
         return rides.values().stream()
                 .filter(ride -> ride.getUserId().equals(userId))
                 .filter(ride -> ride.getStatus() == RideStatus.COMPLETED)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Ride> findCompletedRidesByUserIdInDateRange(String userId, LocalDateTime startDate, LocalDateTime endDate) {
+        return rides.values().stream()
+                .filter(ride -> ride.getUserId().equals(userId))
+                .filter(ride -> ride.getStatus() == RideStatus.COMPLETED)
+                .filter(ride -> !ride.getStartTime().isBefore(startDate))
+                .filter(ride -> !ride.getStartTime().isAfter(endDate))
                 .collect(Collectors.toList());
     }
 }

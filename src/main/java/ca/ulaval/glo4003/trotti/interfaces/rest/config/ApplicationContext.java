@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.EndRideUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.GetRideHistoryUseCase;
+import ca.ulaval.glo4003.trotti.application.ride.GetTripHistoryWithSummaryUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.application.scooter.EndTransferScooterUseCase;
@@ -78,6 +79,7 @@ public class ApplicationContext {
     private final StartRideUseCase startRideUseCase;
     private final EndRideUseCase endRideUseCase;
     private final GetRideHistoryUseCase getRideHistoryUseCase;
+    private final GetTripHistoryWithSummaryUseCase getTripHistoryWithSummaryUseCase;
 
     private final StartStationMaintenanceUseCase startStationMaintenanceUseCase;
     private final EndStationMaintenanceUseCase endStationMaintenanceUseCase;
@@ -128,7 +130,7 @@ public class ApplicationContext {
         this.sendPaymentReminderUseCase = new SendPaymentReminderUseCase(userRepository, emailService);
         this.updateAutoPayPreferenceUseCase = new UpdateAutoPayPreferenceUseCase(userRepository);
         this.automaticPaymentUseCase = new AutomaticPaymentUseCase(userRepository);
-
+        this.getTripHistoryWithSummaryUseCase = new GetTripHistoryWithSummaryUseCase(userRepository, rideRepository, clock);
         initializeData();
     }
 
@@ -232,6 +234,10 @@ public class ApplicationContext {
     public UpdateAutoPayPreferenceUseCase getUpdateAutoPayPreferenceUseCase() {return updateAutoPayPreferenceUseCase;}
 
     public AutomaticPaymentUseCase getAutomaticPaymentUseCase() {return automaticPaymentUseCase;}
+
+    public GetTripHistoryWithSummaryUseCase getGetTripHistoryWithSummaryUseCase() {
+        return getTripHistoryWithSummaryUseCase;
+    }
 
     public UserRepository getUserRepository() {
         return userRepository;
