@@ -18,7 +18,7 @@ public class PaymentReminderScheduler {
     }
 
     public void start() {
-        long initialDelay = computeInitialDelay(6); // 6h du matin
+        long initialDelay = computeInitialDelay(6);
 
         exec.scheduleAtFixedRate(
                 this::runIfFirstOfMonth,
