@@ -24,17 +24,15 @@ class PurchasePassUseCaseTest {
 
     private PurchasePassUseCase purchasePassUseCase;
     private UserRepository userRepository;
-    private PassRepository passRepository;
     private PricingPolicy pricingPolicy;
     private Clock clock;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        passRepository = mock(PassRepository.class);
         pricingPolicy = new PricingPolicy();
         clock = new FixedClock(LocalDate.of(2024, 1, 15));
-        purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy, clock);
+        purchasePassUseCase = new PurchasePassUseCase(userRepository, pricingPolicy, clock);
     }
 
     @Test
@@ -70,13 +68,7 @@ class PurchasePassUseCaseTest {
         assertEquals(BigDecimal.valueOf(61), result.getTotalPrice());
         assertEquals(monthlyBilling, result.isMonthlyBilling());
 
-        ArgumentCaptor<Pass> passCaptor = ArgumentCaptor.forClass(Pass.class);
-        verify(passRepository).save(passCaptor.capture());
-
-        Pass savedPass = passCaptor.getValue();
-        assertEquals(user.getId(), savedPass.getUserId());
-        assertEquals(Session.A2025, savedPass.getSession());
-        assertEquals(extraMinutes, savedPass.getExtraMinutesPerDay());
+        verify(userRepository).save(user);
     }
 
     @Test
@@ -91,8 +83,6 @@ class PurchasePassUseCaseTest {
                 "4532015112830366", "John Doe", "12/25", "123"
             )
         );
-
-        verify(passRepository, never()).save(any(Pass.class));
     }
 
     @Test
@@ -117,8 +107,6 @@ class PurchasePassUseCaseTest {
                 "4532015112830366", "John Doe", "12/25", "123"
             )
         );
-
-        verify(passRepository, never()).save(any(Pass.class));
     }
 
     @Test
@@ -142,8 +130,6 @@ class PurchasePassUseCaseTest {
                 "1234567890123456", "John Doe", "12/25", "123"
             )
         );
-
-        verify(passRepository, never()).save(any(Pass.class));
     }
 
     @Test
@@ -167,8 +153,6 @@ class PurchasePassUseCaseTest {
                 "4532015112830366", "John Doe", "12/25", "123"
             )
         );
-
-        verify(passRepository, never()).save(any(Pass.class));
     }
 
     @Test

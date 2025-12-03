@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.infrastructure.persistence.memory;
 
+import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
@@ -17,11 +18,13 @@ import static org.mockito.Mockito.*;
 class InMemoryUserRepositoryTest {
 
     private InMemoryUserRepository repository;
+    private PassRepository passRepository;
     private EmailService emailService;
 
     @BeforeEach
     void setUp() {
-        repository = new InMemoryUserRepository();
+        passRepository = new InMemoryPassRepository();
+        repository = new InMemoryUserRepository(passRepository);
         emailService = mock(EmailService.class);
     }
 

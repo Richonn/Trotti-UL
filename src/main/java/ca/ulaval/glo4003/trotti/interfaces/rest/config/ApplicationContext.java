@@ -93,10 +93,10 @@ public class ApplicationContext {
     private final AutomaticPaymentUseCase automaticPaymentUseCase;
 
     private ApplicationContext() {
-        this.userRepository = new InMemoryUserRepository();
         this.passRepository = new InMemoryPassRepository();
-        this.stationRepository = new InMemoryStationRepository();
         this.scooterRepository = new InMemoryScooterRepository();
+        this.stationRepository = new InMemoryStationRepository(scooterRepository);
+        this.userRepository = new InMemoryUserRepository(passRepository);
         this.rideRepository = new InMemoryRideRepository();
         this.rideCodeRepository = new InMemoryRideCodeRepository();
 
@@ -116,15 +116,15 @@ public class ApplicationContext {
         this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository, clock);
         this.getUserBalanceUseCase = new GetUserBalanceUseCase(userRepository);
         this.payUserBalanceUseCase = new PayUserBalanceUseCase(userRepository, this.clock);
-        this.purchasePassUseCase = new PurchasePassUseCase(userRepository, passRepository, pricingPolicy, clock);
-        this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository, passRepository);
+        this.purchasePassUseCase = new PurchasePassUseCase(userRepository, pricingPolicy, clock);
+        this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository);
         this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase(stationRepository);
         this.endStationMaintenanceUseCase = new EndStationMaintenanceUseCase(stationRepository);
         this.requestStationMaintenanceUseCase = new RequestStationMaintenanceUseCase(userRepository, stationRepository, emailService);
         this.startTransferScooterUseCase = new StartTransferScooterUseCase(stationRepository, scooterRepository);
         this.endTransferScooterUseCase = new EndTransferScooterUseCase(stationRepository, scooterRepository);
         this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService, clock);
-        this.startRideUseCase = new StartRideUseCase(userRepository, passRepository, stationRepository, scooterRepository, rideRepository, rideCodeRepository, clock);
+        this.startRideUseCase = new StartRideUseCase(userRepository, stationRepository, scooterRepository, rideRepository, rideCodeRepository, clock);
         this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
         this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
         this.sendPaymentReminderUseCase = new SendPaymentReminderUseCase(userRepository, emailService);
