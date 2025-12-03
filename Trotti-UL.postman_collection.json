@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "63b95d01-d2a1-44c1-9c09-d7df40a6416e",
-		"name": "Trotti-UL",
+		"_postman_id": "51575138-546d-4c0b-a798-f9946a180fb3",
+		"name": "Trotti-UL Copy 3",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9240786"
+		"_exporter_id": "48983168",
+		"_collection_link": "https://yohan-decamps-7039098.postman.co/workspace/Yohan-Decamps's-Workspace~3aae193a-7807-4b3a-827b-455b0b76fc60/collection/48983168-51575138-546d-4c0b-a798-f9946a180fb3?action=share&source=collection_link&creator=48983168"
 	},
 	"item": [
 		{
@@ -535,7 +536,173 @@
 			"response": []
 		},
 		{
-			"name": "Historique",
+			"name": "Start Maintenance",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/stations/VACHON/maintenance/start",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"stations",
+						"VACHON",
+						"maintenance",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "End Maintenance",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"station\": \"PEPS\",\n    \"scooterId\": \"3c6ac800-e026-4865-9dec-3451bc094b85\",\n    \"slot\": 22\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/stations/VACHON/maintenance/end",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"stations",
+						"VACHON",
+						"maintenance",
+						"end"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start Scooter Transfer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"station\": \"VACHON\",\n    \"slot\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/scooters/transfer/start",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"scooters",
+						"transfer",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "End Scooter Transfer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"station\": \"PEPS\",\n    \"scooterId\": \"3c6ac800-e026-4865-9dec-3451bc094b85\",\n    \"slot\": 22\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/scooters/transfer/end",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"scooters",
+						"transfer",
+						"end"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Historique Copy",
 			"request": {
 				"method": "GET",
 				"header": [],
