@@ -533,6 +533,26 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Historique",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/ride/trip-history",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ride",
+						"trip-history"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
