@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
 import ca.ulaval.glo4003.trotti.domain.pass.Pass;
-import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.pass.PricingPolicy;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.pass.exception.NoActivePassException;
@@ -43,7 +42,6 @@ class StartRideUseCaseTest {
 
     private StartRideUseCase startRideUseCase;
     private UserRepository userRepository;
-    private PassRepository passRepository;
     private StationRepository stationRepository;
     private ScooterRepository scooterRepository;
     private RideRepository rideRepository;
@@ -54,7 +52,6 @@ class StartRideUseCaseTest {
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        passRepository = mock(PassRepository.class);
         stationRepository = mock(StationRepository.class);
         scooterRepository = mock(ScooterRepository.class);
         rideRepository = mock(RideRepository.class);
@@ -63,7 +60,7 @@ class StartRideUseCaseTest {
         clock = new FixedClock(LocalDate.of(2025, 11, 16));
 
         startRideUseCase = new StartRideUseCase(
-            userRepository, passRepository, stationRepository,
+            userRepository, stationRepository,
             scooterRepository, rideRepository, rideCodeRepository, clock
         );
     }
@@ -84,21 +81,21 @@ class StartRideUseCaseTest {
 
         Station station = new Station("station-1", "Campus", 20);
         Scooter scooter = new Scooter("scooter-1", 80.0, "station-1", 5);
+        station.addScooter(scooter);
         RideCode rideCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
         Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        user.addPass(activePass);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(rideCode));
         when(stationRepository.findById("station-1")).thenReturn(Optional.of(station));
-        when(scooterRepository.findByStationIdAndSlotNumber("station-1", 5)).thenReturn(Optional.of(scooter));
         when(scooterRepository.findById("scooter-1")).thenReturn(Optional.of(scooter));
 
         RideStartResult result = startRideUseCase.execute(email, "station-1", 5, "ABC123");
 
         assertNotNull(result);
         assertEquals(80.0, result.getBatteryLevel());
-        verify(scooterRepository).save(scooter);
+        verify(stationRepository).save(station);
         verify(rideRepository).save(any(Ride.class));
     }
 
@@ -149,7 +146,6 @@ class StartRideUseCaseTest {
 
         Station station = new Station("station-1", "Campus", 20);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
         when(stationRepository.findById("station-1")).thenReturn(Optional.of(station));
 
         assertThrows(NoActivePassException.class, () ->
@@ -175,8 +171,8 @@ class StartRideUseCaseTest {
         Station station = new Station("station-1", "Campus", 20);
 
         Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        user.addPass(activePass);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(rideCode));
         when(stationRepository.findById("station-1")).thenReturn(Optional.of(station));
 
@@ -201,10 +197,10 @@ class StartRideUseCaseTest {
 
         RideCode expiredCode = new RideCode("ABC123", clock.now().minusMinutes(1));
         Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        user.addPass(activePass);
         Station station = new Station("station-1", "Campus", 20);
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(expiredCode));
         when(stationRepository.findById("station-1")).thenReturn(Optional.of(station));
 
@@ -230,8 +226,8 @@ class StartRideUseCaseTest {
         RideCode rideCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
         Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        user.addPass(activePass);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(rideCode));
         when(stationRepository.findById("station-1")).thenReturn(Optional.empty());
 
@@ -258,11 +254,10 @@ class StartRideUseCaseTest {
         RideCode rideCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
         Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        user.addPass(activePass);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(rideCode));
         when(stationRepository.findById("station-1")).thenReturn(Optional.of(station));
-        when(scooterRepository.findByStationIdAndSlotNumber("station-1", 5)).thenReturn(Optional.empty());
 
         assertThrows(SlotNotAvailableException.class, () ->
             startRideUseCase.execute(email, "station-1", 5, "ABC123")
@@ -285,14 +280,14 @@ class StartRideUseCaseTest {
 
         Station station = new Station("station-1", "Campus", 20);
         Scooter scooter = new Scooter("scooter-1", 10.0, "station-1", 5);
+        station.addScooter(scooter);
         RideCode rideCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
         Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        user.addPass(activePass);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(rideCode));
         when(stationRepository.findById("station-1")).thenReturn(Optional.of(station));
-        when(scooterRepository.findByStationIdAndSlotNumber("station-1", 5)).thenReturn(Optional.of(scooter));
 
         assertThrows(LowBatteryException.class, () ->
             startRideUseCase.execute(email, "station-1", 5, "ABC123")

@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.infrastructure.persistence.memory;
 
+import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
+import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import ca.ulaval.glo4003.trotti.domain.station.StationRepository;
 
@@ -11,15 +13,31 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryStationRepository implements StationRepository {
     private final Map<String, Station> stations = new ConcurrentHashMap<>();
+    private final ScooterRepository scooterRepository;
+
+    public InMemoryStationRepository(ScooterRepository scooterRepository) {
+        this.scooterRepository = scooterRepository;
+    }
 
     @Override
     public void save(Station station) {
         stations.put(station.getId(), station);
+        for (Scooter scooter : station.getScooters()) {
+            scooterRepository.save(scooter);
+        }
     }
 
     @Override
     public Optional<Station> findById(String id) {
-        return Optional.ofNullable(stations.get(id));
+        return Optional.ofNullable(stations.get(id)).map(this::loadScootersForStation);
+    }
+
+    private Station loadScootersForStation(Station station) {
+        List<Scooter> scooters = scooterRepository.findByStationId(station.getId());
+        for (Scooter scooter : scooters) {
+            station.addScooter(scooter);
+        }
+        return station;
     }
 
     @Override

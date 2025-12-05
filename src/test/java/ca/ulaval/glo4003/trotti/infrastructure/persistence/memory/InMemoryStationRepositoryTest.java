@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.infrastructure.persistence.memory;
 
+import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,10 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryStationRepositoryTest {
 
     private InMemoryStationRepository repository;
+    private ScooterRepository scooterRepository;
 
     @BeforeEach
     void setUp() {
-        repository = new InMemoryStationRepository();
+        scooterRepository = new InMemoryScooterRepository();
+        repository = new InMemoryStationRepository(scooterRepository);
     }
 
     @Test

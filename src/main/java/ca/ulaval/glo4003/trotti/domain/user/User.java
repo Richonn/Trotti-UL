@@ -14,7 +14,6 @@ import ca.ulaval.glo4003.trotti.domain.ride.email.RideCodeEmail;
 import ca.ulaval.glo4003.trotti.domain.ride.exception.ExpiredRideCodeException;
 import ca.ulaval.glo4003.trotti.domain.ride.exception.InvalidRideCodeException;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
-import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
@@ -216,8 +215,7 @@ public class User {
     }
 
     public Ride startRide(Clock clock, RideCodeRepository rideCodeRepository,
-                         String inputCode, Station station, int slotNumber,
-                         ScooterRepository scooterRepository) {
+                         String inputCode, Station station, int slotNumber) {
         if (!this.activated) {
             throw new AccountNotActivatedException();
         }
@@ -238,7 +236,7 @@ public class User {
             throw new ExpiredRideCodeException();
         }
 
-        Scooter scooter = station.rentScooter(slotNumber, this.id, scooterRepository);
+        Scooter scooter = station.rentScooter(slotNumber, this.id);
 
         return Ride.start(this.id, scooter.getId(), station.getId(), clock.now());
     }
