@@ -21,13 +21,13 @@ import ca.ulaval.glo4003.trotti.interfaces.rest.ride.dto.TripHistoryResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideHistoryResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.ride.mapper.RideResponseMapper;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/ride")
 @Produces(MediaType.APPLICATION_JSON)
@@ -58,9 +58,7 @@ public class RideController {
             String email = authenticationService.extractEmailFromToken(token);
 
             RideCode rideCode = requestRideCodeUseCase.execute(email);
-
-            ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode =
-                    new ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode(rideCode.getCode(), rideCode.getExpirationTime());
+            ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode = RideResponseMapper.toRideCodeModel(rideCode);
             return Response.ok(new RideCodeResponse(dtoRideCode)).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForException(e);
@@ -84,9 +82,8 @@ public class RideController {
                     request.getCode()
             );
 
-            String message = "Ride started successfully with scooter having battery level: " +
-                           result.getBatteryLevel() + "%";
-            return Response.ok(new StartRideResponse(message)).build();
+            StartRideResponse response = RideResponseMapper.toStartRideResponse(result);
+            return Response.ok(response).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForStartRideException(e);
             return ErrorResponseBuilder.buildErrorResponse(e, status);
@@ -130,25 +127,8 @@ public class RideController {
                     Integer.parseInt(request.getSlot())
             );
 
-            String billingMessage = result.isChargedImmediately()
-                    ? "Additional fees of $" + result.getAdditionalFeesAmount() + " have been charged to your card."
-                    : "Additional fees of $" + result.getAdditionalFeesAmount() + " added to your monthly balance.";
-
-            String message = String.format(
-                    "Ride ended successfully. Duration: %d minutes %d seconds. %s",
-                    result.getDurationInMinutes(),
-                    result.getDurationInSeconds(),
-                    result.getAdditionalFeesAmount().compareTo(java.math.BigDecimal.ZERO) > 0 ? billingMessage : "No additional fees."
-            );
-
-            return Response.ok(new EndRideResponse(
-                    result.getDurationInMinutes(),
-                    result.getDurationInSeconds(),
-                    result.getAdditionalFeesAmount(),
-                    result.isChargedImmediately(),
-                    result.getMonthlyBalanceAfter().getAmount(),
-                    message
-            )).build();
+            EndRideResponse response = RideResponseMapper.toEndRideResponse(result);
+            return Response.ok(response).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForEndRideException(e);
             return ErrorResponseBuilder.buildErrorResponse(e, status);
@@ -179,19 +159,7 @@ public class RideController {
             String email = authenticationService.extractEmailFromToken(token);
 
             List<Ride> rides = getRideHistoryUseCase.execute(email);
-
-            List<RideHistoryResponse.RideHistoryItem> rideItems = rides.stream()
-                    .map(ride -> new RideHistoryResponse.RideHistoryItem(
-                            ride.getId(),
-                            ride.getStartStationId(),
-                            ride.getEndStationId(),
-                            ride.getStartTime().toString(),
-                            ride.getEndTime().toString(),
-                            ride.getDurationMinutes(),
-                            ride.getDurationSeconds()
-                    ))
-                    .collect(Collectors.toList());
-
+            List<RideHistoryResponse.RideHistoryItem> rideItems = RideResponseMapper.toRideHistoryItems(rides);
             return Response.ok(new RideHistoryResponse(rideItems)).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForException(e);
@@ -209,27 +177,8 @@ public class RideController {
             String email = authenticationService.extractEmailFromToken(token);
 
             TripHistoryResult result = getTripHistoryWithSummaryUseCase.execute(email);
-
-            List<TripHistoryResponse.TripItem> tripItems = result.getRides().stream()
-                    .map(ride -> new TripHistoryResponse.TripItem(
-                            ride.getId(),
-                            ride.getStartStationId(),
-                            ride.getEndStationId(),
-                            ride.getStartTime().toString(),
-                            ride.getEndTime().toString(),
-                            ride.getDurationMinutes(),
-                            ride.getDurationSeconds()
-                    ))
-                    .collect(Collectors.toList());
-
-            TripHistoryResponse.TripSummaryDto summaryDto = new TripHistoryResponse.TripSummaryDto(
-                    result.getSummary().getTotalTrips(),
-                    result.getSummary().getTotalDurationMinutes(),
-                    result.getSummary().getAverageDurationMinutes(),
-                    result.getSummary().getFavoriteStationId()
-            );
-
-            return Response.ok(new TripHistoryResponse(tripItems, summaryDto)).build();
+            TripHistoryResponse response = RideResponseMapper.toTripHistoryResponse(result);
+            return Response.ok(response).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForException(e);
             return ErrorResponseBuilder.buildErrorResponse(e, status);

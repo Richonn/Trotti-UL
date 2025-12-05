@@ -14,6 +14,8 @@ import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.*;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.InvoiceResponseMapper;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.UserResponseMapper;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import jakarta.ws.rs.*;
@@ -61,15 +63,10 @@ public class UserController {
                     request.getIdul(),
                     Role.USER);
 
-            ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User userResponseModel = new ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User();
-            userResponseModel.setName(userDTO.getName());
-            userResponseModel.setEmail(userDTO.getEmail());
-            userResponseModel.setDateOfBirth(userDTO.getDateOfBirth());
-            userResponseModel.setGender(userDTO.getGender());
-            userResponseModel.setIdul(userDTO.getIdul());
+            ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User userModel = UserResponseMapper.toModel(userDTO);
 
             return Response.status(Response.Status.CREATED)
-                    .entity(new RegisterResponse(userResponseModel))
+                    .entity(new RegisterResponse(userModel))
                     .build();
         } catch (DomainException e) {
             return ErrorResponseBuilder.buildErrorResponse(e);
@@ -103,23 +100,8 @@ public class UserController {
     public Response getAllUsers() {
         try {
             List<UserDTO> users = getAllUsersUseCase.execute();
-
-            List<ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User> userDtos = users.stream()
-                    .map(userDTO -> {
-                        ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User dto = new ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User();
-                        dto.setName(userDTO.getName());
-                        dto.setEmail(userDTO.getEmail());
-                        dto.setDateOfBirth(userDTO.getDateOfBirth());
-                        dto.setGender(userDTO.getGender());
-                        dto.setIdul(userDTO.getIdul());
-                        if (userDTO.isActivated()) {
-                            dto.activate();
-                        }
-                        return dto;
-                    })
-                    .toList();
-
-            return Response.ok(userDtos).build();
+            List<ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User> userModels = UserResponseMapper.toModelList(users);
+            return Response.ok(userModels).build();
         } catch (Exception e) {
             return ErrorResponseBuilder.buildInternalServerError("Can't get all users");
         }
@@ -165,12 +147,7 @@ public class UserController {
             String email = authenticationService.extractEmailFromToken(token);
 
             MonthlyInvoiceDto invoiceDto = payUserBalanceUseCase.execute(email);
-
-            InvoiceDto invoice = new InvoiceDto(
-                    invoiceDto.getAmount().getAmount(),
-                    true,
-                    invoiceDto.getStart(),
-                    invoiceDto.getEnd());
+            InvoiceDto invoice = InvoiceResponseMapper.toDto(invoiceDto);
 
             return Response.status(Response.Status.CREATED)
                     .entity(new PaymentResponse("Purchase successful", invoice))

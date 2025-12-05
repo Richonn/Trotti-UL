@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.mapper.PassResponseMapper;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -52,15 +53,7 @@ public class PassController {
                     request.getCvv()
             );
 
-            Session sessionEnum = Session.getInstance(result.getSessionCode());
-
-            InvoiceDto invoice = new InvoiceDto(
-                    sessionEnum.name(),
-                    result.getTotalPrice(),
-                    result.isMonthlyBilling(),
-                    result.getStartDate(),
-                    result.getEndDate()
-            );
+            InvoiceDto invoice = PassResponseMapper.toInvoiceDto(result);
 
             return Response.status(Response.Status.CREATED)
                     .entity(new PurchaseResponse("Purchase successful", invoice))
@@ -82,18 +75,7 @@ public class PassController {
             String email = authenticationService.extractEmailFromToken(token);
 
             List<PassDTO> passes = getUserPassesUseCase.execute(email);
-
-            List<ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto> passDtos = passes.stream()
-                    .map(passDTO -> new ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto(
-                            passDTO.getId(),
-                            passDTO.getSession(),
-                            passDTO.getExtraMinutesPerDay(),
-                            passDTO.isMonthlyBilling(),
-                            passDTO.getTotalPrice(),
-                            passDTO.isActive()
-                    ))
-                    .toList();
-
+            List<ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto> passDtos = PassResponseMapper.toDtoList(passes);
             return Response.ok(passDtos).build();
         } catch (DomainException e) {
             return ErrorResponseBuilder.buildErrorResponse(e);
