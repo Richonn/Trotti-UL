@@ -89,7 +89,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
     private boolean isPublicEndpoint(String path) {
         return path.equals("user/register") ||
-               path.equals("user/login");
+               path.equals("user/login") ||
+               path.equals("user/all");
     }
 
     private AuthUser validateBearerToken(String token) {

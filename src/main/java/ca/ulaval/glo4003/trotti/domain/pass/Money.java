@@ -95,6 +95,6 @@ public class Money {
 
     @Override
     public String toString() {
-        return amount.toString() + " " + currency.getCurrencyCode();
+        return amount.toString();
     }
 }
