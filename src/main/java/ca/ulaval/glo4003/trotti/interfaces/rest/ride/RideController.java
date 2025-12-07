@@ -22,10 +22,12 @@ import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideHistoryResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.ride.mapper.RideResponseMapper;
-import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
+import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 
@@ -52,12 +54,11 @@ public class RideController {
 
     @POST
     @Path("/request-code")
-    public Response requestRideCode(@HeaderParam("Authorization") String authHeader) {
+    public Response requestRideCode(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            RideCode rideCode = requestRideCodeUseCase.execute(email);
+            RideCode rideCode = requestRideCodeUseCase.execute(authUser.getEmail());
             ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode = RideResponseMapper.toRideCodeModel(rideCode);
             return Response.ok(new RideCodeResponse(dtoRideCode)).build();
         } catch (DomainException e) {
@@ -70,13 +71,12 @@ public class RideController {
 
     @POST
     @Path("/start")
-    public Response startRide(@HeaderParam("Authorization") String authHeader, StartRideRequest request) {
+    public Response startRide(@Context SecurityContext securityContext, StartRideRequest request) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
             RideStartResult result = startRideUseCase.execute(
-                    email,
+                    authUser.getEmail(),
                     request.getStation(),
                     Integer.parseInt(request.getSlot()),
                     request.getCode()
@@ -116,13 +116,12 @@ public class RideController {
 
     @POST
     @Path("/end")
-    public Response endRide(@HeaderParam("Authorization") String authHeader, EndRideRequest request) {
+    public Response endRide(@Context SecurityContext securityContext, EndRideRequest request) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
             RideEndResult result = endRideUseCase.execute(
-                    email,
+                    authUser.getEmail(),
                     request.getStation(),
                     Integer.parseInt(request.getSlot())
             );
@@ -153,12 +152,11 @@ public class RideController {
 
     @GET
     @Path("/history")
-    public Response getRideHistory(@HeaderParam("Authorization") String authHeader) {
+    public Response getRideHistory(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            List<Ride> rides = getRideHistoryUseCase.execute(email);
+            List<Ride> rides = getRideHistoryUseCase.execute(authUser.getEmail());
             List<RideHistoryResponse.RideHistoryItem> rideItems = RideResponseMapper.toRideHistoryItems(rides);
             return Response.ok(new RideHistoryResponse(rideItems)).build();
         } catch (DomainException e) {
@@ -171,12 +169,11 @@ public class RideController {
 
     @GET
     @Path("/trip-history")
-    public Response getTripHistory(@HeaderParam("Authorization") String authHeader) {
+    public Response getTripHistory(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            TripHistoryResult result = getTripHistoryWithSummaryUseCase.execute(email);
+            TripHistoryResult result = getTripHistoryWithSummaryUseCase.execute(authUser.getEmail());
             TripHistoryResponse response = RideResponseMapper.toTripHistoryResponse(result);
             return Response.ok(response).build();
         } catch (DomainException e) {

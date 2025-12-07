@@ -65,6 +65,9 @@ public class ApplicationContext {
     private final RideFeeCalculator rideFeeCalculator;
     private final DailyUsageRepository dailyUsageRepository;
 
+    private final ca.ulaval.glo4003.trotti.domain.user.UserFactory userFactory;
+    private final ca.ulaval.glo4003.trotti.domain.pass.PassFactory passFactory;
+
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUserUseCase loginUserUseCase;
     private final ActivateAccountUseCase activateAccountUseCase;
@@ -96,9 +99,9 @@ public class ApplicationContext {
         this.passRepository = new InMemoryPassRepository();
         this.scooterRepository = new InMemoryScooterRepository();
         this.stationRepository = new InMemoryStationRepository(scooterRepository);
-        this.userRepository = new InMemoryUserRepository(passRepository);
-        this.rideRepository = new InMemoryRideRepository();
         this.rideCodeRepository = new InMemoryRideCodeRepository();
+        this.userRepository = new InMemoryUserRepository(passRepository, rideCodeRepository);
+        this.rideRepository = new InMemoryRideRepository();
 
         this.emailService = new MailtrapEmailAdapter();
         this.tokenGenerator = new JwtTokenService();
@@ -110,21 +113,24 @@ public class ApplicationContext {
         this.rideFeeCalculator = new RideFeeCalculator();
         this.dailyUsageRepository = new InMemoryDailyUsageRepository();
 
-        this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService, clock);
+        this.userFactory = new ca.ulaval.glo4003.trotti.domain.user.UserFactory();
+        this.passFactory = new ca.ulaval.glo4003.trotti.domain.pass.PassFactory();
+
+        this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService, clock, userFactory);
         this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
         this.activateAccountUseCase = new ActivateAccountUseCase(userRepository, emailService);
         this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository, clock);
         this.getUserBalanceUseCase = new GetUserBalanceUseCase(userRepository);
         this.payUserBalanceUseCase = new PayUserBalanceUseCase(userRepository, this.clock);
-        this.purchasePassUseCase = new PurchasePassUseCase(userRepository, pricingPolicy, clock);
+        this.purchasePassUseCase = new PurchasePassUseCase(userRepository, pricingPolicy, clock, passFactory);
         this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository);
         this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase(stationRepository);
         this.endStationMaintenanceUseCase = new EndStationMaintenanceUseCase(stationRepository);
         this.requestStationMaintenanceUseCase = new RequestStationMaintenanceUseCase(userRepository, stationRepository, emailService);
         this.startTransferScooterUseCase = new StartTransferScooterUseCase(stationRepository, scooterRepository);
         this.endTransferScooterUseCase = new EndTransferScooterUseCase(stationRepository, scooterRepository);
-        this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, passRepository, rideCodeGenerator, rideCodeRepository, emailService, clock);
-        this.startRideUseCase = new StartRideUseCase(userRepository, stationRepository, scooterRepository, rideRepository, rideCodeRepository, clock);
+        this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, rideCodeGenerator, emailService, clock);
+        this.startRideUseCase = new StartRideUseCase(userRepository, stationRepository, scooterRepository, rideRepository, clock);
         this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
         this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
         this.sendPaymentReminderUseCase = new SendPaymentReminderUseCase(userRepository, emailService);
@@ -142,7 +148,7 @@ public class ApplicationContext {
             scooterRepo.initializeScootersForStation(station.getId(), station.getCapacity());
         }
 
-        User gerard = User.register(
+        User gerard = userFactory.createForRegistration(
             new Email("gerard@trotti.ul"),
             new Password("G3R4rdIsTh3B3st!"),
             "Gerard Jugnot",

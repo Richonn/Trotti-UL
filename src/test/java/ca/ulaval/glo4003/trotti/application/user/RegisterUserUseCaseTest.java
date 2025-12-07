@@ -31,7 +31,8 @@ class RegisterUserUseCaseTest {
         emailService = mock(EmailService.class);
         clock = mock(Clock.class);
         when(clock.today()).thenReturn(LocalDate.of(2025, 11, 26));
-        registerUserUseCase = new RegisterUserUseCase(userRepository, emailService, clock);
+        ca.ulaval.glo4003.trotti.domain.user.UserFactory userFactory = new ca.ulaval.glo4003.trotti.domain.user.UserFactory();
+        registerUserUseCase = new RegisterUserUseCase(userRepository, emailService, clock, userFactory);
     }
 
     @Test

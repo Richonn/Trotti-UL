@@ -11,11 +11,13 @@ public class RegisterUserUseCase {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final Clock clock;
+    private final UserFactory userFactory;
 
-    public RegisterUserUseCase(UserRepository userRepository, EmailService emailService, Clock clock) {
+    public RegisterUserUseCase(UserRepository userRepository, EmailService emailService, Clock clock, UserFactory userFactory) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.clock = clock;
+        this.userFactory = userFactory;
     }
 
     public UserDTO execute(String email, String password, String name, String dateOfBirth, String gender, String idul, Role role) {
@@ -25,7 +27,7 @@ public class RegisterUserUseCase {
             throw new UserAlreadyExistsException();
         }
 
-        User user = User.register(userEmail, new Password(password), name, dateOfBirth, gender, idul, role);
+        User user = userFactory.createForRegistration(userEmail, new Password(password), name, dateOfBirth, gender, idul, role);
         userRepository.save(user);
 
         return UserMapper.toDTO(user, clock);

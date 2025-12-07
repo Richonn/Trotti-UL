@@ -18,30 +18,30 @@ class PricingPolicyTest {
 
     @Test
     void givenNoExtraMinutes_whenCalculatingPrice_thenReturnsBasePrice() {
-        BigDecimal price = pricingPolicy.calculatePrice(Session.A2025, 0);
+        Money price = pricingPolicy.calculatePrice(Session.A2025, 0);
 
-        assertEquals(BigDecimal.valueOf(45), price);
+        assertEquals(Money.cad(45), price);
     }
 
     @Test
     void given10ExtraMinutes_whenCalculatingPrice_thenAdds8DollarsToBase() {
-        BigDecimal price = pricingPolicy.calculatePrice(Session.A2025, 10);
+        Money price = pricingPolicy.calculatePrice(Session.A2025, 10);
 
-        assertEquals(BigDecimal.valueOf(53), price);
+        assertEquals(Money.cad(53), price);
     }
 
     @Test
     void given20ExtraMinutes_whenCalculatingPrice_thenAdds16DollarsToBase() {
-        BigDecimal price = pricingPolicy.calculatePrice(Session.H2026, 20);
+        Money price = pricingPolicy.calculatePrice(Session.H2026, 20);
 
-        assertEquals(BigDecimal.valueOf(61), price);
+        assertEquals(Money.cad(61), price);
     }
 
     @Test
     void given50ExtraMinutes_whenCalculatingPrice_thenAdds40DollarsToBase() {
-        BigDecimal price = pricingPolicy.calculatePrice(Session.E2026, 50);
+        Money price = pricingPolicy.calculatePrice(Session.E2026, 50);
 
-        assertEquals(BigDecimal.valueOf(85), price);
+        assertEquals(Money.cad(85), price);
     }
 
     @Test
@@ -66,9 +66,9 @@ class PricingPolicyTest {
 
     @Test
     void givenDifferentSessions_whenCalculatingPrice_thenReturnsConsistentPricing() {
-        BigDecimal priceA2025 = pricingPolicy.calculatePrice(Session.A2025, 20);
-        BigDecimal priceH2026 = pricingPolicy.calculatePrice(Session.H2026, 20);
-        BigDecimal priceE2026 = pricingPolicy.calculatePrice(Session.E2026, 20);
+        Money priceA2025 = pricingPolicy.calculatePrice(Session.A2025, 20);
+        Money priceH2026 = pricingPolicy.calculatePrice(Session.H2026, 20);
+        Money priceE2026 = pricingPolicy.calculatePrice(Session.E2026, 20);
 
         assertEquals(priceA2025, priceH2026);
         assertEquals(priceA2025, priceE2026);

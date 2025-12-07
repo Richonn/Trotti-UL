@@ -8,15 +8,17 @@ import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
+import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.mapper.PassResponseMapper;
-import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 
@@ -37,13 +39,12 @@ public class PassController {
 
     @POST
     @Path("/purchase")
-    public Response purchase(@HeaderParam("Authorization") String authHeader, PurchaseRequest request) {
+    public Response purchase(@Context SecurityContext securityContext, PurchaseRequest request) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
             PassPurchaseResult result = purchasePassUseCase.execute(
-                    email,
+                    authUser.getEmail(),
                     request.getSession().name(),
                     request.getExtraMinutesPerDay(),
                     request.isMonthlyBilling(),
@@ -69,12 +70,11 @@ public class PassController {
 
     @GET
     @Path("/my-purchases")
-    public Response getMyPurchases(@HeaderParam("Authorization") String authHeader) {
+    public Response getMyPurchases(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            List<PassDTO> passes = getUserPassesUseCase.execute(email);
+            List<PassDTO> passes = getUserPassesUseCase.execute(authUser.getEmail());
             List<ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto> passDtos = PassResponseMapper.toDtoList(passes);
             return Response.ok(passDtos).build();
         } catch (DomainException e) {

@@ -14,13 +14,15 @@ import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.*;
+import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.InvoiceResponseMapper;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.UserResponseMapper;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
-import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -109,11 +111,10 @@ public class UserController {
 
     @POST
     @Path("/activate")
-    public Response activateAccount(@HeaderParam("Authorization") String authHeader) {
+    public Response activateAccount(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-            activateAccountUseCase.execute(email);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+            activateAccountUseCase.execute(authUser.getEmail());
             return Response.ok(new AccountActivationResponse("Account activated")).build();
         } catch (DomainException e) {
             return ErrorResponseBuilder.buildErrorResponse(e);
@@ -124,13 +125,10 @@ public class UserController {
 
     @GET
     @Path("/balance")
-    public Response getUserBalance(@HeaderParam("Authorization") String authHeader) {
+    public Response getUserBalance(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-
-            BigDecimal amount = getUserBalanceUseCase.execute(email);
-
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+            BigDecimal amount = getUserBalanceUseCase.execute(authUser.getEmail());
             return Response.ok(new GetUserBalanceResponse(amount)).build();
         } catch (DomainException e) {
             return ErrorResponseBuilder.buildErrorResponse(e);
@@ -141,12 +139,10 @@ public class UserController {
 
     @POST
     @Path("/balance/pay")
-    public Response purchase(@HeaderParam("Authorization") String authHeader) {
+    public Response purchase(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-
-            MonthlyInvoiceDto invoiceDto = payUserBalanceUseCase.execute(email);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+            MonthlyInvoiceDto invoiceDto = payUserBalanceUseCase.execute(authUser.getEmail());
             InvoiceDto invoice = InvoiceResponseMapper.toDto(invoiceDto);
 
             return Response.status(Response.Status.CREATED)
@@ -163,13 +159,10 @@ public class UserController {
 
     @PUT
     @Path("/settings/auto-pay")
-    public Response updateAutoPayPreference(@HeaderParam("Authorization") String authHeader, AutoPayRequest request) {
+    public Response updateAutoPayPreference(@Context SecurityContext securityContext, AutoPayRequest request) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-
-            updateAutoPayPreferenceUseCase.execute(email, request.isEnabled());
-
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+            updateAutoPayPreferenceUseCase.execute(authUser.getEmail(), request.isEnabled());
             return Response.ok().build();
         } catch (DomainException e) {
             return ErrorResponseBuilder.buildErrorResponse(e);

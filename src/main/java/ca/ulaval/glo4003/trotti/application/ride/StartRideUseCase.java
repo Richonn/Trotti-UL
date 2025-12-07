@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
-import ca.ulaval.glo4003.trotti.domain.ride.*;
+import ca.ulaval.glo4003.trotti.domain.ride.Ride;
+import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.station.Station;
@@ -17,17 +18,15 @@ public class StartRideUseCase {
     private final StationRepository stationRepository;
     private final ScooterRepository scooterRepository;
     private final RideRepository rideRepository;
-    private final RideCodeRepository rideCodeRepository;
     private final Clock clock;
 
     public StartRideUseCase(UserRepository userRepository, StationRepository stationRepository,
                              ScooterRepository scooterRepository, RideRepository rideRepository,
-                             RideCodeRepository rideCodeRepository, Clock clock) {
+                             Clock clock) {
         this.userRepository = userRepository;
         this.stationRepository = stationRepository;
         this.scooterRepository = scooterRepository;
         this.rideRepository = rideRepository;
-        this.rideCodeRepository = rideCodeRepository;
         this.clock = clock;
     }
 
@@ -39,14 +38,9 @@ public class StartRideUseCase {
         Station station = stationRepository.findById(stationName)
                 .orElseThrow(StationNotFoundException::new);
 
-        Ride ride = user.startRide(
-                clock,
-                rideCodeRepository,
-                inputCode,
-                station,
-                slotNumber
-        );
+        Ride ride = user.startRide(clock, inputCode, station, slotNumber);
 
+        userRepository.save(user);
         stationRepository.save(station);
         rideRepository.save(ride);
 

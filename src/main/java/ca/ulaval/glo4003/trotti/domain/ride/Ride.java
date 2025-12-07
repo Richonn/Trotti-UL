@@ -94,17 +94,4 @@ public class Ride {
     public RideStatus getStatus() {
         return status;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Ride ride = (Ride) o;
-        return Objects.equals(id, ride.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

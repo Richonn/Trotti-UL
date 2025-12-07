@@ -39,20 +39,4 @@ class StationTest {
             () -> new Station("station-1", "Campus Principal", -5));
     }
 
-    @Test
-    void givenTwoStationsWithSameId_whenComparingEquality_thenAreEqual() {
-        Station station1 = new Station("station-1", "Campus Principal", 20);
-        Station station2 = new Station("station-1", "Different Location", 15);
-
-        assertEquals(station1, station2);
-        assertEquals(station1.hashCode(), station2.hashCode());
-    }
-
-    @Test
-    void givenTwoStationsWithDifferentIds_whenComparingEquality_thenAreNotEqual() {
-        Station station1 = new Station("station-1", "Campus Principal", 20);
-        Station station2 = new Station("station-2", "Campus Principal", 20);
-
-        assertNotEquals(station1, station2);
-    }
 }

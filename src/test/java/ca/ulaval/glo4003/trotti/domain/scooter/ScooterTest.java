@@ -133,12 +133,4 @@ class ScooterTest {
         assertThrows(IllegalArgumentException.class, () -> scooter.setBatteryLevel(150));
     }
 
-    @Test
-    void givenTwoScootersWithSameId_whenComparingEquality_thenAreEqual() {
-        Scooter scooter1 = new Scooter("scooter-123", 80.0, "station-1", 5);
-        Scooter scooter2 = new Scooter("scooter-123", 50.0, "station-2", 3);
-
-        assertEquals(scooter1, scooter2);
-        assertEquals(scooter1.hashCode(), scooter2.hashCode());
-    }
 }

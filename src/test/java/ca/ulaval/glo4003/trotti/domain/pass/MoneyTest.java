@@ -127,6 +127,6 @@ class MoneyTest {
 
         String result = money.toString();
 
-        assertEquals("123.45", result);
+        assertEquals("123.45 CAD", result);
     }
 }

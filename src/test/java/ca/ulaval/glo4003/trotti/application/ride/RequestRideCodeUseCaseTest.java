@@ -35,24 +35,19 @@ class RequestRideCodeUseCaseTest {
 
     private RequestRideCodeUseCase requestRideCodeUseCase;
     private UserRepository userRepository;
-    private PassRepository passRepository;
     private RideCodeGenerator rideCodeGenerator;
-    private RideCodeRepository rideCodeRepository;
     private EmailService emailService;
     private Clock clock;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        passRepository = mock(PassRepository.class);
         rideCodeGenerator = mock(RideCodeGenerator.class);
-        rideCodeRepository = mock(RideCodeRepository.class);
         emailService = mock(EmailService.class);
         clock = new FixedClock(LocalDate.of(2025, 11, 16));
 
         requestRideCodeUseCase = new RequestRideCodeUseCase(
-            userRepository, passRepository, rideCodeGenerator,
-            rideCodeRepository, emailService, clock
+            userRepository, rideCodeGenerator, emailService, clock
         );
     }
 
@@ -73,15 +68,15 @@ class RequestRideCodeUseCaseTest {
         RideCode expectedCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
         Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        user.addPass(activePass);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
         when(rideCodeGenerator.generate()).thenReturn(expectedCode);
 
         RideCode result = requestRideCodeUseCase.execute(email);
 
         assertEquals(expectedCode, result);
 
-        verify(rideCodeRepository).save(email, expectedCode);
+        verify(userRepository).save(user);
         verify(emailService, times(2)).send(any());
     }
 
@@ -96,7 +91,7 @@ class RequestRideCodeUseCaseTest {
         );
 
         verify(rideCodeGenerator, never()).generate();
-        verify(rideCodeRepository, never()).save(anyString(), any());
+        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -113,7 +108,6 @@ class RequestRideCodeUseCaseTest {
         );
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
         assertThrows(AccountNotActivatedException.class, () ->
             requestRideCodeUseCase.execute(email)
@@ -137,14 +131,13 @@ class RequestRideCodeUseCaseTest {
         user.activate(emailService);
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
         assertThrows(NoActivePassException.class, () ->
             requestRideCodeUseCase.execute(email)
         );
 
         verify(rideCodeGenerator, never()).generate();
-        verify(rideCodeRepository, never()).save(anyString(), any());
+        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -152,19 +145,40 @@ class RequestRideCodeUseCaseTest {
         String email = "test@example.com";
         RideCode expectedCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
-        when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.of(expectedCode));
+        User user = User.register(
+            new Email(email),
+            new Password("ValidPass123!"),
+            "John Doe",
+            "2000-01-15",
+            "H",
+            "johdo123",
+            Role.USER
+        );
+        user.setCurrentRideCode(expectedCode);
+
+        when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
         RideCode result = requestRideCodeUseCase.getUserCode(email);
 
         assertEquals(expectedCode, result);
-        verify(rideCodeRepository).findByUserEmail(email);
+        verify(userRepository).findByEmail(any(Email.class));
     }
 
     @Test
     void givenUserEmailWithNoCode_whenGettingUserCode_thenReturnsNull() {
         String email = "test@example.com";
 
-        when(rideCodeRepository.findByUserEmail(email)).thenReturn(Optional.empty());
+        User user = User.register(
+            new Email(email),
+            new Password("ValidPass123!"),
+            "John Doe",
+            "2000-01-15",
+            "H",
+            "johdo123",
+            Role.USER
+        );
+
+        when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
 
         RideCode result = requestRideCodeUseCase.getUserCode(email);
 

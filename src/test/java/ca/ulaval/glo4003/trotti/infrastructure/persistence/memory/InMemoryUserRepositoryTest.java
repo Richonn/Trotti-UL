@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.trotti.infrastructure.persistence.memory;
 
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
+import ca.ulaval.glo4003.trotti.domain.ride.RideCodeRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
 import ca.ulaval.glo4003.trotti.domain.user.Password;
@@ -19,12 +20,14 @@ class InMemoryUserRepositoryTest {
 
     private InMemoryUserRepository repository;
     private PassRepository passRepository;
+    private RideCodeRepository rideCodeRepository;
     private EmailService emailService;
 
     @BeforeEach
     void setUp() {
         passRepository = new InMemoryPassRepository();
-        repository = new InMemoryUserRepository(passRepository);
+        rideCodeRepository = new InMemoryRideCodeRepository();
+        repository = new InMemoryUserRepository(passRepository, rideCodeRepository);
         emailService = mock(EmailService.class);
     }
 
