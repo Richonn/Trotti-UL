@@ -28,8 +28,6 @@ public class PayUserBalanceUseCase {
     public MonthlyInvoiceDto execute(String email) {
         User user = userRepository.findByEmail(new Email(email)).orElseThrow(UserNotFoundException::new);
 
-        System.out.println(user.getMonthlyBalance().toString());
-
         if (user.getMonthlyBalance().getAmount().getAmount().equals(new BigDecimal(0)))
             throw new BalanceEmptyException();
 

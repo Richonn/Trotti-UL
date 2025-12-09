@@ -39,7 +39,8 @@ import ca.ulaval.glo4003.trotti.domain.user.Password;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
-import ca.ulaval.glo4003.trotti.infrastructure.email.MailtrapEmailAdapter;
+import ca.ulaval.glo4003.trotti.infrastructure.email.EmailConfig;
+import ca.ulaval.glo4003.trotti.infrastructure.email.MailgunEmailAdapter;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.*;
 import ca.ulaval.glo4003.trotti.infrastructure.security.JwtTokenService;
 import ca.ulaval.glo4003.trotti.infrastructure.time.SystemClock;
@@ -96,7 +97,8 @@ public class ApplicationContext {
     private final AutomaticPaymentUseCase automaticPaymentUseCase;
 
     private ApplicationContext() {
-        this.emailService = new MailtrapEmailAdapter();
+        EmailConfig emailConfig = EmailConfig.fromEnvironment();
+        this.emailService = new MailgunEmailAdapter(emailConfig);
         this.tokenGenerator = new JwtTokenService();
         this.clock = new SystemClock();
         this.authenticationService = new AuthenticationService(tokenGenerator);
