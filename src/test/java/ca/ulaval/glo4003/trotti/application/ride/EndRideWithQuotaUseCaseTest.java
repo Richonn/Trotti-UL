@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
 import ca.ulaval.glo4003.trotti.domain.pass.*;
 import ca.ulaval.glo4003.trotti.domain.ride.*;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
