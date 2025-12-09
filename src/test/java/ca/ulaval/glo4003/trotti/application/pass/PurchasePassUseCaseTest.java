@@ -32,7 +32,8 @@ class PurchasePassUseCaseTest {
         userRepository = mock(UserRepository.class);
         pricingPolicy = new PricingPolicy();
         clock = new FixedClock(LocalDate.of(2024, 1, 15));
-        purchasePassUseCase = new PurchasePassUseCase(userRepository, pricingPolicy, clock);
+        ca.ulaval.glo4003.trotti.domain.pass.PassFactory passFactory = new ca.ulaval.glo4003.trotti.domain.pass.PassFactory();
+        purchasePassUseCase = new PurchasePassUseCase(userRepository, pricingPolicy, clock, passFactory);
     }
 
     @Test
@@ -65,7 +66,7 @@ class PurchasePassUseCaseTest {
 
         assertNotNull(result);
         assertEquals(sessionCode, result.getSessionCode());
-        assertEquals(BigDecimal.valueOf(61), result.getTotalPrice());
+        assertEquals(0, BigDecimal.valueOf(61).compareTo(result.getTotalPrice()));
         assertEquals(monthlyBilling, result.isMonthlyBilling());
 
         verify(userRepository).save(user);
@@ -175,6 +176,6 @@ class PurchasePassUseCaseTest {
             "4532015112830366", "John Doe", "12/25", "123"
         );
 
-        assertEquals(BigDecimal.valueOf(45), result.getTotalPrice());
+        assertEquals(0, BigDecimal.valueOf(45).compareTo(result.getTotalPrice()));
     }
 }

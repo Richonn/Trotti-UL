@@ -13,11 +13,11 @@ public class Pass {
     private final Session session;
     private final int extraMinutesPerDay;
     private final boolean monthlyBilling;
-    private final BigDecimal totalPrice;
+    private final Money totalPrice;
     private boolean active;
 
-    private Pass(String id, String userId, Session session, int extraMinutesPerDay,
-                 boolean monthlyBilling, BigDecimal totalPrice) {
+    Pass(String id, String userId, Session session, int extraMinutesPerDay,
+         boolean monthlyBilling, Money totalPrice) {
         this.id = Objects.requireNonNull(id, "Pass ID cannot be null");
         this.userId = Objects.requireNonNull(userId, "User ID cannot be null");
         this.session = Objects.requireNonNull(session, "Session cannot be null");
@@ -27,10 +27,15 @@ public class Pass {
         this.active = true;
     }
 
+    static Pass create(String id, String userId, Session session, int extraMinutesPerDay,
+                      boolean monthlyBilling, Money totalPrice) {
+        return new Pass(id, userId, session, extraMinutesPerDay, monthlyBilling, totalPrice);
+    }
+
     public static Pass purchase(String userId, Session session, int extraMinutesPerDay,
-                                 boolean monthlyBilling, PricingPolicy pricingPolicy) {
-        BigDecimal price = pricingPolicy.calculatePrice(session, extraMinutesPerDay);
-        return new Pass(UUID.randomUUID().toString(), userId, session, extraMinutesPerDay, monthlyBilling, price);
+                                boolean monthlyBilling, PricingStrategy pricingStrategy) {
+        PassFactory factory = new PassFactory();
+        return factory.createForPurchase(userId, session, extraMinutesPerDay, monthlyBilling, pricingStrategy);
     }
 
     public boolean isActiveOn(LocalDate date) {
@@ -61,24 +66,11 @@ public class Pass {
         return monthlyBilling;
     }
 
-    public BigDecimal getTotalPrice() {
+    public Money getTotalPrice() {
         return totalPrice;
     }
 
     public boolean isActive() {
         return active;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pass pass = (Pass) o;
-        return Objects.equals(id, pass.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

@@ -107,17 +107,4 @@ public class Scooter {
     public Optional<String> getRentedByUserId() {
         return Optional.ofNullable(rentedByUserId);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Scooter scooter = (Scooter) o;
-        return Objects.equals(id, scooter.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

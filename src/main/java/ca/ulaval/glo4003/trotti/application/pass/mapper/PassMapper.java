@@ -11,7 +11,7 @@ public class PassMapper {
             pass.getSession().name(),
             pass.getExtraMinutesPerDay(),
             pass.isMonthlyBilling(),
-            pass.getTotalPrice(),
+            pass.getTotalPrice().getAmount(),
             pass.isActive()
         );
     }

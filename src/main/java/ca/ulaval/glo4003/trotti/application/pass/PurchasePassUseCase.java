@@ -10,13 +10,15 @@ import ca.ulaval.glo4003.trotti.domain.pass.Session;
 
 public class PurchasePassUseCase {
     private final UserRepository userRepository;
-    private final PricingPolicy pricingPolicy;
+    private final PricingStrategy pricingStrategy;
     private final Clock clock;
+    private final PassFactory passFactory;
 
-    public PurchasePassUseCase(UserRepository userRepository, PricingPolicy pricingPolicy, Clock clock) {
+    public PurchasePassUseCase(UserRepository userRepository, PricingStrategy pricingStrategy, Clock clock, PassFactory passFactory) {
         this.userRepository = userRepository;
-        this.pricingPolicy = pricingPolicy;
+        this.pricingStrategy = pricingStrategy;
         this.clock = clock;
+        this.passFactory = passFactory;
     }
 
     public PassPurchaseResult execute(String userEmail, String sessionCode, int extraMinutesPerDay,
@@ -43,13 +45,13 @@ public class PurchasePassUseCase {
 
         Session session = Session.getInstance(sessionCode);
 
-        Pass pass = user.purchasePass(session, extraMinutesPerDay, monthlyBilling, pricingPolicy);
+        Pass pass = user.purchasePass(session, extraMinutesPerDay, monthlyBilling, pricingStrategy, passFactory);
         userRepository.save(user);
 
         return new PassPurchaseResult(
                 pass.getId(),
                 session.name(),
-                pass.getTotalPrice(),
+                pass.getTotalPrice().getAmount(),
                 monthlyBilling,
                 session.getStartDate(),
                 session.getEndDate()

@@ -21,13 +21,15 @@ import ca.ulaval.glo4003.trotti.interfaces.rest.ride.dto.TripHistoryResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideHistoryResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
+import ca.ulaval.glo4003.trotti.interfaces.rest.ride.mapper.RideResponseMapper;
+import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/ride")
 @Produces(MediaType.APPLICATION_JSON)
@@ -52,15 +54,12 @@ public class RideController {
 
     @POST
     @Path("/request-code")
-    public Response requestRideCode(@HeaderParam("Authorization") String authHeader) {
+    public Response requestRideCode(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            RideCode rideCode = requestRideCodeUseCase.execute(email);
-
-            ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode =
-                    new ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode(rideCode.getCode(), rideCode.getExpirationTime());
+            RideCode rideCode = requestRideCodeUseCase.execute(authUser.getEmail());
+            ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode = RideResponseMapper.toRideCodeModel(rideCode);
             return Response.ok(new RideCodeResponse(dtoRideCode)).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForException(e);
@@ -72,21 +71,19 @@ public class RideController {
 
     @POST
     @Path("/start")
-    public Response startRide(@HeaderParam("Authorization") String authHeader, StartRideRequest request) {
+    public Response startRide(@Context SecurityContext securityContext, StartRideRequest request) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
             RideStartResult result = startRideUseCase.execute(
-                    email,
+                    authUser.getEmail(),
                     request.getStation(),
                     Integer.parseInt(request.getSlot()),
                     request.getCode()
             );
 
-            String message = "Ride started successfully with scooter having battery level: " +
-                           result.getBatteryLevel() + "%";
-            return Response.ok(new StartRideResponse(message)).build();
+            StartRideResponse response = RideResponseMapper.toStartRideResponse(result);
+            return Response.ok(response).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForStartRideException(e);
             return ErrorResponseBuilder.buildErrorResponse(e, status);
@@ -119,36 +116,18 @@ public class RideController {
 
     @POST
     @Path("/end")
-    public Response endRide(@HeaderParam("Authorization") String authHeader, EndRideRequest request) {
+    public Response endRide(@Context SecurityContext securityContext, EndRideRequest request) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
             RideEndResult result = endRideUseCase.execute(
-                    email,
+                    authUser.getEmail(),
                     request.getStation(),
                     Integer.parseInt(request.getSlot())
             );
 
-            String billingMessage = result.isChargedImmediately()
-                    ? "Additional fees of $" + result.getAdditionalFeesAmount() + " have been charged to your card."
-                    : "Additional fees of $" + result.getAdditionalFeesAmount() + " added to your monthly balance.";
-
-            String message = String.format(
-                    "Ride ended successfully. Duration: %d minutes %d seconds. %s",
-                    result.getDurationInMinutes(),
-                    result.getDurationInSeconds(),
-                    result.getAdditionalFeesAmount().compareTo(java.math.BigDecimal.ZERO) > 0 ? billingMessage : "No additional fees."
-            );
-
-            return Response.ok(new EndRideResponse(
-                    result.getDurationInMinutes(),
-                    result.getDurationInSeconds(),
-                    result.getAdditionalFeesAmount(),
-                    result.isChargedImmediately(),
-                    result.getMonthlyBalanceAfter().getAmount(),
-                    message
-            )).build();
+            EndRideResponse response = RideResponseMapper.toEndRideResponse(result);
+            return Response.ok(response).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForEndRideException(e);
             return ErrorResponseBuilder.buildErrorResponse(e, status);
@@ -173,25 +152,12 @@ public class RideController {
 
     @GET
     @Path("/history")
-    public Response getRideHistory(@HeaderParam("Authorization") String authHeader) {
+    public Response getRideHistory(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            List<Ride> rides = getRideHistoryUseCase.execute(email);
-
-            List<RideHistoryResponse.RideHistoryItem> rideItems = rides.stream()
-                    .map(ride -> new RideHistoryResponse.RideHistoryItem(
-                            ride.getId(),
-                            ride.getStartStationId(),
-                            ride.getEndStationId(),
-                            ride.getStartTime().toString(),
-                            ride.getEndTime().toString(),
-                            ride.getDurationMinutes(),
-                            ride.getDurationSeconds()
-                    ))
-                    .collect(Collectors.toList());
-
+            List<Ride> rides = getRideHistoryUseCase.execute(authUser.getEmail());
+            List<RideHistoryResponse.RideHistoryItem> rideItems = RideResponseMapper.toRideHistoryItems(rides);
             return Response.ok(new RideHistoryResponse(rideItems)).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForException(e);
@@ -203,33 +169,13 @@ public class RideController {
 
     @GET
     @Path("/trip-history")
-    public Response getTripHistory(@HeaderParam("Authorization") String authHeader) {
+    public Response getTripHistory(@Context SecurityContext securityContext) {
         try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            TripHistoryResult result = getTripHistoryWithSummaryUseCase.execute(email);
-
-            List<TripHistoryResponse.TripItem> tripItems = result.getRides().stream()
-                    .map(ride -> new TripHistoryResponse.TripItem(
-                            ride.getId(),
-                            ride.getStartStationId(),
-                            ride.getEndStationId(),
-                            ride.getStartTime().toString(),
-                            ride.getEndTime().toString(),
-                            ride.getDurationMinutes(),
-                            ride.getDurationSeconds()
-                    ))
-                    .collect(Collectors.toList());
-
-            TripHistoryResponse.TripSummaryDto summaryDto = new TripHistoryResponse.TripSummaryDto(
-                    result.getSummary().getTotalTrips(),
-                    result.getSummary().getTotalDurationMinutes(),
-                    result.getSummary().getAverageDurationMinutes(),
-                    result.getSummary().getFavoriteStationId()
-            );
-
-            return Response.ok(new TripHistoryResponse(tripItems, summaryDto)).build();
+            TripHistoryResult result = getTripHistoryWithSummaryUseCase.execute(authUser.getEmail());
+            TripHistoryResponse response = RideResponseMapper.toTripHistoryResponse(result);
+            return Response.ok(response).build();
         } catch (DomainException e) {
             Response.Status status = determineStatusForException(e);
             return ErrorResponseBuilder.buildErrorResponse(e, status);

@@ -28,7 +28,7 @@ class PassTest {
         assertEquals(Session.A2025, pass.getSession());
         assertEquals(0, pass.getExtraMinutesPerDay());
         assertFalse(pass.isMonthlyBilling());
-        assertEquals(BigDecimal.valueOf(45), pass.getTotalPrice());
+        assertEquals(Money.cad(45), pass.getTotalPrice());
         assertTrue(pass.isActive());
     }
 
@@ -38,7 +38,7 @@ class PassTest {
 
         assertEquals(20, pass.getExtraMinutesPerDay());
         assertTrue(pass.isMonthlyBilling());
-        assertEquals(BigDecimal.valueOf(61), pass.getTotalPrice());
+        assertEquals(Money.cad(61), pass.getTotalPrice());
     }
 
     @Test
