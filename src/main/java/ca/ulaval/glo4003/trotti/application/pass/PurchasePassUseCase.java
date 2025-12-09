@@ -46,6 +46,11 @@ public class PurchasePassUseCase {
         Session session = Session.getInstance(sessionCode);
 
         Pass pass = user.purchasePass(session, extraMinutesPerDay, monthlyBilling, pricingStrategy, passFactory);
+
+        if (monthlyBilling) {
+            user.addToMonthlyBalance(pass.getTotalPrice(), clock.today());
+        }
+
         userRepository.save(user);
 
         return new PassPurchaseResult(
