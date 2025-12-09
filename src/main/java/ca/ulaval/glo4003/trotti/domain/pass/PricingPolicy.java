@@ -5,7 +5,6 @@ import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import java.math.BigDecimal;
 
 public class PricingPolicy implements PricingStrategy {
-    private static final int MONTHS_PER_SESSION = 4;
     private static final Money DEFAULT_BASE_PRICE = Money.cad(45);
     private static final Money DEFAULT_EXTRA_PRICE_PER_BLOCK = Money.cad(2);
 
@@ -31,10 +30,11 @@ public class PricingPolicy implements PricingStrategy {
         }
 
         int extraBlocks = extraMinutesPerDay / 10;
+        int sessionMonths = session.getDurationInMonths();
 
         Money extraPrice = extraPricePerBlock
                 .multiply(extraBlocks)
-                .multiply(BigDecimal.valueOf(MONTHS_PER_SESSION));
+                .multiply(BigDecimal.valueOf(sessionMonths));
 
         return basePrice.add(extraPrice);
     }

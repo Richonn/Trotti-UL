@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.trotti.domain.pass;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 
 public enum Session {
     A2025("Automne 2025", LocalDate.of(2025, Month.SEPTEMBER, 1), LocalDate.of(2025, Month.DECEMBER, 31)),
@@ -28,6 +29,10 @@ public enum Session {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public int getDurationInMonths() {
+        return (int) ChronoUnit.MONTHS.between(startDate, endDate.plusDays(1));
     }
 
     public boolean contains(LocalDate date) {
