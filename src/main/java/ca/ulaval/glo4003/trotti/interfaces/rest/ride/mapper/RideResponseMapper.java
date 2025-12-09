@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.ride.mapper;
 
-import ca.ulaval.glo4003.trotti.application.ride.RideEndResult;
-import ca.ulaval.glo4003.trotti.application.ride.RideStartResult;
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.TripHistoryResult;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
