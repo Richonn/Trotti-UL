@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.trotti.application.ride;
+package ca.ulaval.glo4003.trotti.application.ride.dto;
 
 public class RideStartResult {
     private final String rideId;

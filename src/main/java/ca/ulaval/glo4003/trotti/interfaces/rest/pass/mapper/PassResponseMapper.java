@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.pass.mapper;
 
-import ca.ulaval.glo4003.trotti.application.pass.PassPurchaseResult;
+import ca.ulaval.glo4003.trotti.application.pass.dto.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.pass.dto.PassDTO;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;

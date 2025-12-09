@@ -96,47 +96,57 @@ public class ApplicationContext {
     private final AutomaticPaymentUseCase automaticPaymentUseCase;
 
     private ApplicationContext() {
-        this.passRepository = new InMemoryPassRepository();
-        this.scooterRepository = new InMemoryScooterRepository();
-        this.stationRepository = new InMemoryStationRepository(scooterRepository);
-        this.rideCodeRepository = new InMemoryRideCodeRepository();
-        this.userRepository = new InMemoryUserRepository(passRepository, rideCodeRepository);
-        this.rideRepository = new InMemoryRideRepository();
-
         this.emailService = new MailtrapEmailAdapter();
         this.tokenGenerator = new JwtTokenService();
         this.clock = new SystemClock();
         this.authenticationService = new AuthenticationService(tokenGenerator);
 
+        this.passRepository = new InMemoryPassRepository();
+        this.rideCodeRepository = new InMemoryRideCodeRepository();
+
+        ScooterContext scooterContext = new ScooterContext();
+        this.scooterRepository = scooterContext.getScooterRepository();
+
+        UserContext userContext = new UserContext(emailService, tokenGenerator, clock, passRepository, rideCodeRepository);
+        this.userRepository = userContext.getUserRepository();
+
+        StationContext stationContext = new StationContext(userRepository, emailService, scooterRepository);
+        this.stationRepository = stationContext.getStationRepository();
+
+        ScooterContext scooterFullContext = new ScooterContext(stationRepository);
+        PassContext passContext = new PassContext(userRepository, clock);
+        RideContext rideContext = new RideContext(userRepository, stationRepository, scooterRepository, passRepository, emailService, clock);
+        this.rideRepository = rideContext.getRideRepository();
+        BillingContext billingContext = new BillingContext(userRepository, emailService, clock);
+
         this.pricingPolicy = new PricingPolicy();
         this.rideCodeGenerator = new RideCodeGenerator(clock);
         this.rideFeeCalculator = new RideFeeCalculator();
         this.dailyUsageRepository = new InMemoryDailyUsageRepository();
-
         this.userFactory = new ca.ulaval.glo4003.trotti.domain.user.UserFactory();
         this.passFactory = new ca.ulaval.glo4003.trotti.domain.pass.PassFactory();
 
-        this.registerUserUseCase = new RegisterUserUseCase(userRepository, emailService, clock, userFactory);
-        this.loginUserUseCase = new LoginUserUseCase(userRepository, tokenGenerator);
-        this.activateAccountUseCase = new ActivateAccountUseCase(userRepository, emailService);
-        this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository, clock);
-        this.getUserBalanceUseCase = new GetUserBalanceUseCase(userRepository);
-        this.payUserBalanceUseCase = new PayUserBalanceUseCase(userRepository, this.clock);
-        this.purchasePassUseCase = new PurchasePassUseCase(userRepository, pricingPolicy, clock, passFactory);
-        this.getUserPassesUseCase = new GetUserPassesUseCase(userRepository);
-        this.startStationMaintenanceUseCase = new StartStationMaintenanceUseCase(stationRepository);
-        this.endStationMaintenanceUseCase = new EndStationMaintenanceUseCase(stationRepository);
-        this.requestStationMaintenanceUseCase = new RequestStationMaintenanceUseCase(userRepository, stationRepository, emailService);
-        this.startTransferScooterUseCase = new StartTransferScooterUseCase(stationRepository, scooterRepository);
-        this.endTransferScooterUseCase = new EndTransferScooterUseCase(stationRepository, scooterRepository);
-        this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, rideCodeGenerator, emailService, clock);
-        this.startRideUseCase = new StartRideUseCase(userRepository, stationRepository, scooterRepository, rideRepository, clock);
-        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
-        this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
-        this.sendPaymentReminderUseCase = new SendPaymentReminderUseCase(userRepository, emailService);
-        this.updateAutoPayPreferenceUseCase = new UpdateAutoPayPreferenceUseCase(userRepository);
-        this.automaticPaymentUseCase = new AutomaticPaymentUseCase(userRepository);
-        this.getTripHistoryWithSummaryUseCase = new GetTripHistoryWithSummaryUseCase(userRepository, rideRepository, clock);
+        this.registerUserUseCase = userContext.getRegisterUserUseCase();
+        this.loginUserUseCase = userContext.getLoginUserUseCase();
+        this.activateAccountUseCase = userContext.getActivateAccountUseCase();
+        this.getAllUsersUseCase = userContext.getGetAllUsersUseCase();
+        this.getUserBalanceUseCase = userContext.getGetUserBalanceUseCase();
+        this.payUserBalanceUseCase = billingContext.getPayUserBalanceUseCase();
+        this.purchasePassUseCase = passContext.getPurchasePassUseCase();
+        this.getUserPassesUseCase = passContext.getGetUserPassesUseCase();
+        this.startStationMaintenanceUseCase = stationContext.getStartStationMaintenanceUseCase();
+        this.endStationMaintenanceUseCase = stationContext.getEndStationMaintenanceUseCase();
+        this.requestStationMaintenanceUseCase = stationContext.getRequestStationMaintenanceUseCase();
+        this.startTransferScooterUseCase = scooterFullContext.getStartTransferScooterUseCase();
+        this.endTransferScooterUseCase = scooterFullContext.getEndTransferScooterUseCase();
+        this.requestRideCodeUseCase = rideContext.getRequestRideCodeUseCase();
+        this.startRideUseCase = rideContext.getStartRideUseCase();
+        this.endRideUseCase = rideContext.getEndRideUseCase();
+        this.getRideHistoryUseCase = rideContext.getGetRideHistoryUseCase();
+        this.sendPaymentReminderUseCase = billingContext.getSendPaymentReminderUseCase();
+        this.updateAutoPayPreferenceUseCase = billingContext.getUpdateAutoPayPreferenceUseCase();
+        this.automaticPaymentUseCase = billingContext.getAutomaticPaymentUseCase();
+        this.getTripHistoryWithSummaryUseCase = rideContext.getGetTripHistoryWithSummaryUseCase();
         initializeData();
     }
 

@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.trotti.application.ride;
+package ca.ulaval.glo4003.trotti.application.ride.dto;
 
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
 

@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.pass;
 
+import ca.ulaval.glo4003.trotti.application.pass.dto.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.domain.pass.*;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
 import ca.ulaval.glo4003.trotti.domain.user.Email;

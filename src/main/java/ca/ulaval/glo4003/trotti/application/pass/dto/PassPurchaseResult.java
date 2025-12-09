@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.trotti.application.pass;
+package ca.ulaval.glo4003.trotti.application.pass.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

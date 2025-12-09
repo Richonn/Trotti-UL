@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
 import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;

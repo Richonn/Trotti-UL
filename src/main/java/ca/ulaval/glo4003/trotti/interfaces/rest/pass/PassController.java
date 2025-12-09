@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.pass;
 
 import ca.ulaval.glo4003.trotti.application.pass.GetUserPassesUseCase;
-import ca.ulaval.glo4003.trotti.application.pass.PassPurchaseResult;
+import ca.ulaval.glo4003.trotti.application.pass.dto.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.dto.PassDTO;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
