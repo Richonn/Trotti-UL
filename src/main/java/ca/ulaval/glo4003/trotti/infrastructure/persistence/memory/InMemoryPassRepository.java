@@ -28,4 +28,9 @@ public class InMemoryPassRepository implements PassRepository {
                 .filter(pass -> pass.getUserId().equals(userId))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteAll() {
+        passes.clear();
+    }
 }

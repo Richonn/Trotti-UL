@@ -97,11 +97,20 @@ public class ApplicationContext {
     private final AutomaticPaymentUseCase automaticPaymentUseCase;
 
     private ApplicationContext() {
-        EmailConfig emailConfig = EmailConfig.fromEnvironment();
-        this.emailService = new MailgunEmailAdapter(emailConfig);
-        this.tokenGenerator = new JwtTokenService();
-        this.clock = new SystemClock();
-        this.authenticationService = new AuthenticationService(tokenGenerator);
+        this(null, null, null);
+    }
+
+    public ApplicationContext(EmailService emailService, TokenGenerator tokenGenerator, Clock clock) {
+        if (emailService == null) {
+            EmailConfig emailConfig = EmailConfig.fromEnvironment();
+            this.emailService = new MailgunEmailAdapter(emailConfig);
+        } else {
+            this.emailService = emailService;
+        }
+
+        this.tokenGenerator = tokenGenerator != null ? tokenGenerator : new JwtTokenService();
+        this.clock = clock != null ? clock : new SystemClock();
+        this.authenticationService = new AuthenticationService(this.tokenGenerator);
 
         this.passRepository = new InMemoryPassRepository();
         this.rideCodeRepository = new InMemoryRideCodeRepository();
@@ -177,6 +186,14 @@ public class ApplicationContext {
             instance = new ApplicationContext();
         }
         return instance;
+    }
+
+    public static void setInstance(ApplicationContext context) {
+        instance = context;
+    }
+
+    public static void resetInstance() {
+        instance = null;
     }
 
     public RegisterUserUseCase getRegisterUserUseCase() {
@@ -261,11 +278,23 @@ public class ApplicationContext {
         return userRepository;
     }
 
+    public PassRepository getPassRepository() {
+        return passRepository;
+    }
+
+    public RideCodeRepository getRideCodeRepository() {
+        return rideCodeRepository;
+    }
+
     public TokenGenerator getTokenGenerator() {
         return tokenGenerator;
     }
 
     public AuthenticationService getAuthenticationService() {
         return authenticationService;
+    }
+
+    public Clock getClock() {
+        return clock;
     }
 }

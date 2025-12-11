@@ -1,12 +1,15 @@
 package ca.ulaval.glo4003.trotti.functional;
 
 import ca.ulaval.glo4003.Main;
+import ca.ulaval.glo4003.trotti.domain.user.User;
+import ca.ulaval.glo4003.trotti.infrastructure.email.StubEmailService;
+import ca.ulaval.glo4003.trotti.infrastructure.security.StubTokenGenerator;
+import ca.ulaval.glo4003.trotti.infrastructure.time.SystemClock;
+import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
@@ -19,18 +22,40 @@ class UserFunctionalTest {
 
     private static HttpServer server;
     private static final String BASE_URL = "http://localhost:8080/api";
+    private static StubEmailService stubEmailService;
+    private static TestFixtures fixtures;
 
     @BeforeAll
-    static void setUp() {
+    static void startServer() {
+        stubEmailService = new StubEmailService();
+        ApplicationContext testContext = new ApplicationContext(stubEmailService, new StubTokenGenerator(), new SystemClock());
+        ApplicationContext.setInstance(testContext);
+
         server = Main.startServer();
         RestAssured.baseURI = BASE_URL;
+
+        fixtures = new TestFixtures(
+            testContext.getUserRepository(),
+            testContext.getPassRepository(),
+            testContext.getRideCodeRepository(),
+            testContext.getTokenGenerator(),
+            stubEmailService,
+            testContext.getClock()
+        );
+    }
+
+    @BeforeEach
+    void setUp() {
+        stubEmailService.clear();
+        fixtures.clearAllUsers();
     }
 
     @AfterAll
-    static void tearDown() {
+    static void stopServer() {
         if (server != null) {
             server.shutdownNow();
         }
+        ApplicationContext.resetInstance();
     }
 
     @Test
@@ -61,22 +86,7 @@ class UserFunctionalTest {
     void register_shouldFail_whenDuplicateEmail() {
         String email = "duplicate" + System.currentTimeMillis() + "@test.com";
 
-        given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "name": "User One",
-                    "dateOfBirth": "2000-01-01",
-                    "gender": "F",
-                    "idul": "user1",
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/register")
-                .then()
-                .statusCode(201);
+        fixtures.createUser(email, "Password@123", "User One", "user1");
 
         given()
                 .contentType(ContentType.JSON)
@@ -115,23 +125,7 @@ class UserFunctionalTest {
     @Test
     void login_shouldReturnToken_whenValidCredentials() {
         String email = "login" + System.currentTimeMillis() + "@test.com";
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "name": "Login User",
-                    "dateOfBirth": "2000-01-01",
-                    "gender": "F",
-                    "idul": "login123",
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/register")
-                .then()
-                .statusCode(201);
+        fixtures.createUser(email, "Password@123", "Login User", "login123");
 
         given()
                 .contentType(ContentType.JSON)
@@ -145,30 +139,13 @@ class UserFunctionalTest {
                 .post("/user/login")
                 .then()
                 .statusCode(200)
-                .body("token", notNullValue())
-                .body("token", matchesPattern(".+\\..+\\..+"));
+                .body("token", notNullValue());
     }
 
     @Test
     void login_shouldFail_whenWrongPassword() {
         String email = "wrongpass" + System.currentTimeMillis() + "@test.com";
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "name": "Password User",
-                    "dateOfBirth": "2000-01-01",
-                    "gender": "H",
-                    "idul": "pass123",
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/register")
-                .then()
-                .statusCode(201);
+        fixtures.createUser(email, "Password@123", "Password User", "pass123");
 
         given()
                 .contentType(ContentType.JSON)
@@ -203,38 +180,8 @@ class UserFunctionalTest {
     @Test
     void getUser_shouldReturnUserInfo_whenAuthenticated() {
         String email = "getuser" + System.currentTimeMillis() + "@test.com";
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "name": "Get User",
-                    "dateOfBirth": "2000-01-01",
-                    "gender": "F",
-                    "idul": "get123",
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/register")
-                .then()
-                .statusCode(201);
-
-        String token = given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/login")
-                .then()
-                .statusCode(200)
-                .extract()
-                .path("token");
+        fixtures.createUser(email, "Password@123", "Get User", "get123");
+        String token = fixtures.generateToken(email);
 
         given()
                 .header("Authorization", "Bearer " + token)
@@ -268,23 +215,7 @@ class UserFunctionalTest {
     @Test
     void getAllUsers_shouldReturnUserList() {
         String email = "listuser" + System.currentTimeMillis() + "@test.com";
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "name": "List User",
-                    "dateOfBirth": "2000-01-01",
-                    "gender": "H",
-                    "idul": "list123",
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/register")
-                .then()
-                .statusCode(201);
+        fixtures.createUser(email, "Password@123", "List User", "list123");
 
         given()
                 .when()
@@ -298,38 +229,8 @@ class UserFunctionalTest {
     @Test
     void activateAccount_shouldActivate_whenAuthenticated() {
         String email = "activate" + System.currentTimeMillis() + "@test.com";
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "name": "Activate User",
-                    "dateOfBirth": "2000-01-01",
-                    "gender": "F",
-                    "idul": "activate123",
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/register")
-                .then()
-                .statusCode(201);
-
-        String token = given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "email": "%s",
-                    "password": "Password@123"
-                }
-                """, email))
-                .when()
-                .post("/user/login")
-                .then()
-                .statusCode(200)
-                .extract()
-                .path("token");
+        fixtures.createUser(email, "Password@123", "Activate User", "activate123");
+        String token = fixtures.generateToken(email);
 
         given()
                 .header("Authorization", "Bearer " + token)
@@ -337,7 +238,7 @@ class UserFunctionalTest {
                 .when()
                 .post("/user/activate")
                 .then()
-                .statusCode(anyOf(is(200), is(500)));
+                .statusCode(200);
     }
 
     @Test

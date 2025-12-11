@@ -6,4 +6,5 @@ public interface RideCodeRepository {
     void save(String userEmail, RideCode rideCode);
     Optional<RideCode> findByUserEmail(String userEmail);
     void delete(String userEmail);
+    void deleteAll();
 }

@@ -6,6 +6,7 @@ import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.dto.PassDTO;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
+import ca.ulaval.glo4003.trotti.domain.shared.TransactionFailedException;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
@@ -59,6 +60,8 @@ public class PassController {
             return Response.status(Response.Status.CREATED)
                     .entity(new PurchaseResponse("Purchase successful", invoice))
                     .build();
+        } catch (TransactionFailedException e) {
+            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.PAYMENT_REQUIRED);
         } catch (DomainException e) {
             return ErrorResponseBuilder.buildErrorResponse(e);
         } catch (IllegalArgumentException e) {

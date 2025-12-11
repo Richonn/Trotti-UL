@@ -1,19 +1,16 @@
 package ca.ulaval.glo4003.trotti.functional;
 
 import ca.ulaval.glo4003.Main;
-import ca.ulaval.glo4003.trotti.domain.shared.EmailMessage;
-import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
-import ca.ulaval.glo4003.trotti.domain.user.Email;
-import ca.ulaval.glo4003.trotti.domain.user.Password;
-import ca.ulaval.glo4003.trotti.domain.user.Role;
+import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.user.User;
+import ca.ulaval.glo4003.trotti.infrastructure.email.StubEmailService;
+import ca.ulaval.glo4003.trotti.infrastructure.security.StubTokenGenerator;
+import ca.ulaval.glo4003.trotti.infrastructure.time.SystemClock;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -26,10 +23,9 @@ class TripHistoryFunctionalTest {
     }
 
     private static HttpServer server;
-    private static String authToken;
     private static final String BASE_URL = "http://localhost:8080/api";
-    private static final String TEST_EMAIL = "test-trip-history@ulaval.ca";
-    private static final String TEST_PASSWORD = "TestPassword123!";
+    private static StubEmailService stubEmailService;
+    private static TestFixtures fixtures;
 
     private static final int EXTRA_MINUTES_PER_DAY = 30;
     private static final int NUMBER_OF_TEST_TRIPS = 3;
@@ -43,75 +39,43 @@ class TripHistoryFunctionalTest {
     private static final int HTTP_SERVER_ERROR = 500;
 
     @BeforeAll
-    static void setUp() {
+    static void startServer() {
+        stubEmailService = new StubEmailService();
+        ApplicationContext testContext = new ApplicationContext(stubEmailService, new StubTokenGenerator(), new SystemClock());
+        ApplicationContext.setInstance(testContext);
+
         server = Main.startServer();
         RestAssured.baseURI = BASE_URL;
 
-        createAndActivateTestUser();
-
-        authToken = given()
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "email": "%s",
-                    "password": "%s"
-                }
-                """, TEST_EMAIL, TEST_PASSWORD))
-                .when()
-                .post("/user/login")
-                .jsonPath().getString("token");
+        fixtures = new TestFixtures(
+            testContext.getUserRepository(),
+            testContext.getPassRepository(),
+            testContext.getRideCodeRepository(),
+            testContext.getTokenGenerator(),
+            stubEmailService,
+            testContext.getClock()
+        );
     }
 
-    private static void createAndActivateTestUser() {
-        ApplicationContext context = ApplicationContext.getInstance();
-
-        User testUser = User.register(
-            new Email(TEST_EMAIL),
-            new Password(TEST_PASSWORD),
-            "Test User",
-            "1995-01-01",
-            "F",
-            "testus001",
-            Role.USER
-        );
-
-        testUser.activate(new EmailService() {
-            @Override
-            public void sendEmail(String to, String subject, String body) {}
-            @Override
-            public void send(EmailMessage email) {}
-        });
-
-        context.getUserRepository().save(testUser);
+    @BeforeEach
+    void setUp() {
+        stubEmailService.clear();
+        fixtures.clearAllUsers();
     }
 
     @AfterAll
-    static void tearDown() {
+    static void stopServer() {
         if (server != null) {
             server.shutdownNow();
         }
+        ApplicationContext.resetInstance();
     }
 
     @Test
     void givenUserWithPass_whenPurchasingPassAndMakingTrips_thenTripHistoryShowsCorrectSummary() {
-        given()
-                .header("Authorization", "Bearer " + authToken)
-                .contentType(ContentType.JSON)
-                .body(String.format("""
-                {
-                    "session": "A2025",
-                    "extraMinutesPerDay": %d,
-                    "monthlyBilling": false,
-                    "cardNumber": "4242424242424242",
-                    "cardHolder": "Test User",
-                    "expiryDate": "12/26",
-                    "cvv": "123"
-                }
-                """, EXTRA_MINUTES_PER_DAY))
-                .when()
-                .post("/pass/purchase")
-                .then()
-                .statusCode(HTTP_CREATED);
+        String email = "trip-history" + System.currentTimeMillis() + "@test.com";
+        User user = fixtures.createActivatedUserWithPass(email, "Password@123", "Test User", "test123", Session.A2025);
+        String authToken = fixtures.generateToken(email);
 
         for (int i = 0; i < NUMBER_OF_TEST_TRIPS; i++) {
             String rideCode = given()
@@ -171,6 +135,10 @@ class TripHistoryFunctionalTest {
 
     @Test
     void whenGettingTripHistoryWithoutTrips_thenReturnsEmptyTripsWithZeroSummary() {
+        String email = "no-trips" + System.currentTimeMillis() + "@test.com";
+        User user = fixtures.createActivatedUser(email, "Password@123", "No Trips User", "notrips123");
+        String authToken = fixtures.generateToken(email);
+
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .when()
