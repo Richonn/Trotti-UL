@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.Main;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.domain.user.User;
 import ca.ulaval.glo4003.trotti.infrastructure.email.StubEmailService;
+import ca.ulaval.glo4003.trotti.infrastructure.security.StubTokenGenerator;
 import ca.ulaval.glo4003.trotti.infrastructure.time.SystemClock;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import io.restassured.RestAssured;
@@ -28,7 +29,7 @@ class ApiFunctionalTest {
     @BeforeAll
     static void startServer() {
         stubEmailService = new StubEmailService();
-        ApplicationContext testContext = new ApplicationContext(stubEmailService, null, new SystemClock());
+        ApplicationContext testContext = new ApplicationContext(stubEmailService, new StubTokenGenerator(), new SystemClock());
         ApplicationContext.setInstance(testContext);
 
         server = Main.startServer();
