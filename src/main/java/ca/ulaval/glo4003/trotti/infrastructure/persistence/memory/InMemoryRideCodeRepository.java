@@ -24,4 +24,9 @@ public class InMemoryRideCodeRepository implements RideCodeRepository {
     public void delete(String userEmail) {
         rideCodesByEmail.remove(userEmail);
     }
+
+    @Override
+    public void deleteAll() {
+        rideCodesByEmail.clear();
+    }
 }

@@ -173,6 +173,10 @@ public class User {
         this.passes.add(pass);
     }
 
+    public void removePass(Pass pass) {
+        this.passes.remove(pass);
+    }
+
     public Pass purchasePass(Session session, int extraMinutesPerDay, boolean monthlyBilling, ca.ulaval.glo4003.trotti.domain.pass.PricingStrategy pricingStrategy, ca.ulaval.glo4003.trotti.domain.pass.PassFactory passFactory) {
         Pass pass = passFactory.createForPurchase(this.id, session, extraMinutesPerDay, monthlyBilling, pricingStrategy);
         this.passes.add(pass);

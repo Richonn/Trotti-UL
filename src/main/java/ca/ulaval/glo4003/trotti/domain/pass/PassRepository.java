@@ -9,4 +9,6 @@ public interface PassRepository {
     Optional<Pass> findById(String id);
 
     List<Pass> findByUserId(String userId);
+
+    void deleteAll();
 }
