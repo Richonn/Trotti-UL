@@ -187,7 +187,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>ca.ulaval.glo4003.TelephonyWsMain</mainClass>
+                            <mainClass>ca.ulaval.glo4003.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
