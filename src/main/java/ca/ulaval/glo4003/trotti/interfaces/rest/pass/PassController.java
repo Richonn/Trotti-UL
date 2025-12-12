@@ -5,10 +5,7 @@ import ca.ulaval.glo4003.trotti.application.pass.dto.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.pass.PurchasePassUseCase;
 import ca.ulaval.glo4003.trotti.application.pass.dto.PassDTO;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
-import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
-import ca.ulaval.glo4003.trotti.domain.shared.TransactionFailedException;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
-import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;
@@ -41,49 +38,33 @@ public class PassController {
     @POST
     @Path("/purchase")
     public Response purchase(@Context SecurityContext securityContext, PurchaseRequest request) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            PassPurchaseResult result = purchasePassUseCase.execute(
-                    authUser.getEmail(),
-                    request.getSession().name(),
-                    request.getExtraMinutesPerDay(),
-                    request.isMonthlyBilling(),
-                    request.getCardNumber(),
-                    request.getCardHolder(),
-                    request.getExpiryDate(),
-                    request.getCvv()
-            );
+        PassPurchaseResult result = purchasePassUseCase.execute(
+                authUser.getEmail(),
+                request.getSession().name(),
+                request.getExtraMinutesPerDay(),
+                request.isMonthlyBilling(),
+                request.getCardNumber(),
+                request.getCardHolder(),
+                request.getExpiryDate(),
+                request.getCvv()
+        );
 
-            InvoiceDto invoice = PassResponseMapper.toInvoiceDto(result);
+        InvoiceDto invoice = PassResponseMapper.toInvoiceDto(result);
 
-            return Response.status(Response.Status.CREATED)
-                    .entity(new PurchaseResponse("Purchase successful", invoice))
-                    .build();
-        } catch (TransactionFailedException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.PAYMENT_REQUIRED);
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (IllegalArgumentException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        return Response.status(Response.Status.CREATED)
+                .entity(new PurchaseResponse("Purchase successful", invoice))
+                .build();
     }
 
     @GET
     @Path("/my-purchases")
     public Response getMyPurchases(@Context SecurityContext securityContext) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            List<PassDTO> passes = getUserPassesUseCase.execute(authUser.getEmail());
-            List<ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto> passDtos = PassResponseMapper.toDtoList(passes);
-            return Response.ok(passDtos).build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        List<PassDTO> passes = getUserPassesUseCase.execute(authUser.getEmail());
+        List<ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto> passDtos = PassResponseMapper.toDtoList(passes);
+        return Response.ok(passDtos).build();
     }
 }

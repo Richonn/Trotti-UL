@@ -7,12 +7,10 @@ import ca.ulaval.glo4003.trotti.application.ride.RequestRideCodeUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
 import ca.ulaval.glo4003.trotti.application.ride.dto.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
-import ca.ulaval.glo4003.trotti.application.ride.TripHistoryResult;
+import ca.ulaval.glo4003.trotti.application.ride.dto.TripHistoryResult;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
-import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
-import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideResponse;
@@ -55,132 +53,61 @@ public class RideController {
     @POST
     @Path("/request-code")
     public Response requestRideCode(@Context SecurityContext securityContext) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            RideCode rideCode = requestRideCodeUseCase.execute(authUser.getEmail());
-            ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode = RideResponseMapper.toRideCodeModel(rideCode);
-            return Response.ok(new RideCodeResponse(dtoRideCode)).build();
-        } catch (DomainException e) {
-            Response.Status status = determineStatusForException(e);
-            return ErrorResponseBuilder.buildErrorResponse(e, status);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        RideCode rideCode = requestRideCodeUseCase.execute(authUser.getEmail());
+        ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode = RideResponseMapper.toRideCodeModel(rideCode);
+        return Response.ok(new RideCodeResponse(dtoRideCode)).build();
     }
 
     @POST
     @Path("/start")
     public Response startRide(@Context SecurityContext securityContext, StartRideRequest request) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            RideStartResult result = startRideUseCase.execute(
-                    authUser.getEmail(),
-                    request.getStation(),
-                    Integer.parseInt(request.getSlot()),
-                    request.getCode()
-            );
+        RideStartResult result = startRideUseCase.execute(
+                authUser.getEmail(),
+                request.getStation(),
+                Integer.parseInt(request.getSlot()),
+                request.getCode()
+        );
 
-            StartRideResponse response = RideResponseMapper.toStartRideResponse(result);
-            return Response.ok(response).build();
-        } catch (DomainException e) {
-            Response.Status status = determineStatusForStartRideException(e);
-            return ErrorResponseBuilder.buildErrorResponse(e, status);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
-    }
-
-    private Response.Status determineStatusForException(DomainException e) {
-        String simpleName = e.getClass().getSimpleName();
-        if (simpleName.contains("NotActivated")) {
-            return Response.Status.FORBIDDEN;
-        }
-        if (simpleName.contains("NotFound")) {
-            return Response.Status.UNAUTHORIZED;
-        }
-        return Response.Status.FORBIDDEN;
-    }
-
-    private Response.Status determineStatusForStartRideException(DomainException e) {
-        String simpleName = e.getClass().getSimpleName();
-        if (simpleName.contains("NotFound")) {
-            return Response.Status.NOT_FOUND;
-        }
-        if (simpleName.contains("NotActivated") || simpleName.contains("Code") || simpleName.contains("NoActive")) {
-            return Response.Status.FORBIDDEN;
-        }
-        return Response.Status.BAD_REQUEST;
+        StartRideResponse response = RideResponseMapper.toStartRideResponse(result);
+        return Response.ok(response).build();
     }
 
     @POST
     @Path("/end")
     public Response endRide(@Context SecurityContext securityContext, EndRideRequest request) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            RideEndResult result = endRideUseCase.execute(
-                    authUser.getEmail(),
-                    request.getStation(),
-                    Integer.parseInt(request.getSlot())
-            );
+        RideEndResult result = endRideUseCase.execute(
+                authUser.getEmail(),
+                request.getStation(),
+                Integer.parseInt(request.getSlot())
+        );
 
-            EndRideResponse response = RideResponseMapper.toEndRideResponse(result);
-            return Response.ok(response).build();
-        } catch (DomainException e) {
-            Response.Status status = determineStatusForEndRideException(e);
-            return ErrorResponseBuilder.buildErrorResponse(e, status);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
-    }
-
-    private Response.Status determineStatusForEndRideException(DomainException e) {
-        String simpleName = e.getClass().getSimpleName();
-        if (simpleName.contains("NotFound")) {
-            return Response.Status.NOT_FOUND;
-        }
-        if (simpleName.contains("NoActiveRide")) {
-            return Response.Status.BAD_REQUEST;
-        }
-        if (simpleName.contains("PaymentDeclined")) {
-            return Response.Status.PAYMENT_REQUIRED;
-        }
-        return Response.Status.BAD_REQUEST;
+        EndRideResponse response = RideResponseMapper.toEndRideResponse(result);
+        return Response.ok(response).build();
     }
 
     @GET
     @Path("/history")
     public Response getRideHistory(@Context SecurityContext securityContext) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            List<Ride> rides = getRideHistoryUseCase.execute(authUser.getEmail());
-            List<RideHistoryResponse.RideHistoryItem> rideItems = RideResponseMapper.toRideHistoryItems(rides);
-            return Response.ok(new RideHistoryResponse(rideItems)).build();
-        } catch (DomainException e) {
-            Response.Status status = determineStatusForException(e);
-            return ErrorResponseBuilder.buildErrorResponse(e, status);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        List<Ride> rides = getRideHistoryUseCase.execute(authUser.getEmail());
+        List<RideHistoryResponse.RideHistoryItem> rideItems = RideResponseMapper.toRideHistoryItems(rides);
+        return Response.ok(new RideHistoryResponse(rideItems)).build();
     }
 
     @GET
     @Path("/trip-history")
     public Response getTripHistory(@Context SecurityContext securityContext) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-            TripHistoryResult result = getTripHistoryWithSummaryUseCase.execute(authUser.getEmail());
-            TripHistoryResponse response = RideResponseMapper.toTripHistoryResponse(result);
-            return Response.ok(response).build();
-        } catch (DomainException e) {
-            Response.Status status = determineStatusForException(e);
-            return ErrorResponseBuilder.buildErrorResponse(e, status);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        TripHistoryResult result = getTripHistoryWithSummaryUseCase.execute(authUser.getEmail());
+        TripHistoryResponse response = RideResponseMapper.toTripHistoryResponse(result);
+        return Response.ok(response).build();
     }
 }

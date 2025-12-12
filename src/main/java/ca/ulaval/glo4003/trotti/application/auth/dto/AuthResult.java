@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.trotti.application.auth;
+package ca.ulaval.glo4003.trotti.application.auth.dto;
 
 public class AuthResult {
     private final String userEmail;
