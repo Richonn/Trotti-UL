@@ -348,6 +348,490 @@ No body
 
 ---
 
+### POST http://localhost:8080/api/ride/end
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+<details>
+<summary>Exemple</summary>
+
+```json
+{
+  "station": "VACHON",
+  "slot": 1
+}
+```
+
+</details>
+
+#### Response
+
+- Succès : 200 OK
+
+```json
+{
+  "message": "Ride ended successfully"
+}
+```
+
+- Erreur : 400 Bad Request
+
+```json
+{
+  "error": "No active ride or invalid station/slot"
+}
+```
+
+- Erreur : 402 Payment Required
+
+```json
+{
+  "error": "Payment declined"
+}
+```
+
+- Erreur : 404 Not Found
+
+```json
+{
+  "error": "User or station not found"
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### GET http://localhost:8080/api/ride/history
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK
+
+```json
+[
+  {
+    "rideId": "ride-123",
+    "station": "VACHON",
+    "slot": 1,
+    "startTime": "2025-01-15T14:30:00",
+    "endTime": "2025-01-15T14:45:00",
+    "duration": 15,
+    "cost": 5.50
+  }
+]
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### GET http://localhost:8080/api/ride/trip-history
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK
+
+```json
+{
+  "trips": [
+    {
+      "rideId": "ride-123",
+      "station": "VACHON",
+      "slot": 1,
+      "startTime": "2025-01-15T14:30:00",
+      "endTime": "2025-01-15T14:45:00",
+      "duration": 15,
+      "cost": 5.50
+    }
+  ],
+  "summary": {
+    "totalRides": 10,
+    "totalDistance": 25.5,
+    "totalCost": 85.00
+  }
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### GET http://localhost:8080/api/user/balance
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK
+
+```json
+{
+  "amount": 25.50
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/user/balance/pay
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 201 Created
+
+```json
+{
+  "message": "Purchase successful",
+  "invoice": {
+    "session": "A2025",
+    "totalPrice": 25.50,
+    "monthlyBilling": true
+  }
+}
+```
+
+- Erreur : 400 Bad Request
+
+```json
+{
+  "error": "Invalid request"
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### PUT http://localhost:8080/api/user/settings/auto-pay
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+<details>
+<summary>Exemple</summary>
+
+```json
+{
+  "enabled": true
+}
+```
+
+</details>
+
+#### Response
+
+- Succès : 200 OK
+
+- Erreur : 400 Bad Request
+
+```json
+{
+  "error": "Invalid request"
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/stations/{stationId}/maintenance/start
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-TECHNICIAN-TOKEN`
+
+> Cet endpoint est réservé aux techniciens. Le token doit correspondre à un compte technicien.
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+- Erreur : 403 Forbidden
+
+```json
+{
+  "error": "Vous n'avez pas les droits d'accès (rôle technicien requis)"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/stations/{stationId}/maintenance/end
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-TECHNICIAN-TOKEN`
+
+> Cet endpoint est réservé aux techniciens. Le token doit correspondre à un compte technicien.
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+- Erreur : 403 Forbidden
+
+```json
+{
+  "error": "Vous n'avez pas les droits d'accès (rôle technicien requis)"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/stations/{stationId}/maintenance
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-USER-TOKEN`
+
+> Pour récupérer votre token utilisateur vous devez vous [connecter](#post-httplocalhost8080apiuserlogin).
+
+#### Body
+
+No body
+
+#### Response
+
+- Succès : 200 OK
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/scooters/transfer/start
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-TECHNICIAN-TOKEN`
+
+> Cet endpoint est réservé aux techniciens. Le token doit correspondre à un compte technicien.
+
+#### Body
+
+<details>
+<summary>Exemple</summary>
+
+```json
+{
+  "station": "VACHON",
+  "slot": 1
+}
+```
+
+</details>
+
+#### Response
+
+- Succès : 200 OK
+
+```json
+{
+  "scooterId": "3c6ac800-e026-4865-9dec-3451bc094b85"
+}
+```
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+- Erreur : 403 Forbidden
+
+```json
+{
+  "error": "Vous n'avez pas les droits d'accès (rôle technicien requis)"
+}
+```
+
+---
+
+### POST http://localhost:8080/api/scooters/transfer/end
+
+#### Headers
+
+`Content-Type : application/json`
+
+`Authorization : Bearer YOUR-TECHNICIAN-TOKEN`
+
+> Cet endpoint est réservé aux techniciens. Le token doit correspondre à un compte technicien.
+
+#### Body
+
+<details>
+<summary>Exemple</summary>
+
+```json
+{
+  "station": "PEPS",
+  "scooterId": "3c6ac800-e026-4865-9dec-3451bc094b85",
+  "slot": 22
+}
+```
+
+</details>
+
+#### Response
+
+- Succès : 200 OK
+
+- Erreur : 401 Unauthorized
+
+```json
+{
+  "error": "Token manquant ou invalide"
+}
+```
+
+- Erreur : 403 Forbidden
+
+```json
+{
+  "error": "Vous n'avez pas les droits d'accès (rôle technicien requis)"
+}
+```
+
+---
+
 ## Récit 1
 
 En tant qu’Alexandra, je peux me créer un compte afin d’acheter une passe de trottinette
