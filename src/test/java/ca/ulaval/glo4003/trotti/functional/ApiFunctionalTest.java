@@ -188,7 +188,7 @@ class ApiFunctionalTest {
     @Test
     void getMyPurchases_shouldReturnPurchases() {
         String email = "mypurchases" + System.currentTimeMillis() + "@test.com";
-        User user = fixtures.createActivatedUserWithPass(email, "Password@123", "Purchases User", "purchases123", Session.A2025);
+        User user = fixtures.createActivatedUserWithPass(email, "Password@123", "Purchases User", "purchases123", Session.generate(2025, "Automne"));
         String token = fixtures.generateToken(email);
 
         given()
@@ -203,7 +203,7 @@ class ApiFunctionalTest {
     @Test
     void requestRideCode_shouldGenerateCodeWithActivePass() {
         String email = "ridecode" + System.currentTimeMillis() + "@test.com";
-        User user = fixtures.createActivatedUserWithPass(email, "Password@123", "Ride User", "ride123", Session.A2025);
+        User user = fixtures.createActivatedUserWithPass(email, "Password@123", "Ride User", "ride123", Session.generate(2025, "Automne"));
         String token = fixtures.generateToken(email);
 
         given()

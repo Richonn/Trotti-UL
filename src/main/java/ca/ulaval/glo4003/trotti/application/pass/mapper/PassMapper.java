@@ -8,7 +8,7 @@ public class PassMapper {
     public static PassDTO toDTO(Pass pass) {
         return new PassDTO(
             pass.getId(),
-            pass.getSession().name(),
+            pass.getSession().getId(),
             pass.getExtraMinutesPerDay(),
             pass.isMonthlyBilling(),
             pass.getTotalPrice().getAmount(),

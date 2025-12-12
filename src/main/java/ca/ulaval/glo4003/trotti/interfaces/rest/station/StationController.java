@@ -5,10 +5,8 @@ import org.checkerframework.checker.units.qual.s;
 import ca.ulaval.glo4003.trotti.application.station.EndStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.RequestStationMaintenanceUseCase;
 import ca.ulaval.glo4003.trotti.application.station.StartStationMaintenanceUseCase;
-import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
-import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.RoleChecker;
@@ -44,19 +42,13 @@ public class StationController {
     public Response startMaintenance(
             @HeaderParam("Authorization") String authHeader,
             @PathParam("stationId") String stationId) {
-        try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-            RoleChecker.check(email, Role.TECHNICIAN);
+        String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+        String email = authenticationService.extractEmailFromToken(token);
+        RoleChecker.check(email, Role.TECHNICIAN);
 
-            startStationMaintenanceUseCase.execute(stationId);
+        startStationMaintenanceUseCase.execute(stationId);
 
-            return Response.ok().build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        return Response.ok().build();
     }
 
     @POST
@@ -64,19 +56,13 @@ public class StationController {
     public Response endMaintenance(
             @HeaderParam("Authorization") String authHeader,
             @PathParam("stationId") String stationId) {
-        try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-            RoleChecker.check(email, Role.TECHNICIAN);
+        String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+        String email = authenticationService.extractEmailFromToken(token);
+        RoleChecker.check(email, Role.TECHNICIAN);
 
-            endStationMaintenanceUseCase.execute(stationId);
+        endStationMaintenanceUseCase.execute(stationId);
 
-            return Response.ok().build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        return Response.ok().build();
     }
 
     @POST
@@ -84,18 +70,12 @@ public class StationController {
     public Response requestMaintenance(
             @HeaderParam("Authorization") String authHeader,
             @PathParam("stationId") String stationId) {
-        try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
+        String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+        String email = authenticationService.extractEmailFromToken(token);
 
-            this.requestStationMaintenanceUseCase.execute(stationId, email);
+        this.requestStationMaintenanceUseCase.execute(stationId, email);
 
-            return Response.ok().build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        return Response.ok().build();
     }
 
 }

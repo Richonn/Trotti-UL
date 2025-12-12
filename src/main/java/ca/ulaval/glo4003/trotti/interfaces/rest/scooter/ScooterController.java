@@ -2,12 +2,10 @@ package ca.ulaval.glo4003.trotti.interfaces.rest.scooter;
 
 import ca.ulaval.glo4003.trotti.application.scooter.EndTransferScooterUseCase;
 import ca.ulaval.glo4003.trotti.application.scooter.StartTransferScooterUseCase;
-import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
-import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndTransferRequest;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartTransferRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.request.EndTransferRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.request.StartTransferRequest;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthorizationHeaderExtractor;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.RoleChecker;
@@ -40,19 +38,13 @@ public class ScooterController {
     public Response startTransferScooter(
             @HeaderParam("Authorization") String authHeader,
             StartTransferRequest request) {
-        try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-            RoleChecker.check(email, Role.TECHNICIAN);
+        String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+        String email = authenticationService.extractEmailFromToken(token);
+        RoleChecker.check(email, Role.TECHNICIAN);
 
-            String scooterId = startTransferScooterUseCase.execute(Integer.parseInt(request.getSlot()), request.getStation());
+        String scooterId = startTransferScooterUseCase.execute(Integer.parseInt(request.getSlot()), request.getStation());
 
-            return Response.ok(scooterId).build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        return Response.ok(scooterId).build();
     }
 
     @Path("/transfer/end")
@@ -60,18 +52,12 @@ public class ScooterController {
     public Response endTransferScooter(
             @HeaderParam("Authorization") String authHeader,
             EndTransferRequest request) {
-        try {
-            String token = AuthorizationHeaderExtractor.extractToken(authHeader);
-            String email = authenticationService.extractEmailFromToken(token);
-            RoleChecker.check(email, Role.TECHNICIAN);
+        String token = AuthorizationHeaderExtractor.extractToken(authHeader);
+        String email = authenticationService.extractEmailFromToken(token);
+        RoleChecker.check(email, Role.TECHNICIAN);
 
-            endTransferScooterUseCase.execute(request.getScooterId(), Integer.parseInt(request.getSlot()), request.getStation());
+        endTransferScooterUseCase.execute(request.getScooterId(), Integer.parseInt(request.getSlot()), request.getStation());
 
-            return Response.ok().build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        return Response.ok().build();
     }
 }

@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.trotti.application.ride;
 import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
 import ca.ulaval.glo4003.trotti.domain.pass.Pass;
-import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.*;
 import ca.ulaval.glo4003.trotti.domain.ride.exception.NoActiveRideException;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
@@ -27,20 +26,18 @@ public class EndRideUseCase {
     private final RideRepository rideRepository;
     private final ScooterRepository scooterRepository;
     private final StationRepository stationRepository;
-    private final PassRepository passRepository;
     private final RideFeeCalculator feeCalculator;
     private final DailyUsageRepository dailyUsageRepository;
     private final Clock clock;
 
     public EndRideUseCase(UserRepository userRepository, RideRepository rideRepository,
                           ScooterRepository scooterRepository, StationRepository stationRepository,
-                          PassRepository passRepository, RideFeeCalculator feeCalculator,
+                          RideFeeCalculator feeCalculator,
                           DailyUsageRepository dailyUsageRepository, Clock clock) {
         this.userRepository = userRepository;
         this.rideRepository = rideRepository;
         this.scooterRepository = scooterRepository;
         this.stationRepository = stationRepository;
-        this.passRepository = passRepository;
         this.feeCalculator = feeCalculator;
         this.dailyUsageRepository = dailyUsageRepository;
         this.clock = clock;
@@ -71,8 +68,6 @@ public class EndRideUseCase {
 
         Duration rideDuration = ride.getDuration(clock);
         long rideMinutes = rideDuration.toMinutes();
-
-        passRepository.findByUserId(user.getId()).forEach(user::addPass);
 
         Pass activePass = user.getPasses().stream()
                 .filter(pass -> pass.isActiveOn(clock.today()))

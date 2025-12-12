@@ -10,22 +10,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PassTest {
 
+    private static final String TEST_USER_ID = "user-123";
+
     private PricingPolicy pricingPolicy;
-    private String userId;
+    private Session testSession;
 
     @BeforeEach
     void setUp() {
         pricingPolicy = new PricingPolicy();
-        userId = "user-123";
+        testSession = Session.generate(2025, "Automne");
     }
 
     @Test
     void givenValidData_whenPurchasingPass_thenSucceeds() {
-        Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
+        Pass pass = Pass.purchase(TEST_USER_ID, testSession, 0, false, pricingPolicy);
 
         assertNotNull(pass.getId());
-        assertEquals(userId, pass.getUserId());
-        assertEquals(Session.A2025, pass.getSession());
+        assertEquals(TEST_USER_ID, pass.getUserId());
+        assertEquals(testSession, pass.getSession());
         assertEquals(0, pass.getExtraMinutesPerDay());
         assertFalse(pass.isMonthlyBilling());
         assertEquals(Money.cad(45), pass.getTotalPrice());
@@ -34,7 +36,7 @@ class PassTest {
 
     @Test
     void givenPassWithExtraMinutes_whenPurchasing_thenCalculatesPriceCorrectly() {
-        Pass pass = Pass.purchase(userId, Session.A2025, 20, true, pricingPolicy);
+        Pass pass = Pass.purchase(TEST_USER_ID, testSession, 20, true, pricingPolicy);
 
         assertEquals(20, pass.getExtraMinutesPerDay());
         assertTrue(pass.isMonthlyBilling());
@@ -43,7 +45,7 @@ class PassTest {
 
     @Test
     void givenActivePass_whenCheckingIfActiveOnDateInSession_thenReturnsTrue() {
-        Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
+        Pass pass = Pass.purchase(TEST_USER_ID, testSession, 0, false, pricingPolicy);
         LocalDate dateInSession = LocalDate.of(2025, 10, 15);
 
         assertTrue(pass.isActiveOn(dateInSession));
@@ -51,7 +53,7 @@ class PassTest {
 
     @Test
     void givenActivePass_whenCheckingIfActiveOnDateOutsideSession_thenReturnsFalse() {
-        Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
+        Pass pass = Pass.purchase(TEST_USER_ID, testSession, 0, false, pricingPolicy);
         LocalDate dateOutsideSession = LocalDate.of(2026, 2, 15);
 
         assertFalse(pass.isActiveOn(dateOutsideSession));
@@ -59,7 +61,7 @@ class PassTest {
 
     @Test
     void givenDeactivatedPass_whenCheckingIfActiveOnDateInSession_thenReturnsFalse() {
-        Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
+        Pass pass = Pass.purchase(TEST_USER_ID, testSession, 0, false, pricingPolicy);
         LocalDate dateInSession = LocalDate.of(2025, 10, 15);
         pass.deactivate();
 
@@ -68,7 +70,7 @@ class PassTest {
 
     @Test
     void givenActivePass_whenDeactivating_thenBecomesInactive() {
-        Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
+        Pass pass = Pass.purchase(TEST_USER_ID, testSession, 0, false, pricingPolicy);
 
         pass.deactivate();
 
@@ -77,8 +79,8 @@ class PassTest {
 
     @Test
     void givenTwoPassesWithDifferentIds_whenComparingEquality_thenAreNotEqual() {
-        Pass pass1 = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
-        Pass pass2 = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
+        Pass pass1 = Pass.purchase(TEST_USER_ID, testSession, 0, false, pricingPolicy);
+        Pass pass2 = Pass.purchase(TEST_USER_ID, testSession, 0, false, pricingPolicy);
 
         assertNotEquals(pass1, pass2);
     }

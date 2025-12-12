@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.user;
 
-import ca.ulaval.glo4003.trotti.application.auth.AuthResult;
+import ca.ulaval.glo4003.trotti.application.auth.dto.AuthResult;
 import ca.ulaval.glo4003.trotti.domain.security.TokenGenerator;
 import ca.ulaval.glo4003.trotti.domain.user.*;
 import ca.ulaval.glo4003.trotti.domain.user.exception.InvalidCredentialsException;

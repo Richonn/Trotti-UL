@@ -27,7 +27,7 @@ class InMemoryPassRepositoryTest {
 
     @Test
     void givenPass_whenSaving_thenCanRetrieveById() {
-        Pass pass = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
+        Pass pass = Pass.purchase(userId, Session.generate(2025, "Automne"), 0, false, pricingPolicy);
 
         repository.save(pass);
         Optional<Pass> result = repository.findById(pass.getId());
@@ -45,9 +45,9 @@ class InMemoryPassRepositoryTest {
 
     @Test
     void givenMultiplePassesForUser_whenFindingByUserId_thenReturnsAllUserPasses() {
-        Pass pass1 = Pass.purchase(userId, Session.A2025, 0, false, pricingPolicy);
-        Pass pass2 = Pass.purchase(userId, Session.H2026, 20, true, pricingPolicy);
-        Pass otherUserPass = Pass.purchase("other-user", Session.A2025, 0, false, pricingPolicy);
+        Pass pass1 = Pass.purchase(userId, Session.generate(2025, "Automne"), 0, false, pricingPolicy);
+        Pass pass2 = Pass.purchase(userId, Session.generate(2026, "Hiver"), 20, true, pricingPolicy);
+        Pass otherUserPass = Pass.purchase("other-user", Session.generate(2025, "Automne"), 0, false, pricingPolicy);
 
         repository.save(pass1);
         repository.save(pass2);

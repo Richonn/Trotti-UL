@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
+import ca.ulaval.glo4003.trotti.application.ride.dto.TripHistoryResult;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;

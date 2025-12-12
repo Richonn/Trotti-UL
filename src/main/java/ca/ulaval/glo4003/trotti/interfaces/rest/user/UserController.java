@@ -7,13 +7,14 @@ import ca.ulaval.glo4003.trotti.application.user.GetAllUsersUseCase;
 import ca.ulaval.glo4003.trotti.application.user.GetUserBalanceUseCase;
 import ca.ulaval.glo4003.trotti.application.user.LoginUserUseCase;
 import ca.ulaval.glo4003.trotti.application.user.RegisterUserUseCase;
+import ca.ulaval.glo4003.trotti.application.auth.dto.AuthResult;
 import ca.ulaval.glo4003.trotti.application.user.dto.MonthlyInvoiceDto;
 import ca.ulaval.glo4003.trotti.application.user.dto.UserDTO;
-import ca.ulaval.glo4003.trotti.domain.shared.DomainException;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
-import ca.ulaval.glo4003.trotti.interfaces.rest.error.ErrorResponseBuilder;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.*;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.request.AutoPayRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.request.LoginRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.response.*;
 import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.InvoiceResponseMapper;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.UserResponseMapper;
@@ -55,120 +56,76 @@ public class UserController {
     @POST
     @Path("/register")
     public Response register(UserRegistrationRequest request) {
-        try {
-            UserDTO userDTO = registerUserUseCase.execute(
-                    request.getEmail(),
-                    request.getPassword(),
-                    request.getName(),
-                    request.getDateOfBirth(),
-                    request.getGender(),
-                    request.getIdul(),
-                    Role.USER);
+        UserDTO userDTO = registerUserUseCase.execute(
+                request.getEmail(),
+                request.getPassword(),
+                request.getName(),
+                request.getDateOfBirth(),
+                request.getGender(),
+                request.getIdul(),
+                Role.USER);
 
-            ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User userModel = UserResponseMapper.toModel(userDTO);
+        ca.ulaval.glo4003.trotti.interfaces.rest.user.response.UserResponse userModel = UserResponseMapper.toModel(userDTO);
 
-            return Response.status(Response.Status.CREATED)
-                    .entity(new RegisterResponse(userModel))
-                    .build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (IllegalArgumentException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
-        }
+        return Response.status(Response.Status.CREATED)
+                .entity(new RegisterResponse(userModel))
+                .build();
     }
 
     @POST
     @Path("/login")
     public Response login(LoginRequest request) {
-        try {
-            if (request == null || request.getEmail() == null || request.getPassword() == null) {
-                return ErrorResponseBuilder.buildErrorResponse(
-                        new IllegalArgumentException("Email and password required."),
-                        Response.Status.BAD_REQUEST);
-            }
-
-            ca.ulaval.glo4003.trotti.application.auth.AuthResult authResult = loginUserUseCase
-                    .execute(request.getEmail(), request.getPassword());
-            return Response.ok(new LoginResponse(authResult.getToken())).build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.UNAUTHORIZED);
-        } catch (IllegalArgumentException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
+        if (request == null || request.getEmail() == null || request.getPassword() == null) {
+            throw new IllegalArgumentException("Email and password required.");
         }
+
+        AuthResult authResult = loginUserUseCase
+                .execute(request.getEmail(), request.getPassword());
+        return Response.ok(new LoginResponse(authResult.getToken())).build();
     }
 
     @GET
     @Path("/all")
     public Response getAllUsers() {
-        try {
-            List<UserDTO> users = getAllUsersUseCase.execute();
-            List<ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User> userModels = UserResponseMapper.toModelList(users);
-            return Response.ok(userModels).build();
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError("Can't get all users");
-        }
+        List<UserDTO> users = getAllUsersUseCase.execute();
+        List<ca.ulaval.glo4003.trotti.interfaces.rest.user.response.UserResponse> userModels = UserResponseMapper.toModelList(users);
+        return Response.ok(userModels).build();
     }
 
     @POST
     @Path("/activate")
     public Response activateAccount(@Context SecurityContext securityContext) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
-            activateAccountUseCase.execute(authUser.getEmail());
-            return Response.ok(new AccountActivationResponse("Account activated")).build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        activateAccountUseCase.execute(authUser.getEmail());
+        return Response.ok(new AccountActivationResponse("Account activated")).build();
     }
 
     @GET
     @Path("/balance")
     public Response getUserBalance(@Context SecurityContext securityContext) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
-            BigDecimal amount = getUserBalanceUseCase.execute(authUser.getEmail());
-            return Response.ok(new GetUserBalanceResponse(amount)).build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        BigDecimal amount = getUserBalanceUseCase.execute(authUser.getEmail());
+        return Response.ok(new GetUserBalanceResponse(amount)).build();
     }
 
     @POST
     @Path("/balance/pay")
     public Response purchase(@Context SecurityContext securityContext) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
-            MonthlyInvoiceDto invoiceDto = payUserBalanceUseCase.execute(authUser.getEmail());
-            InvoiceDto invoice = InvoiceResponseMapper.toDto(invoiceDto);
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        MonthlyInvoiceDto invoiceDto = payUserBalanceUseCase.execute(authUser.getEmail());
+        InvoiceResponse invoice = InvoiceResponseMapper.toDto(invoiceDto);
 
-            return Response.status(Response.Status.CREATED)
-                    .entity(new PaymentResponse("Purchase successful", invoice))
-                    .build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (IllegalArgumentException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e, Response.Status.BAD_REQUEST);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        return Response.status(Response.Status.CREATED)
+                .entity(new PaymentResponse("Purchase successful", invoice))
+                .build();
     }
 
     @PUT
     @Path("/settings/auto-pay")
     public Response updateAutoPayPreference(@Context SecurityContext securityContext, AutoPayRequest request) {
-        try {
-            AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
-            updateAutoPayPreferenceUseCase.execute(authUser.getEmail(), request.isEnabled());
-            return Response.ok().build();
-        } catch (DomainException e) {
-            return ErrorResponseBuilder.buildErrorResponse(e);
-        } catch (Exception e) {
-            return ErrorResponseBuilder.buildInternalServerError(e);
-        }
+        AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
+        updateAutoPayPreferenceUseCase.execute(authUser.getEmail(), request.isEnabled());
+        return Response.ok().build();
     }
 
     public static class UserRegistrationRequest {

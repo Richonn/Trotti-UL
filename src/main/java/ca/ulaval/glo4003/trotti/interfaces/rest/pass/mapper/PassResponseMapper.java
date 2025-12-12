@@ -3,17 +3,17 @@ package ca.ulaval.glo4003.trotti.interfaces.rest.pass.mapper;
 import ca.ulaval.glo4003.trotti.application.pass.dto.PassPurchaseResult;
 import ca.ulaval.glo4003.trotti.application.pass.dto.PassDTO;
 import ca.ulaval.glo4003.trotti.domain.pass.Session;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.response.InvoiceResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.response.PassResponse;
 
 import java.util.List;
 
 public class PassResponseMapper {
 
-    public static InvoiceDto toInvoiceDto(PassPurchaseResult result) {
+    public static InvoiceResponse toInvoiceDto(PassPurchaseResult result) {
         Session sessionEnum = Session.getInstance(result.getSessionCode());
-        return new InvoiceDto(
-                sessionEnum.name(),
+        return new InvoiceResponse(
+                sessionEnum.getId(),
                 result.getTotalPrice(),
                 result.isMonthlyBilling(),
                 result.getStartDate(),
@@ -21,8 +21,8 @@ public class PassResponseMapper {
         );
     }
 
-    public static PassDto toDto(PassDTO passDTO) {
-        return new PassDto(
+    public static PassResponse toDto(PassDTO passDTO) {
+        return new PassResponse(
                 passDTO.getId(),
                 passDTO.getSession(),
                 passDTO.getExtraMinutesPerDay(),
@@ -32,7 +32,7 @@ public class PassResponseMapper {
         );
     }
 
-    public static List<PassDto> toDtoList(List<PassDTO> passDTOs) {
+    public static List<PassResponse> toDtoList(List<PassDTO> passDTOs) {
         return passDTOs.stream()
                 .map(PassResponseMapper::toDto)
                 .toList();
