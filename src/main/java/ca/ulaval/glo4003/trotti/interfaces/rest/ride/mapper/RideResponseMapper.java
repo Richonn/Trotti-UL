@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.trotti.interfaces.rest.ride.mapper;
 import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
 import ca.ulaval.glo4003.trotti.application.ride.dto.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.dto.TripHistoryResult;
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideDTO;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.interfaces.rest.ride.response.TripHistoryResponse;
@@ -50,17 +51,24 @@ public class RideResponseMapper {
         );
     }
 
-    public static List<RideHistoryResponse.RideHistoryItem> toRideHistoryItems(List<Ride> rides) {
+    public static List<RideHistoryResponse.RideHistoryItem> toRideHistoryItems(List<RideDTO> rides) {
         return rides.stream()
-                .map(ride -> new RideHistoryResponse.RideHistoryItem(
+                .map(ride -> {
+                    int durationMinutes = (int) java.time.Duration.between(
+                        ride.getStartTime(), ride.getEndTime()).toMinutes();
+                    int durationSeconds = (int) (java.time.Duration.between(
+                        ride.getStartTime(), ride.getEndTime()).getSeconds() % 60);
+
+                    return new RideHistoryResponse.RideHistoryItem(
                         ride.getId(),
                         ride.getStartStationId(),
                         ride.getEndStationId(),
                         ride.getStartTime().toString(),
                         ride.getEndTime().toString(),
-                        ride.getDurationMinutes(),
-                        ride.getDurationSeconds()
-                ))
+                        durationMinutes,
+                        durationSeconds
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

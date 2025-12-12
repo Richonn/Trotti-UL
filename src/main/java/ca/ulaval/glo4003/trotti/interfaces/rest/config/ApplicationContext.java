@@ -126,7 +126,7 @@ public class ApplicationContext {
 
         ScooterContext scooterFullContext = new ScooterContext(stationRepository);
         PassContext passContext = new PassContext(userRepository, this.clock);
-        RideContext rideContext = new RideContext(userRepository, stationRepository, scooterRepository, passRepository, this.emailService, this.clock);
+        RideContext rideContext = new RideContext(userRepository, stationRepository, scooterRepository, this.emailService, this.clock);
         this.rideRepository = rideContext.getRideRepository();
         BillingContext billingContext = new BillingContext(userRepository, this.emailService, this.clock);
 

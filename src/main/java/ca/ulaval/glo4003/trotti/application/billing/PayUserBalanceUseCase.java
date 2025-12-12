@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.trotti.application.billing;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.YearMonth;
 
 import ca.ulaval.glo4003.trotti.application.user.dto.MonthlyInvoiceDto;
 import ca.ulaval.glo4003.trotti.domain.pass.Money;
@@ -42,29 +42,11 @@ public class PayUserBalanceUseCase {
 
         user.resetMonthlyBalance();
 
-        LocalDate current = LocalDate.now();
+        YearMonth previousMonth = YearMonth.from(clock.today()).minusMonths(1);
+        LocalDate startDate = previousMonth.atDay(1);
+        LocalDate endDate = previousMonth.atEndOfMonth();
 
-        Month previousMonth = current.getMonth().minus(1);
-        int year = current.getYear();
-        if (current.getMonth() == Month.JANUARY)
-            year -= 1;
-        int lastDayOfMonth = 0;
-        if (previousMonth == Month.FEBRUARY) {
-            if (year % 4 == 0)
-                lastDayOfMonth = 29;
-            else
-                lastDayOfMonth = 28;
-        } else {
-            if (previousMonth.getValue() % 2 == 0)
-                lastDayOfMonth = 31;
-            else
-                lastDayOfMonth = 30;
-        }
-
-        return new MonthlyInvoiceDto(
-                amount,
-                LocalDate.of(year, previousMonth, 1),
-                LocalDate.of(year, previousMonth, lastDayOfMonth));
+        return new MonthlyInvoiceDto(amount, startDate, endDate);
     }
 
 }

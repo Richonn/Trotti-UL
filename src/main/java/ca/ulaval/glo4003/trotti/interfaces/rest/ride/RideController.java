@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
 import ca.ulaval.glo4003.trotti.application.ride.dto.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.StartRideUseCase;
 import ca.ulaval.glo4003.trotti.application.ride.dto.TripHistoryResult;
-import ca.ulaval.glo4003.trotti.domain.ride.Ride;
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideDTO;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
@@ -96,7 +96,7 @@ public class RideController {
     public Response getRideHistory(@Context SecurityContext securityContext) {
         AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
-        List<Ride> rides = getRideHistoryUseCase.execute(authUser.getEmail());
+        List<RideDTO> rides = getRideHistoryUseCase.execute(authUser.getEmail());
         List<RideHistoryResponse.RideHistoryItem> rideItems = RideResponseMapper.toRideHistoryItems(rides);
         return Response.ok(new RideHistoryResponse(rideItems)).build();
     }

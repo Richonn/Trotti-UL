@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.config;
 
 import ca.ulaval.glo4003.trotti.application.ride.*;
-import ca.ulaval.glo4003.trotti.domain.pass.PassRepository;
 import ca.ulaval.glo4003.trotti.domain.ride.*;
 import ca.ulaval.glo4003.trotti.domain.scooter.ScooterRepository;
 import ca.ulaval.glo4003.trotti.domain.shared.Clock;
@@ -23,7 +22,7 @@ public class RideContext {
     private final GetTripHistoryWithSummaryUseCase getTripHistoryWithSummaryUseCase;
 
     public RideContext(UserRepository userRepository, StationRepository stationRepository,
-                       ScooterRepository scooterRepository, PassRepository passRepository,
+                       ScooterRepository scooterRepository,
                        EmailService emailService, Clock clock) {
         RideCodeGenerator rideCodeGenerator = new RideCodeGenerator(clock);
         RideFeeCalculator rideFeeCalculator = new RideFeeCalculator();
@@ -34,7 +33,7 @@ public class RideContext {
 
         this.requestRideCodeUseCase = new RequestRideCodeUseCase(userRepository, rideCodeGenerator, emailService, clock);
         this.startRideUseCase = new StartRideUseCase(userRepository, stationRepository, scooterRepository, rideRepository, clock);
-        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, passRepository, rideFeeCalculator, dailyUsageRepository, clock);
+        this.endRideUseCase = new EndRideUseCase(userRepository, rideRepository, scooterRepository, stationRepository, rideFeeCalculator, dailyUsageRepository, clock);
         this.getRideHistoryUseCase = new GetRideHistoryUseCase(userRepository, rideRepository);
         this.getTripHistoryWithSummaryUseCase = new GetTripHistoryWithSummaryUseCase(userRepository, rideRepository, clock);
     }

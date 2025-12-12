@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideDTO;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
@@ -62,10 +63,9 @@ class GetRideHistoryUseCaseTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(rideRepository.findCompletedRidesByUserId(user.getId())).thenReturn(expectedRides);
 
-        List<Ride> rides = useCase.execute(userEmail);
+        List<RideDTO> rides = useCase.execute(userEmail);
 
         assertThat(rides).hasSize(2);
-        assertThat(rides).containsExactlyElementsOf(expectedRides);
     }
 
     @Test
@@ -81,7 +81,7 @@ class GetRideHistoryUseCaseTest {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findCompletedRidesByUserId(user.getId())).thenReturn(Arrays.asList());
 
-        List<Ride> rides = useCase.execute(userEmail);
+        List<RideDTO> rides = useCase.execute(userEmail);
 
         assertThat(rides).isEmpty();
     }

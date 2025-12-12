@@ -43,7 +43,6 @@ class EndRideWithQuotaUseCaseTest {
     @Mock
     private StationRepository stationRepository;
     @Mock
-    private PassRepository passRepository;
 
     private RideFeeCalculator feeCalculator;
     private DailyUsageRepository dailyUsageRepository;
@@ -69,7 +68,6 @@ class EndRideWithQuotaUseCaseTest {
                 rideRepository,
                 scooterRepository,
                 stationRepository,
-                passRepository,
                 feeCalculator,
                 dailyUsageRepository,
                 clock
@@ -91,6 +89,7 @@ class EndRideWithQuotaUseCaseTest {
         endStation = new Station("PEPS", "Campus Location", 10);
 
         activePass = Pass.purchase(user.getId(), Session.generate(2026, "Hiver"), 20, true, new PricingPolicy());
+        user.addPass(activePass);
     }
 
     @Test
@@ -101,7 +100,6 @@ class EndRideWithQuotaUseCaseTest {
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("PEPS")).thenReturn(Optional.of(endStation));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
 
         RideEndResult result = endRideUseCase.execute("alexandra@example.com", "PEPS", 2);
 
@@ -117,7 +115,6 @@ class EndRideWithQuotaUseCaseTest {
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("PEPS")).thenReturn(Optional.of(endStation));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
 
         RideEndResult result = endRideUseCase.execute("alexandra@example.com", "PEPS", 2);
 
@@ -135,7 +132,6 @@ class EndRideWithQuotaUseCaseTest {
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("PEPS")).thenReturn(Optional.of(endStation));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
 
         RideEndResult result = endRideUseCase.execute("alexandra@example.com", "PEPS", 2);
 
@@ -153,7 +149,6 @@ class EndRideWithQuotaUseCaseTest {
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("PEPS")).thenReturn(Optional.of(endStation));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
 
         RideEndResult result = endRideUseCase.execute("alexandra@example.com", "PEPS", 2);
 
@@ -169,7 +164,6 @@ class EndRideWithQuotaUseCaseTest {
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("PEPS")).thenReturn(Optional.of(endStation));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(activePass));
 
         RideEndResult result = endRideUseCase.execute("alexandra@example.com", "PEPS", 2);
 

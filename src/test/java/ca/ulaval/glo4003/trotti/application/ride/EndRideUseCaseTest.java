@@ -42,7 +42,6 @@ class EndRideUseCaseTest {
     private RideRepository rideRepository;
     private ScooterRepository scooterRepository;
     private StationRepository stationRepository;
-    private PassRepository passRepository;
     private RideFeeCalculator feeCalculator;
     private Clock clock;
     private ca.ulaval.glo4003.trotti.domain.shared.EmailService emailService;
@@ -58,7 +57,6 @@ class EndRideUseCaseTest {
         rideRepository = mock(RideRepository.class);
         scooterRepository = mock(ScooterRepository.class);
         stationRepository = mock(StationRepository.class);
-        passRepository = mock(PassRepository.class);
         feeCalculator = mock(RideFeeCalculator.class);
         emailService = mock(ca.ulaval.glo4003.trotti.domain.shared.EmailService.class);
         clock = new FixedClock(LocalDateTime.of(2025, 11, 16, 14, 0));
@@ -69,7 +67,6 @@ class EndRideUseCaseTest {
                 rideRepository,
                 scooterRepository,
                 stationRepository,
-                passRepository,
                 feeCalculator,
                 dailyUsageRepository,
                 clock
@@ -99,7 +96,6 @@ class EndRideUseCaseTest {
         when(stationRepository.findById("Station B")).thenReturn(Optional.of(station));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(Money.zero());
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 
@@ -156,13 +152,13 @@ class EndRideUseCaseTest {
                 0,
                 true,
                 new PricingPolicy());
+        user.addPass(monthlyPass);
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("Station B")).thenReturn(Optional.of(station));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(additionalFees);
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(monthlyPass));
 
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 
@@ -181,13 +177,13 @@ class EndRideUseCaseTest {
                 0,
                 false,
                 new PricingPolicy());
+        user.addPass(immediatePass);
 
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideRepository.findActiveRideByUserId(user.getId())).thenReturn(Optional.of(ride));
         when(stationRepository.findById("Station B")).thenReturn(Optional.of(station));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(additionalFees);
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of(immediatePass));
 
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 
@@ -202,7 +198,6 @@ class EndRideUseCaseTest {
         when(stationRepository.findById("Station B")).thenReturn(Optional.of(station));
         when(scooterRepository.findById(scooter.getId())).thenReturn(Optional.of(scooter));
         when(feeCalculator.calculateAdditionalFees(any(Duration.class))).thenReturn(Money.zero());
-        when(passRepository.findByUserId(user.getId())).thenReturn(List.of());
 
         RideEndResult result = endRideUseCase.execute("test@example.com", "Station B", 2);
 

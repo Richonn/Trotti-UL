@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
+import ca.ulaval.glo4003.trotti.application.ride.dto.RideDTO;
+import ca.ulaval.glo4003.trotti.application.ride.mapper.RideMapper;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideRepository;
 import ca.ulaval.glo4003.trotti.domain.user.Email;
@@ -18,11 +20,12 @@ public class GetRideHistoryUseCase {
         this.rideRepository = rideRepository;
     }
 
-    public List<Ride> execute(String userEmail) {
+    public List<RideDTO> execute(String userEmail) {
         Email email = new Email(userEmail);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
-        return rideRepository.findCompletedRidesByUserId(user.getId());
+        List<Ride> rides = rideRepository.findCompletedRidesByUserId(user.getId());
+        return RideMapper.toDTOList(rides);
     }
 }
