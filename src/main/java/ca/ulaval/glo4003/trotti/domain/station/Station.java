@@ -25,6 +25,7 @@ public class Station {
             throw new IllegalArgumentException("Capacity must be positive");
         }
         this.capacity = capacity;
+        this.state = StationState.OPERATIONAL;
         this.scooters = new ArrayList<>();
     }
 

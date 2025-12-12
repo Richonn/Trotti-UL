@@ -17,7 +17,7 @@ public class ScooterContext {
         this.endTransferScooterUseCase = null;
     }
 
-    public ScooterContext(StationRepository stationRepository) {
+    public ScooterContext(StationRepository stationRepository, ScooterRepository scooterRepository) {
         this.scooterRepository = new InMemoryScooterRepository();
 
         this.startTransferScooterUseCase = new StartTransferScooterUseCase(stationRepository, scooterRepository);
