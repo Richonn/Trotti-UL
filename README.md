@@ -28,7 +28,10 @@ enfin executer le projet avec :
 mvn exec:java -Dexec.mainClass="ca.ulaval.glo4003.trotti.Main"
 ```
 
-IL est également possible de lancer le projet avec le script `start.sh`
+IL est également possible de lancer le projet avec le script `start.sh`:
+```bash
+./start.sh
+```
 
 ## Tester le projet
 
