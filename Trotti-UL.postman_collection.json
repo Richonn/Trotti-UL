@@ -1,725 +1,772 @@
 {
 	"info": {
-		"_postman_id": "51575138-546d-4c0b-a798-f9946a180fb3",
-		"name": "Trotti-UL Copy 3",
+		"_postman_id": "adea72b6-6685-4565-bd80-d03ad7a279a2",
+		"name": "Trotti-UL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "48983168",
-		"_collection_link": "https://yohan-decamps-7039098.postman.co/workspace/Yohan-Decamps's-Workspace~3aae193a-7807-4b3a-827b-455b0b76fc60/collection/48983168-51575138-546d-4c0b-a798-f9946a180fb3?action=share&source=collection_link&creator=48983168"
+		"_exporter_id": "35988341"
 	},
 	"item": [
 		{
-			"name": "Register user",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"name\": \"Alexandra Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"idul\": \"adupo123\",\n  \"email\": \"gcacarie@gmail.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/user/register",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Register user2",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"name\": \"Didier Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"H\",\n  \"idul\": \"adupo123\",\n  \"email\": \"didier.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/user/register",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Users",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/user/all",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"all"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Login User",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\": \"gcacarie@gmail.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/user/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Login User2",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\": \"didier.dupont@example.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/user/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Purchase pass",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "",
-							"type": "string"
+			"name": "users",
+			"item": [
+				{
+					"name": "Register user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Alexandra Dupont\",\n  \"dateOfBirth\": \"2000-05-15\",\n  \"gender\": \"F\",\n  \"idul\": \"adupo123\",\n  \"email\": \"gcacarie@gmail.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/user/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"register"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/user/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"all"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/api/pass/purchase",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"pass",
-						"purchase"
-					]
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"gcacarie@gmail.com\",\n  \"password\": \"Paaaaaassw0rd!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/user/activate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"activate"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Purchase pass same credit card",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
-							"type": "string"
+			"name": "ride",
+			"item": [
+				{
+					"name": "get request code",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/ride/request-code",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"ride",
+								"request-code"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true\n}"
+				{
+					"name": "End Ride",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODUzODcsImV4cCI6MTc2NDY4ODk4N30.c4ImxMp7QdJec6C4bHY4jLtCYAixEV-N_FO-SWd3Nas",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"station\": \"VACHON\",\n    \"slot\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/ride/end",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"ride",
+								"end"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/api/pass/purchase",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"pass",
-						"purchase"
-					]
+				{
+					"name": "Take scooter",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"station\": \"VACHON\",\n    \"code\": \"45496\",\n    \"slot\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/ride/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"ride",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ride/trip-history",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ride",
+								"trip-history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Purchase pass",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/pass/purchase",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"pass",
+								"purchase"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Purchase pass new credit card",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODcyNDQsImV4cCI6MTc2MDk5MDg0NH0.0MNxgnwJeKoMJ9qSsNLkb2pSV0gQ-PrkKR6A44qfjlY",
-							"type": "string"
+			"name": "pass",
+			"item": [
+				{
+					"name": "Purchase pass same credit card",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/pass/purchase",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"pass",
+								"purchase"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"321\"\n}"
+				{
+					"name": "Purchase pass",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/pass/purchase",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"pass",
+								"purchase"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/api/pass/purchase",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"pass",
-						"purchase"
-					]
+				{
+					"name": "Purchase pass new credit card",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODcyNDQsImV4cCI6MTc2MDk5MDg0NH0.0MNxgnwJeKoMJ9qSsNLkb2pSV0gQ-PrkKR6A44qfjlY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"session\": \"A2025\",\n  \"extraMinutesPerDay\": 20,\n  \"monthlyBilling\": true,\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"Alexandra Dupont\",\n  \"expiryDate\": \"12/28\",\n  \"cvv\": \"321\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/pass/purchase",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"pass",
+								"purchase"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all purchases by client",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/pass/my-purchases",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"pass",
+								"my-purchases"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "get all purchases by client",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "",
-							"type": "string"
+			"name": "billing",
+			"item": [
+				{
+					"name": "Check Balance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODUzODcsImV4cCI6MTc2NDY4ODk4N30.c4ImxMp7QdJec6C4bHY4jLtCYAixEV-N_FO-SWd3Nas",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/user/balance",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"balance"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/pass/my-purchases",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"pass",
-						"my-purchases"
-					]
+				{
+					"name": "Pay Balance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODc3NzIsImV4cCI6MTc2NDY5MTM3Mn0.flwDjFpQ5nEYTqifVe--SJ8_m59U56QHOqyI10H6I2Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/user/balance/pay",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"balance",
+								"pay"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Activate Account",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
-							"type": "string"
+			"name": "maintenance",
+			"item": [
+				{
+					"name": "Start Maintenance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/stations/VACHON/maintenance/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stations",
+								"VACHON",
+								"maintenance",
+								"start"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/user/activate",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"activate"
-					]
+				{
+					"name": "End Maintenance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"station\": \"PEPS\",\n    \"scooterId\": \"3c6ac800-e026-4865-9dec-3451bc094b85\",\n    \"slot\": 22\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/stations/VACHON/maintenance/end",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stations",
+								"VACHON",
+								"maintenance",
+								"end"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start Scooter Transfer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"station\": \"VACHON\",\n    \"slot\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/scooters/transfer/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"scooters",
+								"transfer",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End Scooter Transfer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"station\": \"PEPS\",\n    \"scooterId\": \"3c6ac800-e026-4865-9dec-3451bc094b85\",\n    \"slot\": 22\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/scooters/transfer/end",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"scooters",
+								"transfer",
+								"end"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
 		},
 		{
-			"name": "get request code",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODg2ODEsImV4cCI6MTc2MDk5MjI4MX0.LMeeYjW4-vt6JC_JQUkWDr48pjVWaNnywBfg-UERRiw",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/ride/request-code",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"ride",
-						"request-code"
-					]
-				}
-			},
-			"response": []
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api"
 		},
 		{
-			"name": "Take scooter",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"station\": \"VACHON\",\n    \"code\": \"45496\",\n    \"slot\": 1\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/ride/start",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"ride",
-						"start"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "End Ride",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODUzODcsImV4cCI6MTc2NDY4ODk4N30.c4ImxMp7QdJec6C4bHY4jLtCYAixEV-N_FO-SWd3Nas",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"station\": \"VACHON\",\n    \"slot\": 1\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/ride/end",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"ride",
-						"end"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Check Balance",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODUzODcsImV4cCI6MTc2NDY4ODk4N30.c4ImxMp7QdJec6C4bHY4jLtCYAixEV-N_FO-SWd3Nas",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/user/balance",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"balance"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Pay Balance",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjQ2ODc3NzIsImV4cCI6MTc2NDY5MTM3Mn0.flwDjFpQ5nEYTqifVe--SJ8_m59U56QHOqyI10H6I2Q",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/user/balance/pay",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"user",
-						"balance",
-						"pay"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Start Maintenance",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/api/stations/VACHON/maintenance/start",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"stations",
-						"VACHON",
-						"maintenance",
-						"start"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "End Maintenance",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"station\": \"PEPS\",\n    \"scooterId\": \"3c6ac800-e026-4865-9dec-3451bc094b85\",\n    \"slot\": 22\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/stations/VACHON/maintenance/end",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"stations",
-						"VACHON",
-						"maintenance",
-						"end"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Start Scooter Transfer",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"station\": \"VACHON\",\n    \"slot\": 1\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/scooters/transfer/start",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"scooters",
-						"transfer",
-						"start"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "End Scooter Transfer",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA5ODgyMDgsImV4cCI6MTc2MDk5MTgwOH0.xqkCI2wwm2g2xQuyelc0-RJn3fwh_bD9eZ8r-2knVhg",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"station\": \"PEPS\",\n    \"scooterId\": \"3c6ac800-e026-4865-9dec-3451bc094b85\",\n    \"slot\": 22\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/scooters/transfer/end",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"scooters",
-						"transfer",
-						"end"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Historique Copy",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/ride/trip-history",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"ride",
-						"trip-history"
-					]
-				}
-			},
-			"response": []
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnY2FjYXJpZUBnbWFpbC5jb20iLCJpYXQiOjE3NjU1NjkwNTQsImV4cCI6MTc2NTU3MjY1NH0.HeX_gxIC3pdyjiLVwdS5PixQImsF6yOROCIy4-QfPm0"
 		}
 	]
 }
