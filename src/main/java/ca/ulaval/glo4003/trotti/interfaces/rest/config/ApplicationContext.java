@@ -118,20 +118,20 @@ public class ApplicationContext {
         ScooterContext scooterContext = new ScooterContext();
         this.scooterRepository = scooterContext.getScooterRepository();
 
-        UserContext userContext = new UserContext(emailService, tokenGenerator, clock, passRepository, rideCodeRepository);
+        UserContext userContext = new UserContext(this.emailService, this.tokenGenerator, this.clock, passRepository, rideCodeRepository);
         this.userRepository = userContext.getUserRepository();
 
-        StationContext stationContext = new StationContext(userRepository, emailService, scooterRepository);
+        StationContext stationContext = new StationContext(userRepository, this.emailService, scooterRepository);
         this.stationRepository = stationContext.getStationRepository();
 
         ScooterContext scooterFullContext = new ScooterContext(stationRepository);
-        PassContext passContext = new PassContext(userRepository, clock);
-        RideContext rideContext = new RideContext(userRepository, stationRepository, scooterRepository, passRepository, emailService, clock);
+        PassContext passContext = new PassContext(userRepository, this.clock);
+        RideContext rideContext = new RideContext(userRepository, stationRepository, scooterRepository, passRepository, this.emailService, this.clock);
         this.rideRepository = rideContext.getRideRepository();
-        BillingContext billingContext = new BillingContext(userRepository, emailService, clock);
+        BillingContext billingContext = new BillingContext(userRepository, this.emailService, this.clock);
 
         this.pricingPolicy = new PricingPolicy();
-        this.rideCodeGenerator = new RideCodeGenerator(clock);
+        this.rideCodeGenerator = new RideCodeGenerator(this.clock);
         this.rideFeeCalculator = new RideFeeCalculator();
         this.dailyUsageRepository = new InMemoryDailyUsageRepository();
         this.userFactory = new ca.ulaval.glo4003.trotti.domain.user.UserFactory();

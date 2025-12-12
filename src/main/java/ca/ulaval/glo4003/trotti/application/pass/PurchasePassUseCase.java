@@ -66,7 +66,7 @@ public class PurchasePassUseCase {
 
         return new PassPurchaseResult(
                 pass.getId(),
-                session.name(),
+                session.getId(),
                 pass.getTotalPrice().getAmount(),
                 monthlyBilling,
                 session.getStartDate(),

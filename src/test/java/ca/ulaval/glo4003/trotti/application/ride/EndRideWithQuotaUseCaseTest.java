@@ -90,7 +90,7 @@ class EndRideWithQuotaUseCaseTest {
         startStation = new Station("VACHON", "Campus Location", 10);
         endStation = new Station("PEPS", "Campus Location", 10);
 
-        activePass = Pass.purchase(user.getId(), Session.H2026, 20, true, new PricingPolicy());
+        activePass = Pass.purchase(user.getId(), Session.generate(2026, "Hiver"), 20, true, new PricingPolicy());
     }
 
     @Test

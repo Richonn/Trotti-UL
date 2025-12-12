@@ -1,9 +1,7 @@
 package ca.ulaval.glo4003.trotti.interfaces.rest.pass.request;
 
-import ca.ulaval.glo4003.trotti.domain.pass.Session;
-
 public class PurchaseRequest {
-    private Session session;
+    private String session;
     private int extraMinutesPerDay;
     private boolean monthlyBilling;
     private String cardNumber;
@@ -11,11 +9,11 @@ public class PurchaseRequest {
     private String expiryDate;
     private String cvv;
 
-    public Session getSession() {
+    public String getSession() {
         return session;
     }
 
-    public void setSession(Session session) {
+    public void setSession(String session) {
         this.session = session;
     }
 

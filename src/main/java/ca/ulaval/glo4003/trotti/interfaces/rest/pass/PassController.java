@@ -43,7 +43,7 @@ public class PassController {
 
         PassPurchaseResult result = purchasePassUseCase.execute(
                 authUser.getEmail(),
-                request.getSession().name(),
+                request.getSession(),
                 request.getExtraMinutesPerDay(),
                 request.isMonthlyBilling(),
                 request.getCardNumber(),

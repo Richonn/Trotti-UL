@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.trotti.domain.shared.EmailService;
 import ca.ulaval.glo4003.trotti.domain.user.UserFactory;
 import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.infrastructure.persistence.memory.InMemoryUserRepository;
+import ca.ulaval.glo4003.trotti.infrastructure.time.SystemClock;
 
 public class UserContext {
     private final UserRepository userRepository;
@@ -17,6 +18,7 @@ public class UserContext {
     private final ActivateAccountUseCase activateAccountUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
     private final GetUserBalanceUseCase getUserBalanceUseCase;
+
 
     public UserContext(EmailService emailService, TokenGenerator tokenGenerator, Clock clock,
                        PassRepository passRepository, RideCodeRepository rideCodeRepository) {

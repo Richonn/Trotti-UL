@@ -13,7 +13,7 @@ public class PassResponseMapper {
     public static InvoiceResponse toInvoiceDto(PassPurchaseResult result) {
         Session sessionEnum = Session.getInstance(result.getSessionCode());
         return new InvoiceResponse(
-                sessionEnum.name(),
+                sessionEnum.getId(),
                 result.getTotalPrice(),
                 result.isMonthlyBilling(),
                 result.getStartDate(),

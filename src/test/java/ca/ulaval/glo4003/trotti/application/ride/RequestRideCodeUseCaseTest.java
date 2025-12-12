@@ -67,7 +67,7 @@ class RequestRideCodeUseCaseTest {
 
         RideCode expectedCode = new RideCode("ABC123", LocalDateTime.now().plusMinutes(1));
 
-        Pass activePass = Pass.purchase(user.getId(), Session.A2025, 0, false, new PricingPolicy());
+        Pass activePass = Pass.purchase(user.getId(), Session.generate(2025, "Automne"), 0, false, new PricingPolicy());
         user.addPass(activePass);
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(user));
         when(rideCodeGenerator.generate()).thenReturn(expectedCode);

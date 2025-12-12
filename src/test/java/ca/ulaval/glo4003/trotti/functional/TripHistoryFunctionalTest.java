@@ -74,7 +74,7 @@ class TripHistoryFunctionalTest {
     @Test
     void givenUserWithPass_whenPurchasingPassAndMakingTrips_thenTripHistoryShowsCorrectSummary() {
         String email = "trip-history" + System.currentTimeMillis() + "@test.com";
-        User user = fixtures.createActivatedUserWithPass(email, "Password@123", "Test User", "test123", Session.A2025);
+        User user = fixtures.createActivatedUserWithPass(email, "Password@123", "Test User", "test123", Session.generate(2025, "Automne"));
         String authToken = fixtures.generateToken(email);
 
         for (int i = 0; i < NUMBER_OF_TEST_TRIPS; i++) {
