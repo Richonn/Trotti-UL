@@ -152,9 +152,6 @@
             <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
-
-
-
     </dependencies>
 
     <build>
@@ -204,7 +201,6 @@
                 </configuration>
             </plugin>
 
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -224,7 +220,7 @@
                 </configuration>
             </plugin>
 
-<!--            Jacoco for UT cov-->
+            <!-- Jacoco for UT cov -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
