@@ -28,6 +28,8 @@ enfin executer le projet avec :
 mvn exec:java -Dexec.mainClass="ca.ulaval.glo4003.trotti.Main"
 ```
 
+IL est également possible de lancer le projet avec le script `start.sh`
+
 ## Tester le projet
 
 Une fois l'application lancée, utilisez un outils d'envoie de requêtes http (curl ou postman par exemple).
