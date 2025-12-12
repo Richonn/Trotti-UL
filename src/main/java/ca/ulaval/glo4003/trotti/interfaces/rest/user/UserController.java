@@ -12,7 +12,9 @@ import ca.ulaval.glo4003.trotti.application.user.dto.MonthlyInvoiceDto;
 import ca.ulaval.glo4003.trotti.application.user.dto.UserDTO;
 import ca.ulaval.glo4003.trotti.domain.user.Role;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
-import ca.ulaval.glo4003.trotti.interfaces.rest.user.dto.*;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.request.AutoPayRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.request.LoginRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.user.response.*;
 import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.InvoiceResponseMapper;
 import ca.ulaval.glo4003.trotti.interfaces.rest.user.mapper.UserResponseMapper;
@@ -63,7 +65,7 @@ public class UserController {
                 request.getIdul(),
                 Role.USER);
 
-        ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User userModel = UserResponseMapper.toModel(userDTO);
+        ca.ulaval.glo4003.trotti.interfaces.rest.user.response.UserResponse userModel = UserResponseMapper.toModel(userDTO);
 
         return Response.status(Response.Status.CREATED)
                 .entity(new RegisterResponse(userModel))
@@ -86,7 +88,7 @@ public class UserController {
     @Path("/all")
     public Response getAllUsers() {
         List<UserDTO> users = getAllUsersUseCase.execute();
-        List<ca.ulaval.glo4003.trotti.interfaces.rest.user.model.User> userModels = UserResponseMapper.toModelList(users);
+        List<ca.ulaval.glo4003.trotti.interfaces.rest.user.response.UserResponse> userModels = UserResponseMapper.toModelList(users);
         return Response.ok(userModels).build();
     }
 
@@ -111,7 +113,7 @@ public class UserController {
     public Response purchase(@Context SecurityContext securityContext) {
         AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
         MonthlyInvoiceDto invoiceDto = payUserBalanceUseCase.execute(authUser.getEmail());
-        InvoiceDto invoice = InvoiceResponseMapper.toDto(invoiceDto);
+        InvoiceResponse invoice = InvoiceResponseMapper.toDto(invoiceDto);
 
         return Response.status(Response.Status.CREATED)
                 .entity(new PaymentResponse("Purchase successful", invoice))

@@ -12,13 +12,13 @@ import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideRequest;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideCodeResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.ride.dto.TripHistoryResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideHistoryResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideRequest;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.request.EndRideRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.EndRideResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.RideCodeResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.ride.response.TripHistoryResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.RideHistoryResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.request.StartRideRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.StartRideResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.ride.mapper.RideResponseMapper;
 import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import jakarta.ws.rs.*;
@@ -56,7 +56,7 @@ public class RideController {
         AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
         RideCode rideCode = requestRideCodeUseCase.execute(authUser.getEmail());
-        ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode dtoRideCode = RideResponseMapper.toRideCodeModel(rideCode);
+        ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.RideCodeModel dtoRideCode = RideResponseMapper.toRideCodeModel(rideCode);
         return Response.ok(new RideCodeResponse(dtoRideCode)).build();
     }
 

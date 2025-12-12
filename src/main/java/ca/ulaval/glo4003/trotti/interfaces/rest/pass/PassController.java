@@ -8,9 +8,10 @@ import ca.ulaval.glo4003.trotti.domain.pass.Session;
 import ca.ulaval.glo4003.trotti.interfaces.rest.config.ApplicationContext;
 import ca.ulaval.glo4003.trotti.application.auth.AuthUser;
 import ca.ulaval.glo4003.trotti.interfaces.rest.security.AuthenticationService;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.InvoiceDto;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseRequest;
-import ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PurchaseResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.response.InvoiceResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.response.PassResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.request.PurchaseRequest;
+import ca.ulaval.glo4003.trotti.interfaces.rest.pass.response.PurchaseResponse;
 import ca.ulaval.glo4003.trotti.interfaces.rest.pass.mapper.PassResponseMapper;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -51,7 +52,7 @@ public class PassController {
                 request.getCvv()
         );
 
-        InvoiceDto invoice = PassResponseMapper.toInvoiceDto(result);
+        InvoiceResponse invoice = PassResponseMapper.toInvoiceDto(result);
 
         return Response.status(Response.Status.CREATED)
                 .entity(new PurchaseResponse("Purchase successful", invoice))
@@ -64,7 +65,7 @@ public class PassController {
         AuthUser authUser = (AuthUser) securityContext.getUserPrincipal();
 
         List<PassDTO> passes = getUserPassesUseCase.execute(authUser.getEmail());
-        List<ca.ulaval.glo4003.trotti.interfaces.rest.pass.dto.PassDto> passDtos = PassResponseMapper.toDtoList(passes);
+        List<PassResponse> passDtos = PassResponseMapper.toDtoList(passes);
         return Response.ok(passDtos).build();
     }
 }

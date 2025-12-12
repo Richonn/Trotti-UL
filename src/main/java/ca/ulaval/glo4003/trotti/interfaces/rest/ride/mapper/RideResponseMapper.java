@@ -5,18 +5,18 @@ import ca.ulaval.glo4003.trotti.application.ride.dto.RideStartResult;
 import ca.ulaval.glo4003.trotti.application.ride.dto.TripHistoryResult;
 import ca.ulaval.glo4003.trotti.domain.ride.Ride;
 import ca.ulaval.glo4003.trotti.domain.ride.RideCode;
-import ca.ulaval.glo4003.trotti.interfaces.rest.ride.dto.TripHistoryResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.EndRideResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.RideHistoryResponse;
-import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.dto.StartRideResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.ride.response.TripHistoryResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.EndRideResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.RideHistoryResponse;
+import ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.StartRideResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RideResponseMapper {
 
-    public static ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode toRideCodeModel(RideCode rideCode) {
-        return new ca.ulaval.glo4003.trotti.interfaces.rest.scooter.model.RideCode(
+    public static ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.RideCodeModel toRideCodeModel(RideCode rideCode) {
+        return new ca.ulaval.glo4003.trotti.interfaces.rest.scooter.response.RideCodeModel(
                 rideCode.getCode(),
                 rideCode.getExpirationTime()
         );
