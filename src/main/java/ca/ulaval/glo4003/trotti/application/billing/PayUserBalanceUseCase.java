@@ -33,7 +33,6 @@ public class PayUserBalanceUseCase {
 
         Money amount = user.getMonthlyBalance().getAmount();
 
-        // Handle payment
         PaymentInfo paymentInfo = user.getSavedPaymentInfo().orElseThrow(
                 () -> new IllegalArgumentException("No payment information available. Please provide card details."));
 
