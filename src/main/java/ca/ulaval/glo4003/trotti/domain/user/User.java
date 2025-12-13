@@ -247,4 +247,40 @@ public class User {
 
         return Ride.start(this.id, scooter.getId(), station.getId(), clock.now());
     }
+
+    public Pass getActivePass(LocalDate date) {
+        return passes.stream()
+                .filter(pass -> pass.isActiveOn(date))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public RideBillingResult calculateRideBilling(java.time.Duration rideDuration, int dailyUsage, Clock clock, ca.ulaval.glo4003.trotti.domain.ride.RideFeeCalculator feeCalculator) {
+        long rideMinutes = rideDuration.toMinutes();
+        Pass activePass = getActivePass(clock.today());
+        int dailyQuota = getDailyQuota(activePass);
+
+        Money additionalFees = Money.zero();
+        boolean chargedImmediately = false;
+
+        if (rideMinutes <= 15) {
+            int newUsedToday = dailyUsage + (int) rideMinutes;
+            if (newUsedToday > dailyQuota) {
+                additionalFees = feeCalculator.getQuotaExceededFee();
+            }
+        } else {
+            additionalFees = feeCalculator.calculateAdditionalFees(rideDuration);
+        }
+
+        if (additionalFees.getAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
+            if (activePass != null && activePass.isMonthlyBilling()) {
+                addToMonthlyBalance(additionalFees, clock.today());
+                chargedImmediately = false;
+            } else {
+                chargedImmediately = true;
+            }
+        }
+
+        return new RideBillingResult(additionalFees, chargedImmediately, getMonthlyBalance().getAmount());
+    }
 }

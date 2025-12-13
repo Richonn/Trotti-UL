@@ -40,6 +40,10 @@ public class MonthlyBalance {
         return amount;
     }
 
+    public java.math.BigDecimal getAmountValue() {
+        return amount.getAmount();
+    }
+
     public LocalDate getBalanceStartDate() {
         return balanceStartDate;
     }

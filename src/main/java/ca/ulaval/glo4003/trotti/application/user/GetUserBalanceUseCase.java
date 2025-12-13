@@ -17,7 +17,6 @@ public class GetUserBalanceUseCase {
     public BigDecimal execute(String email) {
         User user = this.userRepository.findByEmail(new Email(email)).orElseThrow(UserNotFoundException::new);
 
-        return user.getMonthlyBalance().getAmount().getAmount();
-        
+        return user.getMonthlyBalance().getAmountValue();
     }
 }

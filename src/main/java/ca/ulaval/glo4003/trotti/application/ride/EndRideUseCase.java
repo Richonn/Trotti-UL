@@ -1,8 +1,6 @@
 package ca.ulaval.glo4003.trotti.application.ride;
 
 import ca.ulaval.glo4003.trotti.application.ride.dto.RideEndResult;
-import ca.ulaval.glo4003.trotti.domain.pass.Money;
-import ca.ulaval.glo4003.trotti.domain.pass.Pass;
 import ca.ulaval.glo4003.trotti.domain.ride.*;
 import ca.ulaval.glo4003.trotti.domain.ride.exception.NoActiveRideException;
 import ca.ulaval.glo4003.trotti.domain.scooter.Scooter;
@@ -19,7 +17,6 @@ import ca.ulaval.glo4003.trotti.domain.user.UserRepository;
 import ca.ulaval.glo4003.trotti.domain.user.exception.UserNotFoundException;
 
 import java.time.Duration;
-import java.util.List;
 
 public class EndRideUseCase {
     private final UserRepository userRepository;
@@ -69,47 +66,23 @@ public class EndRideUseCase {
         Duration rideDuration = ride.getDuration(clock);
         long rideMinutes = rideDuration.toMinutes();
 
-        Pass activePass = user.getPasses().stream()
-                .filter(pass -> pass.isActiveOn(clock.today()))
-                .findFirst()
-                .orElse(null);
-
-        Money additionalFees = Money.zero();
-        boolean chargedImmediately = false;
-        Money monthlyBalanceAfter = user.getMonthlyBalance().getAmount();
-
-        int dailyQuota = user.getDailyQuota(activePass);
+        int dailyUsage = dailyUsageRepository.getUsageForDay(user.getId(), clock.today());
+        ca.ulaval.glo4003.trotti.domain.user.RideBillingResult billingResult = user.calculateRideBilling(rideDuration, dailyUsage, clock, feeCalculator);
 
         if (rideMinutes <= 15) {
-            int usedToday = dailyUsageRepository.getUsageForDay(user.getId(), clock.today());
-            int newUsedToday = usedToday + (int) rideMinutes;
-
-            if (newUsedToday > dailyQuota) {
-                additionalFees = feeCalculator.getQuotaExceededFee();
-            }
-
             dailyUsageRepository.recordUsage(user.getId(), clock.today(), (int) rideMinutes);
-        } else {
-            additionalFees = feeCalculator.calculateAdditionalFees(rideDuration);
         }
 
-        if (additionalFees.getAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
-            if (activePass != null && activePass.isMonthlyBilling()) {
-                user.addToMonthlyBalance(additionalFees, clock.today());
-                monthlyBalanceAfter = user.getMonthlyBalance().getAmount();
-                chargedImmediately = false;
-            } else {
-                chargedImmediately = true;
-            }
+        if (billingResult.getAdditionalFees().getAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
             userRepository.save(user);
         }
 
         return new RideEndResult(
                 ride.getId(),
                 rideDuration,
-                additionalFees,
-                chargedImmediately,
-                monthlyBalanceAfter
+                billingResult.getAdditionalFees(),
+                billingResult.isChargedImmediately(),
+                billingResult.getMonthlyBalanceAfter()
         );
     }
 }
